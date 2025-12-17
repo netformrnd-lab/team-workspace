@@ -1,0 +1,2406 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>팀 워크스페이스</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-light: #818CF8;
+            --primary-dark: #3730A3;
+            --bg-main: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --bg-sidebar: #1E293B;
+            --text-primary: #1E293B;
+            --text-secondary: #64748B;
+            --text-light: #94A3B8;
+            --border: #E2E8F0;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* 로그인 화면 */
+        .login-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .login-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .login-container {
+            background: white;
+            padding: 48px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 20px;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: white;
+        }
+
+        .login-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .login-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .user-select {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .user-btn {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .user-btn:hover {
+            border-color: var(--primary);
+            background: #F5F3FF;
+            transform: translateY(-2px);
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+            color: white;
+        }
+
+        .user-info {
+            text-align: left;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-role {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* 메인 레이아웃 */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-sidebar);
+            color: white;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 8px;
+            margin-bottom: 32px;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748B;
+            padding: 0 12px;
+            margin-bottom: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #CBD5E1;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--danger);
+            color: white;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .current-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .current-user:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .current-user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+        }
+
+        .current-user-info {
+            flex: 1;
+        }
+
+        .current-user-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .current-user-status {
+            font-size: 12px;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+        }
+
+        /* 메인 콘텐츠 */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 24px;
+        }
+
+        .content-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-main);
+        }
+
+        /* 캘린더 섹션 */
+        .calendar-section {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+        }
+
+        .calendar-main {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            padding: 24px;
+        }
+
+        .calendar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .calendar-nav-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .calendar-nav-btn:hover {
+            background: var(--bg-main);
+        }
+
+        .calendar-month {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .calendar-views {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-main);
+            padding: 4px;
+            border-radius: var(--radius-sm);
+        }
+
+        .view-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .view-btn.active {
+            background: white;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+
+        .calendar-day-header {
+            background: var(--bg-main);
+            padding: 12px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .calendar-day {
+            background: white;
+            min-height: 100px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .calendar-day:hover {
+            background: #F5F3FF;
+        }
+
+        .calendar-day.other-month {
+            background: var(--bg-main);
+            color: var(--text-light);
+        }
+
+        .calendar-day.today {
+            background: #EEF2FF;
+        }
+
+        .day-number {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .calendar-day.today .day-number {
+            background: var(--primary);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .day-events {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .day-event {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .day-event.meeting { background: #DBEAFE; color: #1E40AF; }
+        .day-event.deadline { background: #FEE2E2; color: #991B1B; }
+        .day-event.task { background: #D1FAE5; color: #065F46; }
+        .day-event.memo { background: #FEF3C7; color: #92400E; }
+
+        /* 사이드 패널 */
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .panel-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            padding: 20px;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 오늘의 일정 */
+        .today-events {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .today-events-empty {
+            color: var(--text-secondary);
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .event-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-main);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .event-item:hover {
+            background: #EEF2FF;
+            transform: translateX(4px);
+        }
+
+        .event-time {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            min-width: 50px;
+        }
+
+        .event-content {
+            flex: 1;
+        }
+
+        .event-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .event-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 팀원 상태 */
+        .team-status {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .team-member {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            position: relative;
+        }
+
+        .member-status {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .member-status.online { background: var(--success); }
+        .member-status.away { background: var(--warning); }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .member-activity {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* 모달 */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow: hidden;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--bg-main);
+        }
+
+        .modal-body {
+            padding: 24px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* 폼 스타일 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* 파일 업로드 */
+        .file-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary);
+            background: #F5F3FF;
+        }
+
+        .file-upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .file-upload-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .file-list {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-main);
+            border-radius: var(--radius-sm);
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .file-icon.pdf { background: #FEE2E2; }
+        .file-icon.excel { background: #D1FAE5; }
+        .file-icon.image { background: #DBEAFE; }
+        .file-icon.doc { background: #E0E7FF; }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .file-size {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .file-remove {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .file-remove:hover {
+            background: #FEE2E2;
+            color: var(--danger);
+        }
+
+        /* 회의록/게시물 목록 */
+        .posts-section {
+            display: none;
+        }
+
+        .posts-section.active {
+            display: block;
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .post-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .post-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .post-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .post-type {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .post-type.meeting { background: #DBEAFE; color: #1E40AF; }
+        .post-type.memo { background: #FEF3C7; color: #92400E; }
+        .post-type.task { background: #D1FAE5; color: #065F46; }
+
+        .post-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .post-preview {
+            font-size: 14px;
+            color: var(--text-secondary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .post-footer {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .post-author-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .post-author-name {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .post-stats {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .post-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* 파일 섹션 */
+        .files-section {
+            display: none;
+        }
+
+        .files-section.active {
+            display: block;
+        }
+
+        .files-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .file-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .file-card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .file-card-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-card-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* 댓글 섹션 */
+        .comments-section {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .comments-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .comment-input-wrapper {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .comment-input-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .comment-input-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .comment-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+            min-height: 80px;
+        }
+
+        .comment-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .comment-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 12px;
+        }
+
+        .comment-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .comment-author {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .comment-time {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .comment-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .comment-text .mention {
+            background: #EEF2FF;
+            color: var(--primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        /* 멘션 드롭다운 */
+        .mention-dropdown {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-md);
+            display: none;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 4px;
+        }
+
+        .mention-dropdown.active {
+            display: block;
+        }
+
+        .mention-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mention-item:hover {
+            background: var(--bg-main);
+        }
+
+        .mention-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .mention-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* 활동 기록 */
+        .activity-log {
+            display: none;
+        }
+
+        .activity-log.active {
+            display: block;
+        }
+
+        .log-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .log-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .log-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .log-icon.login { background: #D1FAE5; color: #065F46; }
+        .log-icon.post { background: #DBEAFE; color: #1E40AF; }
+        .log-icon.comment { background: #FEF3C7; color: #92400E; }
+        .log-icon.file { background: #E0E7FF; color: #3730A3; }
+
+        .log-content {
+            flex: 1;
+        }
+
+        .log-text {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .log-time {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* 토스트 */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toast {
+            background: var(--bg-sidebar);
+            color: white;
+            padding: 16px 24px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        .toast.info { border-left: 4px solid var(--primary); }
+
+        /* 로딩 */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .loading::after {
+            content: '';
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 12px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 반응형 */
+        @media (max-width: 1200px) {
+            .calendar-section {
+                grid-template-columns: 1fr;
+            }
+
+            .side-panel {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .side-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 로그인 화면 -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-container">
+            <div class="login-logo">📋</div>
+            <h1 class="login-title">팀 워크스페이스</h1>
+            <p class="login-subtitle">로그인할 계정을 선택하세요</p>
+            <div class="user-select" id="userSelect">
+                <!-- 동적으로 로드됨 -->
+                <div class="loading">사용자 로딩 중</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 메인 앱 -->
+    <div class="app-container">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">📋</div>
+                <div class="sidebar-title">팀 워크스페이스</div>
+            </div>
+
+            <nav>
+                <div class="nav-section">
+                    <div class="nav-section-title">메뉴</div>
+                    <div class="nav-item active" data-section="calendar">
+                        <span class="nav-icon">📅</span>
+                        <span>캘린더</span>
+                    </div>
+                    <div class="nav-item" data-section="posts">
+                        <span class="nav-icon">📝</span>
+                        <span>회의록 / 메모</span>
+                        <span class="nav-badge" id="postsBadge">0</span>
+                    </div>
+                    <div class="nav-item" data-section="files">
+                        <span class="nav-icon">📁</span>
+                        <span>파일함</span>
+                    </div>
+                    <div class="nav-item" data-section="activity">
+                        <span class="nav-icon">🕐</span>
+                        <span>활동 기록</span>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="current-user" onclick="logout()">
+                    <div class="current-user-avatar" id="currentUserAvatar"></div>
+                    <div class="current-user-info">
+                        <div class="current-user-name" id="currentUserName"></div>
+                        <div class="current-user-status">
+                            <span class="status-dot"></span>
+                            온라인
+                        </div>
+                    </div>
+                    <span style="color: var(--text-light);">⎋</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 메인 콘텐츠 -->
+        <main class="main-content">
+            <!-- 캘린더 섹션 -->
+            <section class="calendar-section" id="calendarSection">
+                <div class="calendar-main">
+                    <div class="content-header">
+                        <h1 class="page-title">캘린더</h1>
+                        <div class="header-actions">
+                            <button class="btn btn-primary" onclick="openModal('newEvent')">
+                                <span>+</span> 새 일정
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="calendar-header">
+                        <div class="calendar-nav">
+                            <button class="calendar-nav-btn" onclick="prevMonth()">◀</button>
+                            <span class="calendar-month" id="calendarMonth">2025년 6월</span>
+                            <button class="calendar-nav-btn" onclick="nextMonth()">▶</button>
+                        </div>
+                        <div class="calendar-views">
+                            <button class="view-btn active">월</button>
+                            <button class="view-btn">주</button>
+                            <button class="view-btn">일</button>
+                        </div>
+                    </div>
+
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- 캘린더가 여기에 렌더링됨 -->
+                    </div>
+                </div>
+
+                <div class="side-panel">
+                    <div class="panel-card">
+                        <h3 class="panel-title">📌 오늘의 일정</h3>
+                        <div class="today-events" id="todayEvents">
+                            <div class="loading">로딩 중</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card">
+                        <h3 class="panel-title">👥 팀원 현황</h3>
+                        <div class="team-status" id="teamStatus">
+                            <!-- 동적으로 로드됨 -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 회의록/메모 섹션 -->
+            <section class="posts-section" id="postsSection">
+                <div class="content-header">
+                    <h1 class="page-title">회의록 / 메모</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="openModal('newPost')">
+                            <span>+</span> 새 글 작성
+                        </button>
+                    </div>
+                </div>
+
+                <div class="posts-grid" id="postsGrid">
+                    <div class="loading">로딩 중</div>
+                </div>
+            </section>
+
+            <!-- 파일함 섹션 -->
+            <section class="files-section" id="filesSection">
+                <div class="content-header">
+                    <h1 class="page-title">파일함</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="openModal('uploadFile')">
+                            <span>+</span> 파일 업로드
+                        </button>
+                    </div>
+                </div>
+
+                <div class="files-grid" id="filesGrid">
+                    <div class="loading">로딩 중</div>
+                </div>
+            </section>
+
+            <!-- 활동 기록 섹션 -->
+            <section class="activity-log" id="activitySection">
+                <div class="content-header">
+                    <h1 class="page-title">활동 기록</h1>
+                </div>
+
+                <div class="log-list" id="activityLog">
+                    <div class="loading">로딩 중</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 새 일정 모달 -->
+    <div class="modal-overlay" id="newEventModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">새 일정 추가</h2>
+                <button class="modal-close" onclick="closeModal('newEvent')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">일정 제목</label>
+                    <input type="text" class="form-input" id="eventTitle" placeholder="일정 제목을 입력하세요">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">날짜</label>
+                        <input type="date" class="form-input" id="eventDate">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">시간</label>
+                        <input type="time" class="form-input" id="eventTime">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">일정 유형</label>
+                    <select class="form-input" id="eventType">
+                        <option value="meeting">회의</option>
+                        <option value="deadline">마감</option>
+                        <option value="task">할일</option>
+                        <option value="memo">메모</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">설명</label>
+                    <textarea class="form-input form-textarea" id="eventDescription" placeholder="일정에 대한 설명을 입력하세요"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('newEvent')">취소</button>
+                <button class="btn btn-primary" onclick="saveEvent()">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 새 글 작성 모달 -->
+    <div class="modal-overlay" id="newPostModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">새 글 작성</h2>
+                <button class="modal-close" onclick="closeModal('newPost')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">유형</label>
+                    <select class="form-input" id="postType">
+                        <option value="meeting">회의록</option>
+                        <option value="memo">메모</option>
+                        <option value="task">업무</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">제목</label>
+                    <input type="text" class="form-input" id="postTitle" placeholder="제목을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">내용</label>
+                    <textarea class="form-input form-textarea" id="postContent" placeholder="내용을 입력하세요 (@를 입력하여 멘션)" style="min-height: 200px;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('newPost')">취소</button>
+                <button class="btn btn-primary" onclick="savePost()">게시</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 파일 업로드 모달 -->
+    <div class="modal-overlay" id="uploadFileModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">파일 업로드</h2>
+                <button class="modal-close" onclick="closeModal('uploadFile')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="file-upload-area" id="fileDropZone" onclick="document.getElementById('fileInput').click()">
+                    <div class="file-upload-icon">📁</div>
+                    <p class="file-upload-text">클릭하거나 파일을 드래그하세요</p>
+                    <p class="file-upload-text">PDF, Excel, Word, HTML, 이미지 등 모든 파일 형식 지원</p>
+                </div>
+                <input type="file" id="fileInput" multiple style="display: none" onchange="handleFileSelect(event)">
+                <div class="file-list" id="uploadFileList"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('uploadFile')">취소</button>
+                <button class="btn btn-primary" onclick="uploadFiles()">업로드</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 게시물 상세 모달 -->
+    <div class="modal-overlay" id="postDetailModal">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2 class="modal-title" id="postDetailTitle">게시물 제목</h2>
+                <button class="modal-close" onclick="closeModal('postDetail')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="postDetailContent"></div>
+                
+                <!-- 댓글 섹션 -->
+                <div class="comments-section">
+                    <h4 class="comments-title">💬 댓글</h4>
+                    
+                    <div class="comment-input-wrapper">
+                        <div class="comment-input-avatar" id="commentAvatar"></div>
+                        <div class="comment-input-box">
+                            <div class="mention-dropdown" id="mentionDropdown"></div>
+                            <textarea class="comment-input" id="commentInput" placeholder="댓글을 입력하세요... (@로 멘션)" oninput="checkMention(this)"></textarea>
+                            <div class="comment-actions">
+                                <button class="btn btn-primary" onclick="addComment()">댓글 작성</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comments-list" id="commentsList">
+                        <!-- 댓글들이 여기에 렌더링됨 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 토스트 컨테이너 -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Supabase 초기화
+        const SUPABASE_URL = 'https://lkohsygpwwxipufldqnn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxrb2hzeWdwd3d4aXB1ZmxkcW5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5NDY2OTgsImV4cCI6MjA4MTUyMjY5OH0.gD7KU-r8W_7FLDbz8xaT4aIVbKxmMsIkLmtGqgFwM6I';
+        
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // 전역 변수
+        let currentUser = null;
+        let currentDate = new Date();
+        let users = [];
+        let events = [];
+        let posts = [];
+        let files = [];
+        let currentPostId = null;
+        let selectedFiles = [];
+
+        // 초기화
+        async function init() {
+            await loadUsers();
+            setupRealtimeSubscriptions();
+        }
+
+        // 사용자 로드
+        async function loadUsers() {
+            const { data, error } = await supabaseClient
+                .from('users')
+                .select('*');
+            
+            if (error) {
+                console.error('Error loading users:', error);
+                return;
+            }
+            
+            users = data;
+            renderLoginUsers();
+            renderTeamStatus();
+            renderMentionDropdown();
+        }
+
+        // 로그인 화면 사용자 렌더링
+        function renderLoginUsers() {
+            const container = document.getElementById('userSelect');
+            container.innerHTML = '';
+            
+            users.forEach(user => {
+                container.innerHTML += `
+                    <button class="user-btn" onclick="login('${user.id}')">
+                        <div class="user-avatar" style="background: ${user.avatar_color}">${user.avatar_initial}</div>
+                        <div class="user-info">
+                            <div class="user-name">${user.name}</div>
+                            <div class="user-role">${user.role === 'leader' ? '팀장' : '팀원'}</div>
+                        </div>
+                    </button>
+                `;
+            });
+        }
+
+        // 로그인
+        async function login(userId) {
+            currentUser = users.find(u => u.id === userId);
+            
+            // 로그인 기록 저장
+            await supabaseClient.from('activity_logs').insert({
+                user_id: userId,
+                action: 'login',
+                description: `${currentUser.name}님이 로그인했습니다`
+            });
+            
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('currentUserAvatar').textContent = currentUser.avatar_initial;
+            document.getElementById('currentUserAvatar').style.background = currentUser.avatar_color;
+            document.getElementById('currentUserName').textContent = currentUser.name;
+            document.getElementById('commentAvatar').textContent = currentUser.avatar_initial;
+            document.getElementById('commentAvatar').style.background = currentUser.avatar_color;
+            
+            // 데이터 로드
+            await loadAllData();
+            
+            showToast(`${currentUser.name}님 환영합니다!`, 'success');
+        }
+
+        // 로그아웃
+        function logout() {
+            document.getElementById('loginScreen').classList.remove('hidden');
+            currentUser = null;
+        }
+
+        // 모든 데이터 로드
+        async function loadAllData() {
+            await Promise.all([
+                loadEvents(),
+                loadPosts(),
+                loadFiles(),
+                loadActivityLogs()
+            ]);
+            renderCalendar();
+        }
+
+        // 일정 로드
+        async function loadEvents() {
+            const { data, error } = await supabaseClient
+                .from('events')
+                .select('*')
+                .order('event_date', { ascending: true });
+            
+            if (!error) {
+                events = data;
+                renderTodayEvents();
+            }
+        }
+
+        // 게시물 로드
+        async function loadPosts() {
+            const { data, error } = await supabaseClient
+                .from('posts')
+                .select(`
+                    *,
+                    author:users(name, avatar_initial, avatar_color),
+                    comments(count)
+                `)
+                .order('created_at', { ascending: false });
+            
+            if (!error) {
+                posts = data;
+                renderPosts();
+                document.getElementById('postsBadge').textContent = posts.length;
+            }
+        }
+
+        // 파일 로드
+        async function loadFiles() {
+            const { data, error } = await supabaseClient
+                .from('files')
+                .select(`
+                    *,
+                    uploader:users(name, avatar_initial, avatar_color)
+                `)
+                .order('created_at', { ascending: false });
+            
+            if (!error) {
+                files = data;
+                renderFiles();
+            }
+        }
+
+        // 활동 기록 로드
+        async function loadActivityLogs() {
+            const { data, error } = await supabaseClient
+                .from('activity_logs')
+                .select(`
+                    *,
+                    user:users(name, avatar_initial, avatar_color)
+                `)
+                .order('created_at', { ascending: false })
+                .limit(50);
+            
+            if (!error) {
+                renderActivityLog(data);
+            }
+        }
+
+        // 실시간 구독 설정
+        function setupRealtimeSubscriptions() {
+            // 게시물 실시간 업데이트
+            supabase
+                .channel('posts')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
+                    loadPosts();
+                })
+                .subscribe();
+
+            // 댓글 실시간 업데이트
+            supabase
+                .channel('comments')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, () => {
+                    if (currentPostId) {
+                        loadComments(currentPostId);
+                    }
+                    loadPosts();
+                })
+                .subscribe();
+
+            // 일정 실시간 업데이트
+            supabase
+                .channel('events')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'events' }, () => {
+                    loadEvents();
+                    renderCalendar();
+                })
+                .subscribe();
+
+            // 파일 실시간 업데이트
+            supabase
+                .channel('files')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'files' }, () => {
+                    loadFiles();
+                })
+                .subscribe();
+
+            // 활동 기록 실시간 업데이트
+            supabase
+                .channel('activity_logs')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'activity_logs' }, () => {
+                    loadActivityLogs();
+                })
+                .subscribe();
+        }
+
+        // 네비게이션
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                const section = this.dataset.section;
+                document.getElementById('calendarSection').style.display = section === 'calendar' ? 'grid' : 'none';
+                document.getElementById('postsSection').classList.toggle('active', section === 'posts');
+                document.getElementById('filesSection').classList.toggle('active', section === 'files');
+                document.getElementById('activitySection').classList.toggle('active', section === 'activity');
+            });
+        });
+
+        // 캘린더 렌더링
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            document.getElementById('calendarMonth').textContent = `${year}년 ${month + 1}월`;
+            
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const startDate = new Date(firstDay);
+            startDate.setDate(startDate.getDate() - firstDay.getDay());
+            
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+            
+            // 요일 헤더
+            const days = ['일', '월', '화', '수', '목', '금', '토'];
+            days.forEach(day => {
+                grid.innerHTML += `<div class="calendar-day-header">${day}</div>`;
+            });
+            
+            // 날짜 셀
+            const today = new Date();
+            for (let i = 0; i < 42; i++) {
+                const date = new Date(startDate);
+                date.setDate(date.getDate() + i);
+                
+                const isOtherMonth = date.getMonth() !== month;
+                const isToday = date.toDateString() === today.toDateString();
+                const dateStr = date.toISOString().split('T')[0];
+                const dayEvents = events.filter(e => e.event_date === dateStr);
+                
+                let eventsHtml = '';
+                dayEvents.slice(0, 3).forEach(event => {
+                    eventsHtml += `<div class="day-event ${event.type}">${event.title}</div>`;
+                });
+                if (dayEvents.length > 3) {
+                    eventsHtml += `<div class="day-event" style="background: var(--bg-main); color: var(--text-secondary);">+${dayEvents.length - 3}개 더</div>`;
+                }
+                
+                grid.innerHTML += `
+                    <div class="calendar-day ${isOtherMonth ? 'other-month' : ''} ${isToday ? 'today' : ''}">
+                        <div class="day-number">${isToday ? `<span>${date.getDate()}</span>` : date.getDate()}</div>
+                        <div class="day-events">${eventsHtml}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function prevMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        // 오늘의 일정 렌더링
+        function renderTodayEvents() {
+            const container = document.getElementById('todayEvents');
+            const today = new Date().toISOString().split('T')[0];
+            const todayEvents = events.filter(e => e.event_date === today);
+            
+            if (todayEvents.length === 0) {
+                container.innerHTML = '<div class="today-events-empty">오늘 일정이 없습니다</div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            todayEvents.forEach(event => {
+                container.innerHTML += `
+                    <div class="event-item">
+                        <div class="event-time">${event.event_time ? event.event_time.slice(0, 5) : '종일'}</div>
+                        <div class="event-content">
+                            <div class="event-title">${event.title}</div>
+                            <div class="event-meta">
+                                <span>${getTypeLabel(event.type)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // 팀 상태 렌더링
+        function renderTeamStatus() {
+            const container = document.getElementById('teamStatus');
+            container.innerHTML = '';
+            
+            users.forEach(user => {
+                const isCurrentUser = currentUser && user.id === currentUser.id;
+                container.innerHTML += `
+                    <div class="team-member">
+                        <div class="member-avatar" style="background: ${user.avatar_color}">
+                            ${user.avatar_initial}
+                            <span class="member-status ${isCurrentUser ? 'online' : 'away'}"></span>
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">${user.name}</div>
+                            <div class="member-activity">${isCurrentUser ? '현재 접속 중' : '오프라인'}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // 게시물 렌더링
+        function renderPosts() {
+            const grid = document.getElementById('postsGrid');
+            
+            if (posts.length === 0) {
+                grid.innerHTML = '<div class="today-events-empty">작성된 글이 없습니다</div>';
+                return;
+            }
+            
+            grid.innerHTML = '';
+            posts.forEach(post => {
+                const author = post.author;
+                const commentCount = post.comments?.[0]?.count || 0;
+                grid.innerHTML += `
+                    <div class="post-card" onclick="openPostDetail('${post.id}')">
+                        <div class="post-header">
+                            <span class="post-type ${post.type}">${getTypeLabel(post.type)}</span>
+                            <h3 class="post-title">${post.title}</h3>
+                            <p class="post-preview">${post.content || ''}</p>
+                        </div>
+                        <div class="post-footer">
+                            <div class="post-author">
+                                <div class="post-author-avatar" style="background: ${author?.avatar_color || '#ccc'}">${author?.avatar_initial || '?'}</div>
+                                <span class="post-author-name">${author?.name || '알 수 없음'}</span>
+                            </div>
+                            <div class="post-stats">
+                                <span class="post-stat">💬 ${commentCount}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function getTypeLabel(type) {
+            const labels = { meeting: '회의록', memo: '메모', task: '업무', deadline: '마감' };
+            return labels[type] || type;
+        }
+
+        // 파일 렌더링
+        function renderFiles() {
+            const grid = document.getElementById('filesGrid');
+            
+            if (files.length === 0) {
+                grid.innerHTML = '<div class="today-events-empty">업로드된 파일이 없습니다</div>';
+                return;
+            }
+            
+            grid.innerHTML = '';
+            files.forEach(file => {
+                const ext = file.name.split('.').pop().toLowerCase();
+                const iconStyle = getFileIconStyle(ext);
+                const createdAt = new Date(file.created_at).toLocaleDateString('ko-KR');
+                
+                grid.innerHTML += `
+                    <div class="file-card" onclick="openFile('${file.path}', '${file.name}')">
+                        <div class="file-card-icon" style="background: ${iconStyle.bg}">${iconStyle.icon}</div>
+                        <div class="file-card-name">${file.name}</div>
+                        <div class="file-card-meta">${formatFileSize(file.size)} · ${createdAt}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function getFileIconStyle(ext) {
+            const styles = {
+                pdf: { bg: '#FEE2E2', icon: '📄' },
+                xlsx: { bg: '#D1FAE5', icon: '📊' },
+                xls: { bg: '#D1FAE5', icon: '📊' },
+                csv: { bg: '#D1FAE5', icon: '📊' },
+                pptx: { bg: '#FEF3C7', icon: '📽️' },
+                ppt: { bg: '#FEF3C7', icon: '📽️' },
+                docx: { bg: '#DBEAFE', icon: '📝' },
+                doc: { bg: '#DBEAFE', icon: '📝' },
+                html: { bg: '#E0E7FF', icon: '🌐' },
+                png: { bg: '#FCE7F3', icon: '🖼️' },
+                jpg: { bg: '#FCE7F3', icon: '🖼️' },
+                jpeg: { bg: '#FCE7F3', icon: '🖼️' },
+                gif: { bg: '#FCE7F3', icon: '🖼️' }
+            };
+            return styles[ext] || { bg: '#F3F4F6', icon: '📁' };
+        }
+
+        function formatFileSize(bytes) {
+            if (!bytes) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        // 파일 열기
+        async function openFile(path, name) {
+            const { data } = supabaseClient.storage.from('files').getPublicUrl(path);
+            window.open(data.publicUrl, '_blank');
+        }
+
+        // 활동 기록 렌더링
+        function renderActivityLog(logs) {
+            const list = document.getElementById('activityLog');
+            
+            if (!logs || logs.length === 0) {
+                list.innerHTML = '<div class="today-events-empty">활동 기록이 없습니다</div>';
+                return;
+            }
+            
+            const icons = {
+                login: { bg: 'login', icon: '🔓' },
+                post: { bg: 'post', icon: '📝' },
+                comment: { bg: 'comment', icon: '💬' },
+                file: { bg: 'file', icon: '📁' }
+            };
+            
+            list.innerHTML = '';
+            logs.forEach(log => {
+                const style = icons[log.action] || icons.post;
+                const time = new Date(log.created_at).toLocaleString('ko-KR');
+                list.innerHTML += `
+                    <div class="log-item">
+                        <div class="log-icon ${style.bg}">${style.icon}</div>
+                        <div class="log-content">
+                            <div class="log-text">${log.description}</div>
+                            <div class="log-time">${time}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // 멘션 드롭다운 렌더링
+        function renderMentionDropdown() {
+            const dropdown = document.getElementById('mentionDropdown');
+            dropdown.innerHTML = '';
+            
+            users.forEach(user => {
+                dropdown.innerHTML += `
+                    <div class="mention-item" onclick="insertMention('${user.id}', '${user.name}')">
+                        <div class="mention-avatar" style="background: ${user.avatar_color}">${user.avatar_initial}</div>
+                        <span class="mention-name">${user.name}</span>
+                    </div>
+                `;
+            });
+        }
+
+        // 모달 관리
+        function openModal(type) {
+            document.getElementById(`${type}Modal`).classList.add('active');
+            
+            // 오늘 날짜 기본값 설정
+            if (type === 'newEvent') {
+                document.getElementById('eventDate').value = new Date().toISOString().split('T')[0];
+            }
+        }
+
+        function closeModal(type) {
+            document.getElementById(`${type}Modal`).classList.remove('active');
+        }
+
+        // 일정 저장
+        async function saveEvent() {
+            const title = document.getElementById('eventTitle').value.trim();
+            const date = document.getElementById('eventDate').value;
+            const time = document.getElementById('eventTime').value;
+            const type = document.getElementById('eventType').value;
+            const description = document.getElementById('eventDescription').value.trim();
+            
+            if (!title || !date) {
+                showToast('제목과 날짜를 입력해주세요', 'error');
+                return;
+            }
+            
+            const { error } = await supabaseClient.from('events').insert({
+                title,
+                event_date: date,
+                event_time: time || null,
+                type,
+                description,
+                created_by: currentUser.id
+            });
+            
+            if (error) {
+                showToast('일정 저장 실패', 'error');
+                return;
+            }
+            
+            // 활동 기록
+            await supabaseClient.from('activity_logs').insert({
+                user_id: currentUser.id,
+                action: 'post',
+                description: `${currentUser.name}님이 "${title}" 일정을 추가했습니다`
+            });
+            
+            // 폼 초기화
+            document.getElementById('eventTitle').value = '';
+            document.getElementById('eventTime').value = '';
+            document.getElementById('eventDescription').value = '';
+            
+            closeModal('newEvent');
+            showToast('일정이 추가되었습니다', 'success');
+        }
+
+        // 게시물 저장
+        async function savePost() {
+            const type = document.getElementById('postType').value;
+            const title = document.getElementById('postTitle').value.trim();
+            const content = document.getElementById('postContent').value.trim();
+            
+            if (!title) {
+                showToast('제목을 입력해주세요', 'error');
+                return;
+            }
+            
+            const { error } = await supabaseClient.from('posts').insert({
+                type,
+                title,
+                content,
+                author_id: currentUser.id
+            });
+            
+            if (error) {
+                showToast('게시물 저장 실패', 'error');
+                return;
+            }
+            
+            // 활동 기록
+            await supabaseClient.from('activity_logs').insert({
+                user_id: currentUser.id,
+                action: 'post',
+                description: `${currentUser.name}님이 "${title}" 글을 작성했습니다`
+            });
+            
+            // 폼 초기화
+            document.getElementById('postTitle').value = '';
+            document.getElementById('postContent').value = '';
+            
+            closeModal('newPost');
+            showToast('글이 게시되었습니다', 'success');
+        }
+
+        // 게시물 상세
+        async function openPostDetail(postId) {
+            currentPostId = postId;
+            const post = posts.find(p => p.id === postId);
+            
+            document.getElementById('postDetailTitle').textContent = post.title;
+            
+            const createdAt = new Date(post.created_at).toLocaleString('ko-KR');
+            document.getElementById('postDetailContent').innerHTML = `
+                <div style="margin-bottom: 16px;">
+                    <span class="post-type ${post.type}">${getTypeLabel(post.type)}</span>
+                    <span style="margin-left: 12px; color: var(--text-secondary); font-size: 13px;">
+                        ${post.author?.name || '알 수 없음'} · ${createdAt}
+                    </span>
+                </div>
+                <div style="line-height: 1.8; white-space: pre-wrap;">
+                    ${(post.content || '').replace(/@(\S+)/g, '<span class="mention">@$1</span>')}
+                </div>
+            `;
+            
+            await loadComments(postId);
+            openModal('postDetail');
+        }
+
+        // 댓글 로드
+        async function loadComments(postId) {
+            const { data, error } = await supabaseClient
+                .from('comments')
+                .select(`
+                    *,
+                    author:users(name, avatar_initial, avatar_color)
+                `)
+                .eq('post_id', postId)
+                .order('created_at', { ascending: true });
+            
+            if (!error) {
+                renderComments(data);
+            }
+        }
+
+        // 댓글 렌더링
+        function renderComments(comments) {
+            const list = document.getElementById('commentsList');
+            
+            if (!comments || comments.length === 0) {
+                list.innerHTML = '<div class="today-events-empty">댓글이 없습니다</div>';
+                return;
+            }
+            
+            list.innerHTML = '';
+            comments.forEach(comment => {
+                const author = comment.author;
+                const createdAt = new Date(comment.created_at).toLocaleString('ko-KR');
+                list.innerHTML += `
+                    <div class="comment-item">
+                        <div class="comment-avatar" style="background: ${author?.avatar_color || '#ccc'}">${author?.avatar_initial || '?'}</div>
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <span class="comment-author">${author?.name || '알 수 없음'}</span>
+                                <span class="comment-time">${createdAt}</span>
+                            </div>
+                            <div class="comment-text">${comment.content.replace(/@(\S+)/g, '<span class="mention">@$1</span>')}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // 멘션 체크
+        function checkMention(input) {
+            const text = input.value;
+            const lastAtPos = text.lastIndexOf('@');
+            
+            if (lastAtPos !== -1 && lastAtPos === text.length - 1) {
+                document.getElementById('mentionDropdown').classList.add('active');
+            } else {
+                document.getElementById('mentionDropdown').classList.remove('active');
+            }
+        }
+
+        function insertMention(userId, userName) {
+            const input = document.getElementById('commentInput');
+            const text = input.value;
+            const lastAtPos = text.lastIndexOf('@');
+            input.value = text.substring(0, lastAtPos) + '@' + userName + ' ';
+            document.getElementById('mentionDropdown').classList.remove('active');
+            input.focus();
+        }
+
+        // 댓글 추가
+        async function addComment() {
+            const input = document.getElementById('commentInput');
+            const content = input.value.trim();
+            
+            if (!content) {
+                showToast('댓글을 입력해주세요', 'error');
+                return;
+            }
+            
+            const { error } = await supabaseClient.from('comments').insert({
+                post_id: currentPostId,
+                author_id: currentUser.id,
+                content
+            });
+            
+            if (error) {
+                showToast('댓글 저장 실패', 'error');
+                return;
+            }
+            
+            // 활동 기록
+            await supabaseClient.from('activity_logs').insert({
+                user_id: currentUser.id,
+                action: 'comment',
+                description: `${currentUser.name}님이 댓글을 남겼습니다`
+            });
+            
+            input.value = '';
+            showToast('댓글이 등록되었습니다', 'success');
+        }
+
+        // 파일 선택 핸들러
+        function handleFileSelect(event) {
+            const files = Array.from(event.target.files);
+            selectedFiles = selectedFiles.concat(files);
+            renderSelectedFiles();
+        }
+
+        function renderSelectedFiles() {
+            const list = document.getElementById('uploadFileList');
+            list.innerHTML = '';
+            
+            selectedFiles.forEach((file, index) => {
+                const ext = file.name.split('.').pop().toLowerCase();
+                const iconStyle = getFileIconStyle(ext);
+                list.innerHTML += `
+                    <div class="file-item">
+                        <div class="file-icon" style="background: ${iconStyle.bg}">${iconStyle.icon}</div>
+                        <div class="file-info">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${formatFileSize(file.size)}</div>
+                        </div>
+                        <button class="file-remove" onclick="removeSelectedFile(${index})">✕</button>
+                    </div>
+                `;
+            });
+        }
+
+        function removeSelectedFile(index) {
+            selectedFiles.splice(index, 1);
+            renderSelectedFiles();
+        }
+
+        // 파일 업로드
+        async function uploadFiles() {
+            if (selectedFiles.length === 0) {
+                showToast('업로드할 파일을 선택해주세요', 'error');
+                return;
+            }
+            
+            for (const file of selectedFiles) {
+                const fileName = `${Date.now()}_${file.name}`;
+                const { data, error } = await supabaseClient.storage
+                    .from('files')
+                    .upload(fileName, file);
+                
+                if (error) {
+                    showToast(`${file.name} 업로드 실패`, 'error');
+                    continue;
+                }
+                
+                // 파일 정보 DB 저장
+                await supabaseClient.from('files').insert({
+                    name: file.name,
+                    path: fileName,
+                    size: file.size,
+                    mime_type: file.type,
+                    uploaded_by: currentUser.id
+                });
+                
+                // 활동 기록
+                await supabaseClient.from('activity_logs').insert({
+                    user_id: currentUser.id,
+                    action: 'file',
+                    description: `${currentUser.name}님이 "${file.name}" 파일을 업로드했습니다`
+                });
+            }
+            
+            selectedFiles = [];
+            document.getElementById('uploadFileList').innerHTML = '';
+            closeModal('uploadFile');
+            showToast('파일이 업로드되었습니다', 'success');
+        }
+
+        // 드래그앤드롭
+        const dropZone = document.getElementById('fileDropZone');
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--primary)';
+            dropZone.style.background = '#F5F3FF';
+        });
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--border)';
+            dropZone.style.background = 'transparent';
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--border)';
+            dropZone.style.background = 'transparent';
+            const files = Array.from(e.dataTransfer.files);
+            selectedFiles = selectedFiles.concat(files);
+            renderSelectedFiles();
+        });
+
+        // 토스트 알림
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${message}</span>`;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // 초기화 실행
+        init();
+    </script>
+</body>
+</html>

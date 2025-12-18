@@ -1255,6 +1255,49 @@
         .comment-time { font-size: 12px; color: var(--dark-600); }
         .comment-text { font-size: 14px; line-height: 1.6; color: var(--dark-800); }
 
+        .comment-actions {
+            display: inline-flex;
+            gap: 4px;
+            margin-left: 8px;
+        }
+
+        .comment-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            opacity: 0.6;
+            transition: all 0.2s;
+        }
+
+        .comment-actions button:hover {
+            opacity: 1;
+            background: var(--light-100);
+        }
+
+        .comment-edit-box {
+            margin-top: 8px;
+        }
+
+        .comment-edit-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid var(--primary);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+        }
+
+        .comment-edit-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            justify-content: flex-end;
+        }
+
         .visit-actions {
             display: flex;
             gap: 8px;
@@ -1759,6 +1802,14 @@
 
         .toast.success { background: var(--primary); }
         .toast.error { background: var(--danger); }
+        .toast.notification { 
+            background: var(--dark-900); 
+            min-width: 280px;
+            cursor: pointer;
+        }
+        .toast.notification:hover {
+            transform: translateX(-4px);
+        }
 
         /* ========== 빈 상태 ========== */
         .empty-state {
@@ -2344,15 +2395,37 @@
         // 실시간 구독 설정
         function setupRealtimeSubscription() {
             db.channel('visit_comments_changes')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'visit_comments' }, () => {
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'visit_comments' }, async (payload) => {
+                    // 새 댓글 알림 (내가 쓴 게 아닐 때만)
+                    if (payload.new && payload.new.author_id !== currentUser?.id) {
+                        // 작성자 정보 가져오기
+                        const { data: author } = await db.from('users').select('*').eq('id', payload.new.author_id).single();
+                        if (author) {
+                            showNotification(`💬 ${author.name}님이 새 댓글을 남겼습니다`, payload.new.content);
+                        }
+                    }
                     if (currentProject) loadVisits();
                     loadRecentActivities();
                 }).subscribe();
 
             db.channel('project_visits_changes')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'project_visits' }, () => {
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'project_visits' }, async (payload) => {
+                    // 새 방문 기록 알림 (내가 쓴 게 아닐 때만)
+                    if (payload.new && payload.new.created_by !== currentUser?.id) {
+                        const { data: author } = await db.from('users').select('*').eq('id', payload.new.created_by).single();
+                        const { data: project } = await db.from('projects').select('name').eq('id', payload.new.project_id).single();
+                        if (author && project) {
+                            showNotification(`📝 ${author.name}님이 새 기록을 추가했습니다`, `${project.name}: ${payload.new.title || '방문 기록'}`);
+                        }
+                    }
                     if (currentProject) loadVisits();
                     loadRecentActivities();
+                })
+                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'project_visits' }, () => {
+                    if (currentProject) loadVisits();
+                })
+                .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'project_visits' }, () => {
+                    if (currentProject) loadVisits();
                 }).subscribe();
 
             db.channel('projects_changes')
@@ -2369,6 +2442,34 @@
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'visit_files' }, () => {
                     loadAllFiles();
                 }).subscribe();
+        }
+
+        // 알림 표시 함수
+        function showNotification(title, message) {
+            // 토스트 알림
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast notification';
+            toast.innerHTML = `
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <strong style="font-size: 14px;">${title}</strong>
+                    <span style="font-size: 12px; opacity: 0.9;">${message?.substring(0, 50)}${message?.length > 50 ? '...' : ''}</span>
+                </div>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+
+            // 브라우저 알림 (권한 있을 때)
+            if (Notification.permission === 'granted') {
+                new Notification(title, { body: message, icon: '🚀' });
+            }
+        }
+
+        // 브라우저 알림 권한 요청
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
         }
 
         // 사용자 로드
@@ -2402,6 +2503,9 @@
             document.getElementById('currentUserAvatar').textContent = currentUser.avatar_initial;
             document.getElementById('currentUserAvatar').style.background = currentUser.avatar_color;
             document.getElementById('currentUserName').textContent = currentUser.name;
+            
+            // 알림 권한 요청
+            requestNotificationPermission();
             
             await loadProjects();
             await loadAllFiles();
@@ -2853,15 +2957,21 @@
                         </div>
                         <div class="comments-list">
                             ${(visit.visit_comments || []).map(c => `
-                                <div class="comment-item">
+                                <div class="comment-item" id="comment-item-${c.id}">
                                     <div class="comment-avatar" style="background: ${c.author?.avatar_color || '#ccc'}">${c.author?.avatar_initial || '?'}</div>
                                     <div class="comment-content">
                                         <div class="comment-bubble">
                                             <div class="comment-meta">
                                                 <span class="comment-author">${c.author?.name || '알 수 없음'}</span>
                                                 <span class="comment-time">${new Date(c.created_at).toLocaleString('ko-KR')}</span>
+                                                ${c.author_id === currentUser.id ? `
+                                                    <span class="comment-actions">
+                                                        <button onclick="editComment('${c.id}', '${c.content.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')" title="수정">✏️</button>
+                                                        <button onclick="deleteComment('${c.id}')" title="삭제">🗑️</button>
+                                                    </span>
+                                                ` : ''}
                                             </div>
-                                            <div class="comment-text">${c.content}</div>
+                                            <div class="comment-text" id="comment-text-${c.id}">${c.content}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -3070,6 +3180,67 @@
                 await loadVisits();
                 await loadRecentActivities();
             }
+        }
+
+        // 댓글 수정
+        function editComment(commentId, currentContent) {
+            const textEl = document.getElementById(`comment-text-${commentId}`);
+            if (!textEl) return;
+            
+            // 이미 수정 중인지 확인
+            if (textEl.querySelector('.comment-edit-box')) return;
+            
+            const originalText = currentContent.replace(/\\n/g, '\n').replace(/\\'/g, "'");
+            
+            textEl.innerHTML = `
+                <div class="comment-edit-box">
+                    <textarea class="comment-edit-input" id="edit-comment-${commentId}" rows="2">${originalText}</textarea>
+                    <div class="comment-edit-actions">
+                        <button class="btn btn-ghost btn-sm" onclick="cancelEditComment('${commentId}', '${currentContent}')">취소</button>
+                        <button class="btn btn-primary btn-sm" onclick="saveEditComment('${commentId}')">저장</button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById(`edit-comment-${commentId}`).focus();
+        }
+
+        function cancelEditComment(commentId, originalContent) {
+            const textEl = document.getElementById(`comment-text-${commentId}`);
+            if (textEl) {
+                textEl.innerHTML = originalContent.replace(/\\n/g, '\n').replace(/\\'/g, "'");
+            }
+        }
+
+        async function saveEditComment(commentId) {
+            const input = document.getElementById(`edit-comment-${commentId}`);
+            if (!input) return;
+            
+            const newContent = input.value.trim();
+            if (!newContent) { showToast('댓글 내용을 입력하세요', 'error'); return; }
+            
+            const { error } = await db.from('visit_comments')
+                .update({ content: newContent })
+                .eq('id', commentId);
+            
+            if (error) { showToast('수정 실패', 'error'); return; }
+            
+            showToast('댓글이 수정되었습니다', 'success');
+            await loadVisits();
+        }
+
+        // 댓글 삭제
+        async function deleteComment(commentId) {
+            if (!confirm('이 댓글을 삭제하시겠습니까?')) return;
+            
+            const { error } = await db.from('visit_comments')
+                .delete()
+                .eq('id', commentId);
+            
+            if (error) { showToast('삭제 실패', 'error'); return; }
+            
+            showToast('댓글이 삭제되었습니다', 'success');
+            await loadVisits();
         }
 
         // ========== 캘린더 ==========

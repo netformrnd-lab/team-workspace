@@ -1346,12 +1346,7 @@
             background: var(--primary-soft);
         }
 
-        .comment-check-btn.others-checked {
-            border-color: var(--primary);
-            background: var(--primary-soft);
-            color: var(--primary);
-        }
-
+        .comment-check-btn.others-checked,
         .comment-check-btn.checked {
             border-color: var(--primary);
             background: var(--primary);
@@ -2447,6 +2442,14 @@
         let currentVisits = []; // 현재 프로젝트의 방문 기록
         let expandedVisitIds = new Set(); // 열려있는 방문 기록 ID들
 
+        // 현재 열린 방문기록 상태 저장
+        function saveExpandedState() {
+            document.querySelectorAll('.visit-card.expanded').forEach(card => {
+                const id = card.id.replace('visit-', '');
+                expandedVisitIds.add(id);
+            });
+        }
+
         // ========== 초기화 ==========
         async function init() {
             await loadUsers();
@@ -2572,6 +2575,8 @@
                     if (visitCard) {
                         // 카드 펼치기
                         visitCard.classList.add('expanded');
+                        // 열린 상태 기억
+                        expandedVisitIds.add(String(linkData.visitId));
                         // 스크롤 이동
                         visitCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         // 하이라이트 효과
@@ -3052,6 +3057,9 @@
 
         // ========== 방문 기록 ==========
         async function loadVisits() {
+            // 현재 열린 상태 저장
+            saveExpandedState();
+            
             const { data, error } = await db
                 .from('project_visits')
                 .select(`*, author:users(name, avatar_initial, avatar_color), visit_comments(*, author:users(name, avatar_initial, avatar_color), comment_checks(*, user:users(name))), visit_files(*)`)
@@ -3143,7 +3151,7 @@
                 `;
 
                 return `
-                    <div class="visit-card ${expandedVisitIds.has(visit.id) ? 'expanded' : ''}" id="visit-${visit.id}">
+                    <div class="visit-card ${expandedVisitIds.has(String(visit.id)) ? 'expanded' : ''}" id="visit-${visit.id}">
                         <div class="visit-header" onclick="toggleVisit('${visit.id}')">
                             <div class="visit-date-badge">
                                 <div class="visit-date-icon">
@@ -3180,11 +3188,12 @@
             const card = document.getElementById(`visit-${visitId}`);
             card.classList.toggle('expanded');
             
-            // 열린 상태 기억
+            // 열린 상태 기억 (문자열로 통일)
+            const id = String(visitId);
             if (card.classList.contains('expanded')) {
-                expandedVisitIds.add(visitId);
+                expandedVisitIds.add(id);
             } else {
-                expandedVisitIds.delete(visitId);
+                expandedVisitIds.delete(id);
             }
         }
 

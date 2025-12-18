@@ -657,7 +657,7 @@
         }
 
         .activity-list {
-            padding: 0 24px 24px;
+            padding: 8px 16px 16px;
             max-height: 400px;
             overflow-y: auto;
         }
@@ -665,9 +665,15 @@
         .activity-item {
             display: flex;
             gap: 16px;
-            padding: 16px 0;
-            border-bottom: 1px solid var(--light-200);
+            padding: 14px 12px;
+            border-radius: var(--radius-sm);
             align-items: flex-start;
+            transition: all 0.2s;
+            border-bottom: 1px solid var(--light-100);
+        }
+
+        .activity-item:hover {
+            background: var(--light-100);
         }
 
         .activity-item:last-child {
@@ -2584,16 +2590,16 @@
                 // 최근 방문 기록 가져오기 (다른 사람 것만)
                 const { data: visits, error: visitsError } = await db
                     .from('project_visits')
-                    .select(`*, author:users(id, name, avatar_initial, avatar_color), project:projects(name, color)`)
-                    .neq('created_by', currentUser.id)  // 내 활동 제외
+                    .select(`*, author:users(id, name, avatar_initial, avatar_color), project:projects(id, name, color)`)
+                    .neq('created_by', currentUser.id)
                     .order('created_at', { ascending: false })
                     .limit(10);
 
-                // 최근 댓글 가져오기 (다른 사람 것만)
+                // 최근 댓글 가져오기 (다른 사람 것만) - visit 정보도 함께
                 const { data: comments, error: commentsError } = await db
                     .from('visit_comments')
-                    .select(`*, author:users(id, name, avatar_initial, avatar_color)`)
-                    .neq('author_id', currentUser.id)  // 내 댓글 제외
+                    .select(`*, author:users(id, name, avatar_initial, avatar_color), visit:project_visits(id, title, project:projects(id, name, color))`)
+                    .neq('author_id', currentUser.id)
                     .order('created_at', { ascending: false })
                     .limit(10);
 
@@ -2606,6 +2612,8 @@
                             type: 'visit',
                             user: v.author,
                             project: v.project,
+                            projectId: v.project?.id,
+                            visitId: v.id,
                             title: v.title || '방문 기록',
                             time: v.created_at
                         });
@@ -2618,6 +2626,10 @@
                         recentActivities.push({
                             type: 'comment',
                             user: c.author,
+                            project: c.visit?.project,
+                            projectId: c.visit?.project?.id,
+                            visitId: c.visit?.id,
+                            visitTitle: c.visit?.title || '방문 기록',
                             content: c.content,
                             time: c.created_at
                         });
@@ -2652,21 +2664,28 @@
                 return;
             }
 
-            container.innerHTML = recentActivities.map(activity => {
+            container.innerHTML = recentActivities.map((activity, idx) => {
                 const timeAgo = getTimeAgo(activity.time);
                 const avatarColor = activity.user?.avatar_color || 'var(--light-300)';
                 const avatarInitial = activity.user?.avatar_initial || '?';
                 const userName = activity.user?.name || '알 수 없음';
+                const projectName = activity.project?.name || '프로젝트';
+                const projectColor = activity.project?.color || 'var(--primary)';
+                const hasLink = activity.projectId ? 'cursor: pointer;' : '';
 
                 if (activity.type === 'visit') {
                     return `
-                        <div class="activity-item">
+                        <div class="activity-item" style="${hasLink}" onclick="goToActivity(${idx})" title="클릭하여 이동">
                             <div class="activity-avatar" style="background: ${avatarColor}">${avatarInitial}</div>
                             <div class="activity-content">
+                                <div class="activity-project-tag" style="background: ${projectColor}15; color: ${projectColor}; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; margin-bottom: 6px;">
+                                    📁 ${projectName}
+                                </div>
                                 <div class="activity-text">
-                                    <strong>${userName}</strong>님이 
-                                    <span style="color: ${activity.project?.color || 'var(--primary)'}; font-weight: 600;">${activity.project?.name || '프로젝트'}</span>에 
-                                    "${activity.title}" 추가
+                                    <strong>${userName}</strong>님이 새 기록 추가
+                                </div>
+                                <div class="activity-detail" style="font-size: 13px; color: var(--dark-700); margin-top: 2px;">
+                                    "${activity.title}"
                                 </div>
                                 <div class="activity-meta">
                                     <span class="activity-time">${timeAgo}</span>
@@ -2677,11 +2696,17 @@
                     `;
                 } else {
                     return `
-                        <div class="activity-item">
+                        <div class="activity-item" style="${hasLink}" onclick="goToActivity(${idx})" title="클릭하여 이동">
                             <div class="activity-avatar" style="background: ${avatarColor}">${avatarInitial}</div>
                             <div class="activity-content">
+                                <div class="activity-project-tag" style="background: ${projectColor}15; color: ${projectColor}; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; margin-bottom: 6px;">
+                                    📁 ${projectName} > ${activity.visitTitle || '방문 기록'}
+                                </div>
                                 <div class="activity-text">
-                                    <strong>${userName}</strong>님이 댓글 작성: "${activity.content?.substring(0, 30)}${activity.content?.length > 30 ? '...' : ''}"
+                                    <strong>${userName}</strong>님이 댓글 작성
+                                </div>
+                                <div class="activity-detail" style="font-size: 13px; color: var(--dark-700); margin-top: 2px; background: var(--light-100); padding: 8px 12px; border-radius: 6px; border-left: 3px solid ${avatarColor};">
+                                    "${activity.content?.substring(0, 50)}${activity.content?.length > 50 ? '...' : ''}"
                                 </div>
                                 <div class="activity-meta">
                                     <span class="activity-time">${timeAgo}</span>
@@ -2692,6 +2717,18 @@
                     `;
                 }
             }).join('');
+        }
+
+        // 최근 활동 클릭 시 이동
+        function goToActivity(index) {
+            const activity = recentActivities[index];
+            if (!activity || !activity.projectId) return;
+            
+            navigateToNotification({
+                type: activity.type,
+                projectId: activity.projectId,
+                visitId: activity.visitId
+            });
         }
 
         function getTimeAgo(dateString) {

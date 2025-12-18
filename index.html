@@ -306,6 +306,17 @@
         .status-완료 { background: rgba(99, 179, 237, 0.15); color: var(--info); }
         .status-보류 { background: rgba(246, 173, 85, 0.15); color: var(--warning); }
 
+        .project-list-container {
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+        }
+
+        .project-list-container.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
         .sidebar-footer {
             margin-top: auto;
             padding-top: 20px;
@@ -656,6 +667,7 @@
             gap: 16px;
             padding: 16px 0;
             border-bottom: 1px solid var(--light-200);
+            align-items: flex-start;
         }
 
         .activity-item:last-child {
@@ -675,16 +687,26 @@
             flex-shrink: 0;
         }
 
-        .activity-content { flex: 1; }
+        .activity-content { 
+            flex: 1;
+            min-width: 0;
+        }
 
         .activity-text {
             font-size: 14px;
             color: var(--dark-900);
             margin-bottom: 4px;
+            line-height: 1.5;
         }
 
         .activity-text strong {
             font-weight: 700;
+        }
+
+        .activity-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .activity-time {
@@ -693,12 +715,20 @@
         }
 
         .activity-badge {
-            font-size: 11px;
-            padding: 4px 10px;
+            font-size: 10px;
+            padding: 2px 8px;
             border-radius: var(--radius-full);
-            background: var(--light-100);
-            color: var(--dark-700);
             font-weight: 600;
+        }
+
+        .activity-badge.visit {
+            background: rgba(3, 207, 93, 0.1);
+            color: var(--primary);
+        }
+
+        .activity-badge.comment {
+            background: rgba(99, 179, 237, 0.1);
+            color: var(--info);
         }
 
         /* ========== 프로젝트 상세 ========== */
@@ -1810,11 +1840,14 @@
             </nav>
 
             <nav class="nav-section">
-                <div class="nav-section-title">
-                    프로젝트
-                    <button class="add-btn" onclick="openModal('newProject')">+</button>
+                <div class="nav-section-title" onclick="toggleProjectList()" style="cursor: pointer;">
+                    <span style="display: flex; align-items: center; gap: 8px;">
+                        프로젝트
+                        <span id="projectToggleIcon" style="font-size: 10px; transition: transform 0.2s;">▼</span>
+                    </span>
+                    <button class="add-btn" onclick="event.stopPropagation(); openModal('newProject')">+</button>
                 </div>
-                <div id="projectList"></div>
+                <div id="projectList" class="project-list-container"></div>
             </nav>
 
             <div class="sidebar-footer">
@@ -1903,7 +1936,7 @@
                         <button class="btn btn-ghost btn-sm" onclick="showSection('dashboard')">← 뒤로</button>
                     </div>
                     <div class="header-actions">
-                        <button class="btn btn-secondary btn-sm" onclick="openModal('editProject')">⚙️ 설정</button>
+                        <button class="btn btn-secondary btn-sm" onclick="openModal('projectSettings')">⚙️ 설정</button>
                     </div>
                 </div>
 
@@ -2046,7 +2079,7 @@
                                 <div class="danger-zone-title">⚠️ 위험 영역</div>
                                 <div class="danger-zone-desc">아래 작업은 되돌릴 수 없습니다.</div>
                                 <div style="display: flex; gap: 12px;">
-                                    <button class="btn btn-danger btn-sm" onclick="deleteCurrentProject()">현재 프로젝트 삭제</button>
+                                    <button class="btn btn-danger btn-sm" onclick="clearAllChecklist()">🗑️ 모든 체크리스트 초기화</button>
                                 </div>
                             </div>
                         </div>
@@ -2200,6 +2233,12 @@
                     <label class="form-label">내용</label>
                     <textarea class="form-textarea" id="editVisitContent"></textarea>
                 </div>
+                <div class="form-group">
+                    <label class="form-label">📎 첨부파일</label>
+                    <div id="editVisitExistingFiles" style="margin-bottom: 12px;"></div>
+                    <input type="file" class="form-input" id="editVisitFileInput" multiple onchange="handleEditVisitFiles(event)">
+                    <div class="selected-files-list" id="editVisitNewFiles"></div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('editVisit')">취소</button>
@@ -2217,6 +2256,56 @@
             </div>
             <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
                 <div id="projectListModalContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 프로젝트 설정 모달 -->
+    <div class="modal" id="projectSettingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">⚙️ 프로젝트 설정</h2>
+                <button class="modal-close" onclick="closeModal('projectSettings')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">프로젝트명 *</label>
+                    <input type="text" class="form-input" id="editProjectName">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">설명</label>
+                    <textarea class="form-textarea" id="editProjectDesc"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">색상</label>
+                    <div class="color-options" id="editProjectColorOptions">
+                        <div class="color-option" data-color="#03CF5D" style="background: #03CF5D"></div>
+                        <div class="color-option" data-color="#63B3ED" style="background: #63B3ED"></div>
+                        <div class="color-option" data-color="#F6AD55" style="background: #F6AD55"></div>
+                        <div class="color-option" data-color="#FC8181" style="background: #FC8181"></div>
+                        <div class="color-option" data-color="#B794F4" style="background: #B794F4"></div>
+                        <div class="color-option" data-color="#718D96" style="background: #718D96"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">상태</label>
+                    <select class="form-input" id="editProjectStatus">
+                        <option value="진행중">🔥 진행중</option>
+                        <option value="완료">✅ 완료</option>
+                        <option value="보류">⏸️ 보류</option>
+                    </select>
+                </div>
+                <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--light-200);">
+                    <div class="danger-zone">
+                        <div class="danger-zone-title">⚠️ 위험 영역</div>
+                        <div class="danger-zone-desc">프로젝트를 삭제하면 모든 방문 기록과 파일이 함께 삭제됩니다.</div>
+                        <button class="btn btn-danger btn-sm" onclick="deleteProjectFromSettings()">🗑️ 이 프로젝트 삭제</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('projectSettings')">취소</button>
+                <button class="btn btn-primary" onclick="saveProjectSettings()">저장하기</button>
             </div>
         </div>
     </div>
@@ -2244,6 +2333,7 @@
         let allFiles = [];
         let checklist = {}; // 프로젝트별 체크리스트 (로컬 저장)
         let recentActivities = []; // 최근 활동
+        let currentVisits = []; // 현재 프로젝트의 방문 기록
 
         // ========== 초기화 ==========
         async function init() {
@@ -2394,7 +2484,9 @@
                         <div class="activity-avatar" style="background: var(--light-300)">📭</div>
                         <div class="activity-content">
                             <div class="activity-text">팀원의 새로운 활동이 없습니다</div>
-                            <div class="activity-time">팀원이 활동하면 여기에 표시됩니다</div>
+                            <div class="activity-meta">
+                                <span class="activity-time">팀원이 활동하면 여기에 표시됩니다</span>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -2414,12 +2506,14 @@
                             <div class="activity-content">
                                 <div class="activity-text">
                                     <strong>${userName}</strong>님이 
-                                    <span style="color: ${activity.project?.color || 'var(--primary)'}">${activity.project?.name || '프로젝트'}</span>에 
-                                    "${activity.title}" 기록 추가
+                                    <span style="color: ${activity.project?.color || 'var(--primary)'}; font-weight: 600;">${activity.project?.name || '프로젝트'}</span>에 
+                                    "${activity.title}" 추가
                                 </div>
-                                <div class="activity-time">${timeAgo}</div>
+                                <div class="activity-meta">
+                                    <span class="activity-time">${timeAgo}</span>
+                                    <span class="activity-badge visit">방문</span>
+                                </div>
                             </div>
-                            <span class="activity-badge">방문</span>
                         </div>
                     `;
                 } else {
@@ -2430,9 +2524,11 @@
                                 <div class="activity-text">
                                     <strong>${userName}</strong>님이 댓글 작성: "${activity.content?.substring(0, 30)}${activity.content?.length > 30 ? '...' : ''}"
                                 </div>
-                                <div class="activity-time">${timeAgo}</div>
+                                <div class="activity-meta">
+                                    <span class="activity-time">${timeAgo}</span>
+                                    <span class="activity-badge comment">댓글</span>
+                                </div>
                             </div>
-                            <span class="activity-badge">댓글</span>
                         </div>
                     `;
                 }
@@ -2475,6 +2571,26 @@
                 </div>
             `).join('');
         }
+
+        // ========== 프로젝트 목록 토글 ==========
+        let projectListCollapsed = false;
+        
+        function toggleProjectList() {
+            const container = document.getElementById('projectList');
+            const icon = document.getElementById('projectToggleIcon');
+            projectListCollapsed = !projectListCollapsed;
+            
+            if (projectListCollapsed) {
+                container.classList.add('collapsed');
+                icon.style.transform = 'rotate(-90deg)';
+            } else {
+                container.classList.remove('collapsed');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // 프로젝트 설정 모달용 변수
+        let editProjectColor = '#03CF5D';
 
         // 프로젝트 목록 모달 열기
         function openProjectListModal(status) {
@@ -2612,6 +2728,14 @@
             updateDashboardStats();
         }
 
+        function clearAllChecklist() {
+            if (!confirm('모든 프로젝트의 체크리스트를 초기화하시겠습니까?')) return;
+            checklist = {};
+            saveChecklistToStorage();
+            if (currentProject) renderChecklist();
+            showToast('모든 체크리스트가 초기화되었습니다', 'success');
+        }
+
         function renderChecklist() {
             const items = checklist[currentProject.id] || [];
             const completed = items.filter(c => c.completed).length;
@@ -2684,6 +2808,7 @@
         }
 
         function renderVisits(visits) {
+            currentVisits = visits; // 전역 변수에 저장
             document.getElementById('visitsCount').textContent = visits.length;
             const container = document.getElementById('visitsList');
             
@@ -2764,7 +2889,7 @@
                                 </div>
                             </div>
                             <div class="visit-actions" onclick="event.stopPropagation()">
-                                <button class="visit-action-btn" onclick="openEditVisit('${visit.id}', '${visit.visit_date}', '${visit.title || ''}', '${(visit.content || '').replace(/'/g, "\\'")}')">✏️</button>
+                                <button class="visit-action-btn" onclick="openEditVisit('${visit.id}')">✏️</button>
                                 <button class="visit-action-btn delete" onclick="deleteVisit('${visit.id}')">🗑️</button>
                             </div>
                             <span class="visit-toggle">▼</span>
@@ -2783,27 +2908,124 @@
             document.getElementById(`visit-${visitId}`).classList.toggle('expanded');
         }
 
-        function openEditVisit(id, date, title, content) {
-            document.getElementById('editVisitId').value = id;
-            document.getElementById('editVisitDate').value = date;
-            document.getElementById('editVisitTitle').value = title;
-            document.getElementById('editVisitContent').value = content.replace(/\\'/g, "'");
+        // 수정용 파일 변수
+        let editVisitNewFiles = [];
+        let editVisitExistingFiles = [];
+        let editVisitFilesToDelete = [];
+
+        function openEditVisit(visitId) {
+            const visit = currentVisits.find(v => v.id === visitId);
+            if (!visit) { showToast('방문 기록을 찾을 수 없습니다', 'error'); return; }
+            
+            document.getElementById('editVisitId').value = visit.id;
+            document.getElementById('editVisitDate').value = visit.visit_date;
+            document.getElementById('editVisitTitle').value = visit.title || '';
+            document.getElementById('editVisitContent').value = visit.content || '';
+            
+            // 파일 초기화
+            editVisitNewFiles = [];
+            editVisitFilesToDelete = [];
+            editVisitExistingFiles = visit.visit_files || [];
+            
+            // 기존 파일 표시
+            renderEditVisitExistingFiles();
+            document.getElementById('editVisitNewFiles').innerHTML = '';
+            document.getElementById('editVisitFileInput').value = '';
+            
             openModal('editVisit');
+        }
+
+        function renderEditVisitExistingFiles() {
+            const container = document.getElementById('editVisitExistingFiles');
+            const activeFiles = editVisitExistingFiles.filter(f => !editVisitFilesToDelete.includes(f.id));
+            
+            if (activeFiles.length === 0) {
+                container.innerHTML = '<div style="color: var(--dark-600); font-size: 13px;">첨부된 파일이 없습니다</div>';
+                return;
+            }
+            
+            container.innerHTML = activeFiles.map(f => `
+                <div class="selected-file" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--light-100); border-radius: 8px; margin-bottom: 8px;">
+                    <span style="display: flex; align-items: center; gap: 8px;">
+                        <span>${getFileIcon(f.name)}</span>
+                        <span style="font-size: 13px;">${f.name}</span>
+                    </span>
+                    <button onclick="markFileForDelete('${f.id}')" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 16px; padding: 4px;">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function markFileForDelete(fileId) {
+            editVisitFilesToDelete.push(fileId);
+            renderEditVisitExistingFiles();
+        }
+
+        function handleEditVisitFiles(event) {
+            editVisitNewFiles = editVisitNewFiles.concat(Array.from(event.target.files));
+            renderEditVisitNewFiles();
+        }
+
+        function renderEditVisitNewFiles() {
+            document.getElementById('editVisitNewFiles').innerHTML = editVisitNewFiles.map((f, i) => `
+                <div class="selected-file" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(3, 207, 93, 0.1); border-radius: 8px; margin-top: 8px;">
+                    <span style="display: flex; align-items: center; gap: 8px;">
+                        <span>${getFileIcon(f.name)}</span>
+                        <span style="font-size: 13px;">${f.name}</span>
+                        <span style="font-size: 11px; color: var(--primary);">새 파일</span>
+                    </span>
+                    <button onclick="removeEditVisitNewFile(${i})" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 16px; padding: 4px;">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function removeEditVisitNewFile(index) {
+            editVisitNewFiles.splice(index, 1);
+            renderEditVisitNewFiles();
         }
 
         async function updateVisit() {
             const id = document.getElementById('editVisitId').value;
+            
+            // 기본 정보 업데이트
             const { error } = await db.from('project_visits').update({
                 visit_date: document.getElementById('editVisitDate').value,
                 title: document.getElementById('editVisitTitle').value,
                 content: document.getElementById('editVisitContent').value
             }).eq('id', id);
             
-            if (!error) {
-                closeModal('editVisit');
-                await loadVisits();
-                showToast('수정되었습니다', 'success');
+            if (error) { showToast('수정 실패', 'error'); return; }
+            
+            // 삭제할 파일 처리
+            for (const fileId of editVisitFilesToDelete) {
+                const fileToDelete = editVisitExistingFiles.find(f => f.id === fileId);
+                if (fileToDelete) {
+                    // Storage에서 삭제
+                    await db.storage.from('files').remove([fileToDelete.path]);
+                    // DB에서 삭제
+                    await db.from('visit_files').delete().eq('id', fileId);
+                }
             }
+            
+            // 새 파일 업로드
+            for (const file of editVisitNewFiles) {
+                const fileName = `${Date.now()}_${file.name}`;
+                const { error: uploadError } = await db.storage.from('files').upload(fileName, file);
+                if (!uploadError) {
+                    await db.from('visit_files').insert({
+                        visit_id: id,
+                        name: file.name,
+                        path: fileName,
+                        size: file.size,
+                        mime_type: file.type,
+                        uploaded_by: currentUser.id
+                    });
+                }
+            }
+            
+            closeModal('editVisit');
+            await loadVisits();
+            await loadAllFiles();
+            showToast('수정되었습니다', 'success');
         }
 
         async function deleteVisit(id) {
@@ -3087,6 +3309,20 @@
                 document.getElementById('nextVisitDate').value = currentProject.next_visit_date || '';
                 document.getElementById('nextVisitMemo').value = currentProject.next_visit_memo || '';
             }
+            if (type === 'projectSettings' && currentProject) {
+                document.getElementById('editProjectName').value = currentProject.name;
+                document.getElementById('editProjectDesc').value = currentProject.description || '';
+                document.getElementById('editProjectStatus').value = currentProject.status || '진행중';
+                editProjectColor = currentProject.color;
+                
+                // 색상 선택 업데이트
+                document.querySelectorAll('#editProjectColorOptions .color-option').forEach(el => {
+                    el.classList.remove('selected');
+                    if (el.dataset.color === currentProject.color) {
+                        el.classList.add('selected');
+                    }
+                });
+            }
         }
 
         function closeModal(type) {
@@ -3101,11 +3337,60 @@
                 this.classList.add('selected');
                 if (parent.id === 'calendarColorOptions') {
                     calendarSelectedColor = this.dataset.color;
+                } else if (parent.id === 'editProjectColorOptions') {
+                    editProjectColor = this.dataset.color;
                 } else {
                     selectedColor = this.dataset.color;
                 }
             });
         });
+
+        // 프로젝트 설정 저장
+        async function saveProjectSettings() {
+            if (!currentProject) return;
+            
+            const name = document.getElementById('editProjectName').value.trim();
+            if (!name) { showToast('프로젝트명을 입력하세요', 'error'); return; }
+            
+            const { error } = await db.from('projects').update({
+                name,
+                description: document.getElementById('editProjectDesc').value.trim(),
+                color: editProjectColor,
+                status: document.getElementById('editProjectStatus').value
+            }).eq('id', currentProject.id);
+            
+            if (error) { showToast('저장 실패', 'error'); return; }
+            
+            // 현재 프로젝트 업데이트
+            currentProject.name = name;
+            currentProject.description = document.getElementById('editProjectDesc').value.trim();
+            currentProject.color = editProjectColor;
+            currentProject.status = document.getElementById('editProjectStatus').value;
+            
+            renderProjectDetail();
+            await loadProjects();
+            closeModal('projectSettings');
+            showToast('프로젝트가 수정되었습니다', 'success');
+        }
+
+        // 프로젝트 설정에서 삭제
+        async function deleteProjectFromSettings() {
+            if (!currentProject) return;
+            if (!confirm(`"${currentProject.name}" 프로젝트를 삭제하시겠습니까?\n\n⚠️ 모든 방문 기록과 파일이 함께 삭제됩니다.`)) return;
+            
+            const { error } = await db.from('projects').delete().eq('id', currentProject.id);
+            if (error) { showToast('삭제 실패', 'error'); return; }
+            
+            // 체크리스트도 삭제
+            delete checklist[currentProject.id];
+            saveChecklistToStorage();
+            
+            currentProject = null;
+            closeModal('projectSettings');
+            await loadProjects();
+            showSection('dashboard');
+            showToast('프로젝트가 삭제되었습니다', 'success');
+        }
 
         // 프로젝트 저장
         async function saveProject() {

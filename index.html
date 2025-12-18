@@ -1346,6 +1346,12 @@
             background: var(--primary-soft);
         }
 
+        .comment-check-btn.others-checked {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
         .comment-check-btn.checked {
             border-color: var(--primary);
             background: var(--primary);
@@ -3114,7 +3120,7 @@
                                             </div>
                                             <div class="comment-text" id="comment-text-${c.id}">${c.content}</div>
                                             <div class="comment-check-area ${checkCount > 0 ? 'has-checks' : ''}">
-                                                <button class="comment-check-btn ${isCheckedByMe ? 'checked' : ''}" onclick="toggleCommentCheck('${c.id}')" title="${checkedUsers || '확인하기'}">
+                                                <button class="comment-check-btn ${isCheckedByMe ? 'checked' : ''} ${checkCount > 0 && !isCheckedByMe ? 'others-checked' : ''}" onclick="event.stopPropagation(); toggleCommentCheck('${c.id}')" title="${checkedUsers || '확인하기'}">
                                                     ☑ <span>${checkCount}</span>
                                                 </button>
                                             </div>

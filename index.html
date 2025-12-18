@@ -2400,8 +2400,14 @@
                     if (payload.new && payload.new.author_id !== currentUser?.id) {
                         // 작성자 정보 가져오기
                         const { data: author } = await db.from('users').select('*').eq('id', payload.new.author_id).single();
+                        // 방문 기록에서 프로젝트 ID 가져오기
+                        const { data: visit } = await db.from('project_visits').select('project_id').eq('id', payload.new.visit_id).single();
                         if (author) {
-                            showNotification(`💬 ${author.name}님이 새 댓글을 남겼습니다`, payload.new.content);
+                            showNotification(
+                                `💬 ${author.name}님이 새 댓글을 남겼습니다`, 
+                                payload.new.content,
+                                { type: 'comment', projectId: visit?.project_id, visitId: payload.new.visit_id }
+                            );
                         }
                     }
                     if (currentProject) loadVisits();
@@ -2415,7 +2421,11 @@
                         const { data: author } = await db.from('users').select('*').eq('id', payload.new.created_by).single();
                         const { data: project } = await db.from('projects').select('name').eq('id', payload.new.project_id).single();
                         if (author && project) {
-                            showNotification(`📝 ${author.name}님이 새 기록을 추가했습니다`, `${project.name}: ${payload.new.title || '방문 기록'}`);
+                            showNotification(
+                                `📝 ${author.name}님이 새 기록을 추가했습니다`, 
+                                `${project.name}: ${payload.new.title || '방문 기록'}`,
+                                { type: 'visit', projectId: payload.new.project_id, visitId: payload.new.id }
+                            );
                         }
                     }
                     if (currentProject) loadVisits();
@@ -2445,24 +2455,69 @@
         }
 
         // 알림 표시 함수
-        function showNotification(title, message) {
+        function showNotification(title, message, linkData = null) {
             // 토스트 알림
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = 'toast notification';
+            
+            if (linkData) {
+                toast.style.cursor = 'pointer';
+                toast.onclick = () => {
+                    navigateToNotification(linkData);
+                    toast.remove();
+                };
+            }
+            
             toast.innerHTML = `
-                <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
                     <strong style="font-size: 14px;">${title}</strong>
                     <span style="font-size: 12px; opacity: 0.9;">${message?.substring(0, 50)}${message?.length > 50 ? '...' : ''}</span>
                 </div>
+                <span style="font-size: 11px; opacity: 0.7;">클릭하여 이동 →</span>
             `;
             container.appendChild(toast);
-            setTimeout(() => toast.remove(), 5000);
+            setTimeout(() => toast.remove(), 8000); // 8초로 늘림
 
             // 브라우저 알림 (권한 있을 때)
             if (Notification.permission === 'granted') {
-                new Notification(title, { body: message, icon: '🚀' });
+                const notification = new Notification(title, { body: message, icon: '🚀' });
+                if (linkData) {
+                    notification.onclick = () => {
+                        window.focus();
+                        navigateToNotification(linkData);
+                        notification.close();
+                    };
+                }
             }
+        }
+
+        // 알림 클릭 시 해당 위치로 이동
+        async function navigateToNotification(linkData) {
+            if (!linkData || !linkData.projectId) return;
+            
+            // 프로젝트로 이동
+            await selectProject(linkData.projectId);
+            
+            // 방문 기록이 있으면 해당 카드 펼치기
+            if (linkData.visitId) {
+                setTimeout(() => {
+                    const visitCard = document.getElementById(`visit-${linkData.visitId}`);
+                    if (visitCard) {
+                        // 카드 펼치기
+                        visitCard.classList.add('expanded');
+                        // 스크롤 이동
+                        visitCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // 하이라이트 효과
+                        visitCard.style.boxShadow = '0 0 0 3px var(--primary)';
+                        setTimeout(() => {
+                            visitCard.style.boxShadow = '';
+                        }, 2000);
+                    }
+                }, 500); // 프로젝트 로드 후 실행
+            }
+            
+            showToast('알림 위치로 이동했습니다', 'success');
         }
 
         // 브라우저 알림 권한 요청

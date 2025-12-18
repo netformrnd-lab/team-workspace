@@ -1314,6 +1314,16 @@
             margin-top: 8px;
             display: flex;
             justify-content: flex-start;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .comment-bubble:hover .comment-check-area {
+            opacity: 1;
+        }
+
+        .comment-check-area.has-checks {
+            opacity: 1;
         }
 
         .comment-check-btn {
@@ -2429,6 +2439,7 @@
         let checklist = {}; // 프로젝트별 체크리스트 (로컬 저장)
         let recentActivities = []; // 최근 활동
         let currentVisits = []; // 현재 프로젝트의 방문 기록
+        let expandedVisitIds = new Set(); // 열려있는 방문 기록 ID들
 
         // ========== 초기화 ==========
         async function init() {
@@ -3102,7 +3113,7 @@
                                                 ` : ''}
                                             </div>
                                             <div class="comment-text" id="comment-text-${c.id}">${c.content}</div>
-                                            <div class="comment-check-area">
+                                            <div class="comment-check-area ${checkCount > 0 ? 'has-checks' : ''}">
                                                 <button class="comment-check-btn ${isCheckedByMe ? 'checked' : ''}" onclick="toggleCommentCheck('${c.id}')" title="${checkedUsers || '확인하기'}">
                                                     ☑ <span>${checkCount}</span>
                                                 </button>
@@ -3126,7 +3137,7 @@
                 `;
 
                 return `
-                    <div class="visit-card" id="visit-${visit.id}">
+                    <div class="visit-card ${expandedVisitIds.has(visit.id) ? 'expanded' : ''}" id="visit-${visit.id}">
                         <div class="visit-header" onclick="toggleVisit('${visit.id}')">
                             <div class="visit-date-badge">
                                 <div class="visit-date-icon">
@@ -3160,7 +3171,15 @@
         }
 
         function toggleVisit(visitId) {
-            document.getElementById(`visit-${visitId}`).classList.toggle('expanded');
+            const card = document.getElementById(`visit-${visitId}`);
+            card.classList.toggle('expanded');
+            
+            // 열린 상태 기억
+            if (card.classList.contains('expanded')) {
+                expandedVisitIds.add(visitId);
+            } else {
+                expandedVisitIds.delete(visitId);
+            }
         }
 
         // 수정용 파일 변수

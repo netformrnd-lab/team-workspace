@@ -198,10 +198,13 @@
             position: relative;
         }
 
+        .notification-bell-wrapper {
+            position: relative;
+        }
+
         .notification-bell {
-            margin-left: auto;
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -209,17 +212,20 @@
             border-radius: var(--radius-sm);
             transition: all 0.2s;
             position: relative;
-            font-size: 18px;
+            font-size: 20px;
+            background: white;
+            border: 1px solid var(--light-200);
         }
 
         .notification-bell:hover {
             background: var(--light-100);
+            border-color: var(--primary);
         }
 
         .notification-badge {
             position: absolute;
-            top: 2px;
-            right: 2px;
+            top: 4px;
+            right: 4px;
             min-width: 18px;
             height: 18px;
             background: #FC8181;
@@ -236,14 +242,14 @@
         .notification-panel {
             position: absolute;
             top: 50px;
-            left: 0;
-            right: -20px;
+            right: 0;
+            width: 360px;
             background: white;
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-lg);
             z-index: 1000;
             display: none;
-            max-height: 400px;
+            max-height: 450px;
             overflow: hidden;
             border: 1px solid var(--light-200);
         }
@@ -253,13 +259,13 @@
         }
 
         .notification-panel-header {
-            padding: 14px 16px;
+            padding: 16px;
             border-bottom: 1px solid var(--light-200);
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 15px;
         }
 
         .btn-text {
@@ -277,12 +283,12 @@
         }
 
         .notification-list {
-            max-height: 320px;
+            max-height: 380px;
             overflow-y: auto;
         }
 
         .notification-item {
-            padding: 12px 16px;
+            padding: 14px 16px;
             border-bottom: 1px solid var(--light-100);
             cursor: pointer;
             transition: all 0.2s;
@@ -2137,6 +2143,53 @@
             border-radius: 4px;
         }
 
+        .schedule-type-options {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .schedule-type-option {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid var(--light-200);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            background: var(--white);
+        }
+
+        .schedule-type-option:hover {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .schedule-type-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .personal-schedule-preview {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: var(--light-50);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            color: var(--dark-600);
+        }
+
+        .personal-color-preview {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+
         .modal-footer {
             padding: 20px 24px;
             border-top: 1px solid var(--light-200);
@@ -2283,21 +2336,6 @@
                     <span class="sidebar-title">Workspace</span>
                     <span class="sidebar-subtitle">TEAM COLLABORATION</span>
                 </div>
-                <div class="notification-bell" onclick="toggleNotificationPanel()">
-                    🔔
-                    <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
-                </div>
-            </div>
-            
-            <!-- 알림 패널 -->
-            <div class="notification-panel" id="notificationPanel">
-                <div class="notification-panel-header">
-                    <span>🔔 알림</span>
-                    <button class="btn-text" onclick="markAllAsRead()">모두 읽음</button>
-                </div>
-                <div class="notification-list" id="notificationList">
-                    <div class="notification-empty">새로운 알림이 없습니다</div>
-                </div>
             </div>
 
             <nav class="nav-section">
@@ -2388,6 +2426,22 @@
                         <span class="page-badge">실시간</span>
                     </div>
                     <div class="header-actions">
+                        <div class="notification-bell-wrapper">
+                            <div class="notification-bell" onclick="toggleNotificationPanel()">
+                                🔔
+                                <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                            </div>
+                            <!-- 알림 패널 -->
+                            <div class="notification-panel" id="notificationPanel">
+                                <div class="notification-panel-header">
+                                    <span>🔔 알림</span>
+                                    <button class="btn-text" onclick="markAllAsRead()">모두 읽음</button>
+                                </div>
+                                <div class="notification-list" id="notificationList">
+                                    <div class="notification-empty">새로운 알림이 없습니다</div>
+                                </div>
+                            </div>
+                        </div>
                         <button class="btn btn-secondary btn-sm" onclick="showSection('calendar')">📅 캘린더</button>
                         <button class="btn btn-primary btn-sm" onclick="openModal('newProject')">+ 새 프로젝트</button>
                     </div>
@@ -2657,39 +2711,71 @@
                 <button class="modal-close" onclick="closeModal('calendarAdd')">✕</button>
             </div>
             <div class="modal-body">
+                <!-- 일정 타입 선택 -->
                 <div class="form-group">
-                    <label class="form-label">프로젝트명 *</label>
-                    <input type="text" class="form-input" id="calendarProjectName" placeholder="프로젝트명">
+                    <label class="form-label">일정 타입</label>
+                    <div class="schedule-type-options">
+                        <div class="schedule-type-option selected" data-type="project" onclick="selectScheduleType('project')">
+                            📋 프로젝트
+                        </div>
+                        <div class="schedule-type-option" data-type="personal" onclick="selectScheduleType('personal')">
+                            👤 개인일정
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">설명</label>
-                    <textarea class="form-textarea" id="calendarProjectDesc" placeholder="설명 (선택)"></textarea>
+                
+                <!-- 프로젝트 입력 영역 -->
+                <div id="projectInputArea">
+                    <div class="form-group">
+                        <label class="form-label">프로젝트명 *</label>
+                        <input type="text" class="form-input" id="calendarProjectName" placeholder="프로젝트명">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">설명</label>
+                        <textarea class="form-textarea" id="calendarProjectDesc" placeholder="설명 (선택)"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">미팅 타입</label>
+                        <div class="meeting-type-options" id="calendarMeetingTypeOptions">
+                            <div class="meeting-type-option selected" data-color="#FC8181" onclick="selectCalendarMeetingType(this)">
+                                <div class="meeting-type-color" style="background: #FC8181"></div>
+                                <span>🔴 외부미팅</span>
+                            </div>
+                            <div class="meeting-type-option" data-color="#63B3ED" onclick="selectCalendarMeetingType(this)">
+                                <div class="meeting-type-color" style="background: #63B3ED"></div>
+                                <span>🔵 협업미팅</span>
+                            </div>
+                            <div class="meeting-type-option" data-color="#03CF5D" onclick="selectCalendarMeetingType(this)">
+                                <div class="meeting-type-color" style="background: #03CF5D"></div>
+                                <span>🟢 내부회의</span>
+                            </div>
+                            <div class="meeting-type-option" data-color="#F6AD55" onclick="selectCalendarMeetingType(this)">
+                                <div class="meeting-type-color" style="background: #F6AD55"></div>
+                                <span>🟡 개인프로젝트</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">미팅 타입</label>
-                    <div class="meeting-type-options" id="calendarMeetingTypeOptions">
-                        <div class="meeting-type-option selected" data-color="#FC8181" onclick="selectCalendarMeetingType(this)">
-                            <div class="meeting-type-color" style="background: #FC8181"></div>
-                            <span>🔴 외부미팅</span>
-                        </div>
-                        <div class="meeting-type-option" data-color="#63B3ED" onclick="selectCalendarMeetingType(this)">
-                            <div class="meeting-type-color" style="background: #63B3ED"></div>
-                            <span>🔵 협업미팅</span>
-                        </div>
-                        <div class="meeting-type-option" data-color="#03CF5D" onclick="selectCalendarMeetingType(this)">
-                            <div class="meeting-type-color" style="background: #03CF5D"></div>
-                            <span>🟢 내부회의</span>
-                        </div>
-                        <div class="meeting-type-option" data-color="#F6AD55" onclick="selectCalendarMeetingType(this)">
-                            <div class="meeting-type-color" style="background: #F6AD55"></div>
-                            <span>🟡 개인프로젝트</span>
-                        </div>
+                
+                <!-- 개인일정 입력 영역 -->
+                <div id="personalInputArea" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">일정 제목 *</label>
+                        <input type="text" class="form-input" id="personalScheduleTitle" placeholder="예: 휴가, 외출, 재택근무 등">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">메모</label>
+                        <textarea class="form-textarea" id="personalScheduleDesc" placeholder="메모 (선택)"></textarea>
+                    </div>
+                    <div class="personal-schedule-preview">
+                        <span>내 일정 색상:</span>
+                        <div class="personal-color-preview" id="personalColorPreview"></div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('calendarAdd')">취소</button>
-                <button class="btn btn-primary" onclick="saveCalendarProject()">생성하기</button>
+                <button class="btn btn-primary" onclick="saveCalendarSchedule()">생성하기</button>
             </div>
         </div>
     </div>
@@ -2898,6 +2984,8 @@
             calendarSelectedColor = el.dataset.color;
         }
         let calendarSelectedDate = null;
+        let personalSchedules = [];
+        let calendarScheduleType = 'project'; // 'project' or 'personal'
         let visitFiles = [];
         let allFiles = [];
         let checklist = {}; // 프로젝트별 체크리스트 (로컬 저장)
@@ -3043,6 +3131,15 @@
                         );
                     }
                 }).subscribe();
+
+            // 개인일정 실시간 구독
+            db.channel('personal_schedules_changes')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'personal_schedules' }, () => {
+                    loadPersonalSchedules().then(() => {
+                        renderCalendar();
+                        renderMiniCalendar();
+                    });
+                }).subscribe();
         }
 
         // 알림 표시 함수
@@ -3159,12 +3256,13 @@
             await loadAllFiles();
             await loadRecentActivities();
             await loadNotifications();
+            await loadPersonalSchedules();
             renderMiniCalendar();
             updateDashboardStats();
             showToast(`${currentUser.name}님 환영합니다!`, 'success');
             
             // 일정 알림 체크 (D-day, D-1)
-            setTimeout(() => checkScheduleAlerts(), 1000);
+            setTimeout(() => checkScheduleAlerts(), 1500);
         }
 
         // 일정 알림 체크 (D-day, D-1)
@@ -4404,9 +4502,25 @@
         // ========== 캘린더 ==========
         function getCalendarEvents(dateStr) {
             const events = [];
+            // 프로젝트 일정
             projects.forEach(p => {
                 if (p.next_visit_date === dateStr) {
-                    events.push({ type: 'next-visit', name: `📅 ${p.name}`, color: p.color, projectId: p.id });
+                    events.push({ type: 'project', name: `📅 ${p.name}`, color: p.color, projectId: p.id });
+                }
+            });
+            // 개인일정
+            personalSchedules.forEach(s => {
+                if (s.schedule_date === dateStr) {
+                    const userColor = getUserPersonalColor(s.user_id);
+                    const userName = s.user?.name || '나';
+                    const isMySchedule = s.user_id === currentUser?.id;
+                    events.push({ 
+                        type: 'personal', 
+                        name: `👤 ${isMySchedule ? s.title : `${userName}: ${s.title}`}`, 
+                        color: userColor, 
+                        personalId: s.id,
+                        userId: s.user_id
+                    });
                 }
             });
             return events;
@@ -4441,7 +4555,11 @@
                             <button class="day-add-btn" onclick="event.stopPropagation(); openCalendarAdd('${dateStr}')">+</button>
                         </div>
                         <div class="day-events">
-                            ${events.map(e => `
+                            ${events.map(e => e.type === 'personal' ? `
+                                <div class="day-event personal-event" style="background: ${e.color}20; color: ${e.color}; border-left: 3px solid ${e.color};" title="${e.name}">
+                                    ${e.name}
+                                </div>
+                            ` : `
                                 <div class="day-event" style="background: ${e.color}20; color: ${e.color}" onclick="event.stopPropagation(); selectProject('${e.projectId}')">
                                     ${e.name}
                                 </div>
@@ -4464,7 +4582,92 @@
                 el.classList.remove('selected');
                 if (el.dataset.color === '#FC8181') el.classList.add('selected');
             });
+            // 일정 타입 초기화
+            calendarScheduleType = 'project';
+            document.querySelectorAll('.schedule-type-option').forEach(el => {
+                el.classList.remove('selected');
+                if (el.dataset.type === 'project') el.classList.add('selected');
+            });
+            document.getElementById('projectInputArea').style.display = 'block';
+            document.getElementById('personalInputArea').style.display = 'none';
             openModal('calendarAdd');
+        }
+
+        // 일정 타입 선택
+        function selectScheduleType(type) {
+            calendarScheduleType = type;
+            document.querySelectorAll('.schedule-type-option').forEach(el => {
+                el.classList.remove('selected');
+                if (el.dataset.type === type) el.classList.add('selected');
+            });
+            
+            if (type === 'project') {
+                document.getElementById('projectInputArea').style.display = 'block';
+                document.getElementById('personalInputArea').style.display = 'none';
+            } else {
+                document.getElementById('projectInputArea').style.display = 'none';
+                document.getElementById('personalInputArea').style.display = 'block';
+                // 현재 사용자 색상 미리보기
+                const userColor = getUserPersonalColor(currentUser.id);
+                document.getElementById('personalColorPreview').style.background = userColor;
+            }
+        }
+
+        // 사용자별 개인일정 색상
+        function getUserPersonalColor(userId) {
+            // 사용자 이름 기반으로 색상 결정
+            const user = users.find(u => u.id === userId);
+            if (!user) return '#9CA3AF';
+            
+            // 이재훈 = 노란색, 김범석 = 초록색
+            if (user.name.includes('이재훈')) return '#F6AD55';
+            if (user.name.includes('김범석')) return '#68D391';
+            
+            // 기타 사용자는 아바타 색상 사용
+            return user.avatar_color || '#9CA3AF';
+        }
+
+        // 개인일정 저장
+        async function savePersonalSchedule() {
+            const title = document.getElementById('personalScheduleTitle').value.trim();
+            if (!title) { showToast('일정 제목을 입력하세요', 'error'); return; }
+            
+            const { data, error } = await db.from('personal_schedules').insert({
+                user_id: currentUser.id,
+                title,
+                description: document.getElementById('personalScheduleDesc').value.trim(),
+                schedule_date: calendarSelectedDate
+            }).select().single();
+            
+            if (error) { showToast('저장 실패', 'error'); return; }
+            
+            personalSchedules.push(data);
+            renderCalendar();
+            renderMiniCalendar();
+            closeModal('calendarAdd');
+            document.getElementById('personalScheduleTitle').value = '';
+            document.getElementById('personalScheduleDesc').value = '';
+            showToast('개인일정이 등록되었습니다', 'success');
+        }
+
+        // 캘린더 일정 저장 (통합)
+        async function saveCalendarSchedule() {
+            if (calendarScheduleType === 'personal') {
+                await savePersonalSchedule();
+            } else {
+                await saveCalendarProject();
+            }
+        }
+
+        // 개인일정 로드
+        async function loadPersonalSchedules() {
+            const { data, error } = await db.from('personal_schedules')
+                .select('*, user:users(id, name, avatar_initial, avatar_color)')
+                .order('schedule_date', { ascending: false });
+            
+            if (!error) {
+                personalSchedules = data || [];
+            }
         }
 
         async function saveCalendarProject() {

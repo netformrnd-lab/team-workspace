@@ -302,8 +302,9 @@
             font-weight: 600;
         }
 
-        .status-진행중 { background: rgba(3, 207, 93, 0.15); color: var(--primary); }
-        .status-완료 { background: rgba(99, 179, 237, 0.15); color: var(--info); }
+        .status-시작전 { background: rgba(128, 90, 213, 0.15); color: #805AD5; }
+        .status-진행중 { background: rgba(99, 179, 237, 0.15); color: #3182CE; }
+        .status-완료 { background: rgba(3, 207, 93, 0.15); color: var(--primary); }
         .status-보류 { background: rgba(246, 173, 85, 0.15); color: var(--warning); }
 
         .project-list-container {
@@ -338,51 +339,82 @@
         }
 
         .project-group {
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         .project-group-header {
-            padding: 8px 16px;
-            font-size: 12px;
+            padding: 10px 16px;
+            font-size: 13px;
             font-weight: 600;
-            color: var(--dark-600);
+            color: var(--dark-800);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: space-between;
             transition: all 0.2s;
+            border-radius: var(--radius-sm);
+            margin: 4px 8px;
+            border-left: 3px solid transparent;
         }
 
         .project-group-header:hover {
-            color: var(--dark-900);
-            background: var(--light-50);
+            background: var(--light-100);
+        }
+
+        .project-group-header.ready {
+            background: rgba(128, 90, 213, 0.1);
+            border-left-color: #805AD5;
+        }
+        .project-group-header.ready:hover {
+            background: rgba(128, 90, 213, 0.2);
+        }
+
+        .project-group-header.ongoing {
+            background: rgba(99, 179, 237, 0.1);
+            border-left-color: #63B3ED;
+        }
+        .project-group-header.ongoing:hover {
+            background: rgba(99, 179, 237, 0.2);
+        }
+
+        .project-group-header.completed {
+            background: rgba(3, 207, 93, 0.1);
+            border-left-color: #03CF5D;
+        }
+        .project-group-header.completed:hover {
+            background: rgba(3, 207, 93, 0.2);
+        }
+
+        .project-group-header.hold {
+            background: rgba(246, 173, 85, 0.1);
+            border-left-color: #F6AD55;
+        }
+        .project-group-header.hold:hover {
+            background: rgba(246, 173, 85, 0.2);
         }
 
         .project-group-header.collapsed span:first-child::before {
-            content: '▶';
-        }
-
-        .project-group-header span:first-child::before {
-            content: '▼';
-            margin-right: 6px;
+            content: '▶ ';
             font-size: 10px;
         }
 
-        .project-group-header span:first-child {
-            display: flex;
-            align-items: center;
+        .project-group-header:not(.collapsed) span:first-child::before {
+            content: '▼ ';
+            font-size: 10px;
         }
 
         .project-group-list {
             max-height: 300px;
             overflow-y: auto;
-            transition: max-height 0.3s ease, opacity 0.3s ease;
+            transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+            padding-left: 8px;
         }
 
         .project-group-list.collapsed {
             max-height: 0;
             opacity: 0;
             overflow: hidden;
+            padding: 0;
         }
 
         .project-type-tag {
@@ -392,6 +424,16 @@
             background: var(--light-100);
             color: var(--dark-600);
             white-space: nowrap;
+        }
+
+        /* 검색 결과 하이라이트 */
+        .nav-item.search-match {
+            background: rgba(3, 207, 93, 0.15);
+            border-left: 3px solid var(--primary);
+        }
+        
+        .nav-item.search-match:hover {
+            background: rgba(3, 207, 93, 0.25);
         }
 
         .sidebar-footer {
@@ -2085,26 +2127,34 @@
                     <input type="text" class="project-search-input" id="projectSearchInput" placeholder="🔍 프로젝트 검색..." oninput="filterProjects(this.value)">
                 </div>
                 
+                <!-- 시작 전 섹션 -->
+                <div class="project-group">
+                    <div class="project-group-header ready" id="readyHeader" onclick="toggleProjectGroup('ready')">
+                        <span>🆕 시작 전 <span id="readyCount">(0)</span></span>
+                    </div>
+                    <div id="readyProjectList" class="project-group-list"></div>
+                </div>
+                
                 <!-- 진행중 섹션 -->
                 <div class="project-group">
-                    <div class="project-group-header" id="ongoingHeader" onclick="toggleProjectGroup('ongoing')">
-                        <span>진행중 <span id="ongoingCount">(0)</span></span>
+                    <div class="project-group-header ongoing" id="ongoingHeader" onclick="toggleProjectGroup('ongoing')">
+                        <span>🔥 진행중 <span id="ongoingCount">(0)</span></span>
                     </div>
                     <div id="ongoingProjectList" class="project-group-list"></div>
                 </div>
                 
                 <!-- 완료 섹션 -->
                 <div class="project-group">
-                    <div class="project-group-header" id="completedHeader" onclick="toggleProjectGroup('completed')">
-                        <span>완료 <span id="completedCount">(0)</span></span>
+                    <div class="project-group-header completed" id="completedHeader" onclick="toggleProjectGroup('completed')">
+                        <span>✅ 완료 <span id="completedCount">(0)</span></span>
                     </div>
                     <div id="completedProjectList" class="project-group-list"></div>
                 </div>
                 
                 <!-- 보류 섹션 -->
                 <div class="project-group">
-                    <div class="project-group-header" id="holdHeader" onclick="toggleProjectGroup('hold')">
-                        <span>보류 <span id="holdCount">(0)</span></span>
+                    <div class="project-group-header hold" id="holdHeader" onclick="toggleProjectGroup('hold')">
+                        <span>⏸️ 보류 <span id="holdCount">(0)</span></span>
                     </div>
                     <div id="holdProjectList" class="project-group-list"></div>
                 </div>
@@ -2145,10 +2195,10 @@
                         <div class="stat-value" id="totalProjects">0</div>
                         <div class="stat-label">전체 프로젝트</div>
                     </div>
-                    <div class="stat-card" onclick="openProjectListModal('진행중')" title="진행중 프로젝트 보기">
-                        <div class="stat-icon">🔥</div>
-                        <div class="stat-value" id="activeProjects">0</div>
-                        <div class="stat-label">진행중</div>
+                    <div class="stat-card" onclick="openProjectListModal('시작전')" title="시작 전 프로젝트 보기">
+                        <div class="stat-icon">🆕</div>
+                        <div class="stat-value" id="readyProjects">0</div>
+                        <div class="stat-label">시작 전</div>
                     </div>
                     <div class="stat-card" onclick="openProjectListModal('완료')" title="완료된 프로젝트 보기">
                         <div class="stat-icon">✅</div>
@@ -2210,6 +2260,7 @@
                             </div>
                         </div>
                         <select class="project-status-select" id="projectStatusSelect" onchange="updateProjectStatus()">
+                            <option value="시작전">🆕 시작 전</option>
                             <option value="진행중">🔥 진행중</option>
                             <option value="완료">✅ 완료</option>
                             <option value="보류">⏸️ 보류</option>
@@ -2582,6 +2633,7 @@
                 <div class="form-group">
                     <label class="form-label">상태</label>
                     <select class="form-input" id="editProjectStatus">
+                        <option value="시작전">🆕 시작 전</option>
                         <option value="진행중">🔥 진행중</option>
                         <option value="완료">✅ 완료</option>
                         <option value="보류">⏸️ 보류</option>
@@ -2658,7 +2710,8 @@
         // 프로젝트 검색어
         let projectSearchQuery = '';
         
-        // 진행중/완료/보류 토글 상태
+        // 시작전/진행중/완료/보류 토글 상태
+        let readyExpanded = true;
         let ongoingExpanded = true;
         let completedExpanded = false;
         let holdExpanded = false;
@@ -3135,21 +3188,46 @@
                 );
             }
             
-            // 진행중 / 완료 / 보류 분리
-            const ongoing = filtered.filter(p => (p.status || '진행중') === '진행중');
-            const completed = filtered.filter(p => (p.status || '진행중') === '완료');
-            const hold = filtered.filter(p => (p.status || '진행중') === '보류');
+            // 시작 전 / 진행중 / 완료 / 보류 분리
+            const ready = filtered.filter(p => (p.status || '시작전') === '시작전');
+            const ongoing = filtered.filter(p => p.status === '진행중');
+            const completed = filtered.filter(p => p.status === '완료');
+            const hold = filtered.filter(p => p.status === '보류');
             
             // 카운트 업데이트
+            document.getElementById('readyCount').textContent = `(${ready.length})`;
             document.getElementById('ongoingCount').textContent = `(${ongoing.length})`;
             document.getElementById('completedCount').textContent = `(${completed.length})`;
             document.getElementById('holdCount').textContent = `(${hold.length})`;
             
             // 검색 중일 때 결과가 있는 폴더 자동 펼침
             if (isSearching) {
+                if (ready.length > 0) expandGroup('ready', true);
                 if (ongoing.length > 0) expandGroup('ongoing', true);
                 if (completed.length > 0) expandGroup('completed', true);
                 if (hold.length > 0) expandGroup('hold', true);
+            }
+            
+            // 프로젝트 아이템 렌더링 함수
+            const renderProjectItem = (p) => {
+                const meetingType = getMeetingType(p.color);
+                const searchMatchClass = isSearching ? 'search-match' : '';
+                const activeClass = currentProject?.id === p.id ? 'active' : '';
+                return `
+                    <div class="nav-item ${activeClass} ${searchMatchClass}" onclick="selectProject('${p.id}')">
+                        <div class="project-color" style="background: ${p.color}"></div>
+                        <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.name}</span>
+                        <span class="project-type-tag">${meetingType.name}</span>
+                    </div>
+                `;
+            };
+            
+            // 시작 전 프로젝트 렌더링
+            const readyContainer = document.getElementById('readyProjectList');
+            if (ready.length === 0) {
+                readyContainer.innerHTML = '<div class="nav-item" style="color: var(--dark-600); font-size: 12px; padding-left: 24px;">프로젝트 없음</div>';
+            } else {
+                readyContainer.innerHTML = ready.map(renderProjectItem).join('');
             }
             
             // 진행중 프로젝트 렌더링
@@ -3157,15 +3235,7 @@
             if (ongoing.length === 0) {
                 ongoingContainer.innerHTML = '<div class="nav-item" style="color: var(--dark-600); font-size: 12px; padding-left: 24px;">프로젝트 없음</div>';
             } else {
-                ongoingContainer.innerHTML = ongoing.map(p => {
-                    const meetingType = getMeetingType(p.color);
-                    return `
-                    <div class="nav-item ${currentProject?.id === p.id ? 'active' : ''}" onclick="selectProject('${p.id}')">
-                        <div class="project-color" style="background: ${p.color}"></div>
-                        <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.name}</span>
-                        <span class="project-type-tag">${meetingType.name}</span>
-                    </div>
-                `}).join('');
+                ongoingContainer.innerHTML = ongoing.map(renderProjectItem).join('');
             }
             
             // 완료 프로젝트 렌더링
@@ -3173,15 +3243,7 @@
             if (completed.length === 0) {
                 completedContainer.innerHTML = '<div class="nav-item" style="color: var(--dark-600); font-size: 12px; padding-left: 24px;">프로젝트 없음</div>';
             } else {
-                completedContainer.innerHTML = completed.map(p => {
-                    const meetingType = getMeetingType(p.color);
-                    return `
-                    <div class="nav-item ${currentProject?.id === p.id ? 'active' : ''}" onclick="selectProject('${p.id}')">
-                        <div class="project-color" style="background: ${p.color}"></div>
-                        <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.name}</span>
-                        <span class="project-type-tag">${meetingType.name}</span>
-                    </div>
-                `}).join('');
+                completedContainer.innerHTML = completed.map(renderProjectItem).join('');
             }
             
             // 보류 프로젝트 렌더링
@@ -3189,15 +3251,7 @@
             if (hold.length === 0) {
                 holdContainer.innerHTML = '<div class="nav-item" style="color: var(--dark-600); font-size: 12px; padding-left: 24px;">프로젝트 없음</div>';
             } else {
-                holdContainer.innerHTML = hold.map(p => {
-                    const meetingType = getMeetingType(p.color);
-                    return `
-                    <div class="nav-item ${currentProject?.id === p.id ? 'active' : ''}" onclick="selectProject('${p.id}')">
-                        <div class="project-color" style="background: ${p.color}"></div>
-                        <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.name}</span>
-                        <span class="project-type-tag">${meetingType.name}</span>
-                    </div>
-                `}).join('');
+                holdContainer.innerHTML = hold.map(renderProjectItem).join('');
             }
             
             // 초기 토글 상태 적용
@@ -3207,6 +3261,7 @@
         // 그룹 토글 상태 적용
         function applyGroupToggleState() {
             const groups = [
+                { name: 'ready', expanded: readyExpanded },
                 { name: 'ongoing', expanded: ongoingExpanded },
                 { name: 'completed', expanded: completedExpanded },
                 { name: 'hold', expanded: holdExpanded }
@@ -3229,7 +3284,8 @@
         
         // 그룹 펼침/접기 (내부용)
         function expandGroup(group, expand) {
-            if (group === 'ongoing') ongoingExpanded = expand;
+            if (group === 'ready') readyExpanded = expand;
+            else if (group === 'ongoing') ongoingExpanded = expand;
             else if (group === 'completed') completedExpanded = expand;
             else if (group === 'hold') holdExpanded = expand;
         }
@@ -3240,9 +3296,11 @@
             renderProjectList();
         }
 
-        // 프로젝트 그룹 토글 (진행중/완료/보류)
+        // 프로젝트 그룹 토글 (시작전/진행중/완료/보류)
         function toggleProjectGroup(group) {
-            if (group === 'ongoing') {
+            if (group === 'ready') {
+                readyExpanded = !readyExpanded;
+            } else if (group === 'ongoing') {
                 ongoingExpanded = !ongoingExpanded;
             } else if (group === 'completed') {
                 completedExpanded = !completedExpanded;
@@ -3274,8 +3332,11 @@
                 title = '전체 프로젝트';
                 icon = '📋';
             } else {
-                filtered = projects.filter(p => (p.status || '진행중') === status);
-                if (status === '진행중') {
+                filtered = projects.filter(p => (p.status || '시작전') === status);
+                if (status === '시작전') {
+                    title = '시작 전 프로젝트';
+                    icon = '🆕';
+                } else if (status === '진행중') {
                     title = '진행중인 프로젝트';
                     icon = '🔥';
                 } else if (status === '완료') {
@@ -3311,12 +3372,23 @@
                             <div style="font-weight: 700; font-size: 16px; margin-bottom: 4px;">${p.name}</div>
                             <div style="font-size: 13px; color: var(--dark-600);">${p.description || '설명 없음'}</div>
                         </div>
-                        <span class="project-status-tag status-${p.status || '진행중'}">${p.status || '진행중'}</span>
+                        <span class="project-status-tag status-${p.status || '진행중'}">${getStatusLabel(p.status)}</span>
                     </div>
                 `).join('');
             }
             
             openModal('projectList');
+        }
+        
+        // 상태 라벨 변환
+        function getStatusLabel(status) {
+            const statusMap = {
+                '시작전': '시작 전',
+                '진행중': '진행중',
+                '완료': '완료',
+                '보류': '보류'
+            };
+            return statusMap[status] || '시작 전';
         }
 
         async function selectProject(projectId) {
@@ -3336,7 +3408,7 @@
             document.getElementById('projectIcon').style.background = currentProject.color;
             document.getElementById('projectName').textContent = currentProject.name;
             document.getElementById('projectDescription').textContent = currentProject.description || '';
-            document.getElementById('projectStatusSelect').value = currentProject.status || '진행중';
+            document.getElementById('projectStatusSelect').value = currentProject.status || '시작전';
             renderNextVisit();
         }
 
@@ -3948,6 +4020,7 @@
                 name,
                 description: document.getElementById('calendarProjectDesc').value.trim(),
                 color: calendarSelectedColor,
+                status: '시작전',
                 next_visit_date: calendarSelectedDate,
                 created_by: currentUser.id
             }).select().single();
@@ -4061,8 +4134,8 @@
             // 전체 프로젝트
             document.getElementById('totalProjects').textContent = projects.length;
             
-            // 진행중 프로젝트
-            document.getElementById('activeProjects').textContent = projects.filter(p => (p.status || '진행중') === '진행중').length;
+            // 시작전 프로젝트
+            document.getElementById('readyProjects').textContent = projects.filter(p => (p.status || '시작전') === '시작전').length;
             
             // 완료된 프로젝트
             document.getElementById('completedProjects').textContent = projects.filter(p => p.status === '완료').length;
@@ -4114,7 +4187,7 @@
             if (type === 'projectSettings' && currentProject) {
                 document.getElementById('editProjectName').value = currentProject.name;
                 document.getElementById('editProjectDesc').value = currentProject.description || '';
-                document.getElementById('editProjectStatus').value = currentProject.status || '진행중';
+                document.getElementById('editProjectStatus').value = currentProject.status || '시작전';
                 editProjectColor = currentProject.color;
                 
                 // 미팅 타입 선택 업데이트
@@ -4203,6 +4276,7 @@
                 name,
                 description: document.getElementById('projectDescInput').value.trim(),
                 color: selectedColor,
+                status: '시작전',
                 created_by: currentUser.id
             }).select().single();
             

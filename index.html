@@ -195,6 +195,145 @@
             gap: 12px;
             padding: 0 8px;
             margin-bottom: 32px;
+            position: relative;
+        }
+
+        .notification-bell {
+            margin-left: auto;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+            position: relative;
+            font-size: 18px;
+        }
+
+        .notification-bell:hover {
+            background: var(--light-100);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            min-width: 18px;
+            height: 18px;
+            background: #FC8181;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+        }
+
+        .notification-panel {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            right: -20px;
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            display: none;
+            max-height: 400px;
+            overflow: hidden;
+            border: 1px solid var(--light-200);
+        }
+
+        .notification-panel.active {
+            display: block;
+        }
+
+        .notification-panel-header {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--light-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .btn-text {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: var(--radius-xs);
+        }
+
+        .btn-text:hover {
+            background: var(--primary-soft);
+        }
+
+        .notification-list {
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--light-100);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .notification-item:hover {
+            background: var(--light-50);
+        }
+
+        .notification-item.unread {
+            background: rgba(3, 207, 93, 0.05);
+            border-left: 3px solid var(--primary);
+        }
+
+        .notification-item-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .notification-item-icon {
+            font-size: 16px;
+        }
+
+        .notification-item-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--dark-800);
+            flex: 1;
+        }
+
+        .notification-item-time {
+            font-size: 11px;
+            color: var(--dark-500);
+        }
+
+        .notification-item-message {
+            font-size: 12px;
+            color: var(--dark-600);
+            margin-left: 24px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .notification-empty {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--dark-500);
+            font-size: 13px;
         }
 
         .sidebar-logo {
@@ -2144,6 +2283,21 @@
                     <span class="sidebar-title">Workspace</span>
                     <span class="sidebar-subtitle">TEAM COLLABORATION</span>
                 </div>
+                <div class="notification-bell" onclick="toggleNotificationPanel()">
+                    🔔
+                    <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                </div>
+            </div>
+            
+            <!-- 알림 패널 -->
+            <div class="notification-panel" id="notificationPanel">
+                <div class="notification-panel-header">
+                    <span>🔔 알림</span>
+                    <button class="btn-text" onclick="markAllAsRead()">모두 읽음</button>
+                </div>
+                <div class="notification-list" id="notificationList">
+                    <div class="notification-empty">새로운 알림이 없습니다</div>
+                </div>
             </div>
 
             <nav class="nav-section">
@@ -2722,6 +2876,7 @@
         let currentUser = null;
         let users = [];
         let projects = [];
+        let notifications = [];
         let currentProject = null;
         let currentDate = new Date();
         let miniCalendarDate = new Date();
@@ -2873,6 +3028,21 @@
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'comment_checks' }, () => {
                     if (currentProject) loadVisits();
                 }).subscribe();
+
+            // 알림 실시간 구독
+            db.channel('notifications_changes')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, (payload) => {
+                    // 내 알림일 때만 업데이트
+                    if (payload.new && payload.new.user_id === currentUser?.id) {
+                        loadNotifications();
+                        // 토스트로도 알림 표시
+                        showNotification(
+                            payload.new.title,
+                            payload.new.message,
+                            { type: payload.new.type, projectId: payload.new.link_project_id, visitId: payload.new.link_visit_id }
+                        );
+                    }
+                }).subscribe();
         }
 
         // 알림 표시 함수
@@ -2988,6 +3158,7 @@
             await loadProjects();
             await loadAllFiles();
             await loadRecentActivities();
+            await loadNotifications();
             renderMiniCalendar();
             updateDashboardStats();
             showToast(`${currentUser.name}님 환영합니다!`, 'success');
@@ -3243,6 +3414,163 @@
             if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`;
             if (diff < 604800) return `${Math.floor(diff / 86400)}일 전`;
             return date.toLocaleDateString('ko-KR');
+        }
+
+        // ========== 알림 시스템 ==========
+        async function loadNotifications() {
+            if (!currentUser) return;
+            
+            const { data, error } = await db.from('notifications')
+                .select('*, creator:users!created_by(id, name, avatar_initial, avatar_color)')
+                .eq('user_id', currentUser.id)
+                .order('created_at', { ascending: false })
+                .limit(50);
+            
+            if (!error) {
+                notifications = data || [];
+                renderNotifications();
+                updateNotificationBadge();
+            }
+        }
+
+        function renderNotifications() {
+            const list = document.getElementById('notificationList');
+            
+            if (notifications.length === 0) {
+                list.innerHTML = '<div class="notification-empty">새로운 알림이 없습니다</div>';
+                return;
+            }
+            
+            list.innerHTML = notifications.map(n => {
+                const icon = getNotificationIcon(n.type);
+                const timeAgo = getRelativeTime(n.created_at);
+                return `
+                    <div class="notification-item ${n.is_read ? '' : 'unread'}" onclick="clickNotification('${n.id}', '${n.link_project_id || ''}', '${n.link_visit_id || ''}')">
+                        <div class="notification-item-header">
+                            <span class="notification-item-icon">${icon}</span>
+                            <span class="notification-item-title">${n.title}</span>
+                            <span class="notification-item-time">${timeAgo}</span>
+                        </div>
+                        <div class="notification-item-message">${n.message || ''}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getNotificationIcon(type) {
+            const icons = {
+                'project_created': '🆕',
+                'comment': '💬',
+                'visit': '📝',
+                'check': '✅'
+            };
+            return icons[type] || '🔔';
+        }
+
+        function updateNotificationBadge() {
+            const unreadCount = notifications.filter(n => !n.is_read).length;
+            const badge = document.getElementById('notificationBadge');
+            
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function toggleNotificationPanel() {
+            const panel = document.getElementById('notificationPanel');
+            panel.classList.toggle('active');
+            
+            // 패널 외부 클릭 시 닫기
+            if (panel.classList.contains('active')) {
+                setTimeout(() => {
+                    document.addEventListener('click', closeNotificationPanelOnClickOutside);
+                }, 100);
+            }
+        }
+
+        function closeNotificationPanelOnClickOutside(e) {
+            const panel = document.getElementById('notificationPanel');
+            const bell = document.querySelector('.notification-bell');
+            
+            if (!panel.contains(e.target) && !bell.contains(e.target)) {
+                panel.classList.remove('active');
+                document.removeEventListener('click', closeNotificationPanelOnClickOutside);
+            }
+        }
+
+        async function clickNotification(notificationId, projectId, visitId) {
+            // 읽음 처리
+            await db.from('notifications')
+                .update({ is_read: true })
+                .eq('id', notificationId);
+            
+            // 로컬 상태 업데이트
+            const notification = notifications.find(n => n.id === notificationId);
+            if (notification) notification.is_read = true;
+            renderNotifications();
+            updateNotificationBadge();
+            
+            // 패널 닫기
+            document.getElementById('notificationPanel').classList.remove('active');
+            
+            // 프로젝트로 이동
+            if (projectId) {
+                await selectProject(projectId);
+                
+                // 방문 기록이 있으면 해당 카드 펼치기
+                if (visitId) {
+                    setTimeout(() => {
+                        const visitCard = document.getElementById(`visit-${visitId}`);
+                        if (visitCard) {
+                            visitCard.classList.add('expanded');
+                            expandedVisitIds.add(String(visitId));
+                            visitCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            visitCard.style.boxShadow = '0 0 0 3px var(--primary)';
+                            setTimeout(() => visitCard.style.boxShadow = '', 2000);
+                        }
+                    }, 500);
+                }
+            }
+        }
+
+        async function markAllAsRead() {
+            if (!currentUser || notifications.length === 0) return;
+            
+            await db.from('notifications')
+                .update({ is_read: true })
+                .eq('user_id', currentUser.id)
+                .eq('is_read', false);
+            
+            notifications.forEach(n => n.is_read = true);
+            renderNotifications();
+            updateNotificationBadge();
+            showToast('모든 알림을 읽음 처리했습니다', 'success');
+        }
+
+        // 알림 생성 함수
+        async function createNotification(userId, type, title, message, projectId = null, visitId = null) {
+            if (userId === currentUser?.id) return; // 본인에게는 알림 안 보냄
+            
+            await db.from('notifications').insert({
+                user_id: userId,
+                type: type,
+                title: title,
+                message: message,
+                link_project_id: projectId,
+                link_visit_id: visitId,
+                created_by: currentUser.id
+            });
+        }
+
+        // 모든 다른 사용자에게 알림 보내기
+        async function notifyOtherUsers(type, title, message, projectId = null, visitId = null) {
+            const otherUsers = users.filter(u => u.id !== currentUser?.id);
+            for (const user of otherUsers) {
+                await createNotification(user.id, type, title, message, projectId, visitId);
+            }
         }
 
         // ========== 프로젝트 ==========
@@ -3955,15 +4283,25 @@
             const content = input.value.trim();
             if (!content) { showToast('댓글을 입력하세요', 'error'); return; }
             
-            const { error } = await db.from('visit_comments').insert({
+            const { data, error } = await db.from('visit_comments').insert({
                 visit_id: visitId,
                 author_id: currentUser.id,
                 content
-            });
+            }).select().single();
             
             if (!error) {
                 input.value = '';
                 showToast('댓글이 등록되었습니다', 'success');
+                
+                // 다른 사용자들에게 알림 보내기
+                await notifyOtherUsers(
+                    'comment',
+                    `${currentUser.name}님이 댓글을 남겼습니다`,
+                    content.substring(0, 50) + (content.length > 50 ? '...' : ''),
+                    currentProject?.id,
+                    visitId
+                );
+                
                 await loadVisits();
                 await loadRecentActivities();
             }
@@ -4144,6 +4482,15 @@
             }).select().single();
             
             if (error) { showToast('저장 실패', 'error'); return; }
+            
+            // 다른 사용자들에게 알림 보내기
+            const meetingType = getMeetingType(calendarSelectedColor);
+            await notifyOtherUsers(
+                'project_created',
+                `${currentUser.name}님이 새 프로젝트를 생성했습니다`,
+                `[${meetingType.name}] ${name}`,
+                data.id
+            );
             
             projects.unshift(data);
             renderProjectList();
@@ -4431,6 +4778,15 @@
             
             if (error) { showToast('저장 실패', 'error'); return; }
             
+            // 다른 사용자들에게 알림 보내기
+            const meetingType = getMeetingType(selectedColor);
+            await notifyOtherUsers(
+                'project_created',
+                `${currentUser.name}님이 새 프로젝트를 생성했습니다`,
+                `[${meetingType.name}] ${name}`,
+                data.id
+            );
+            
             projects.unshift(data);
             renderProjectList();
             closeModal('newProject');
@@ -4503,10 +4859,11 @@
             const visitDate = document.getElementById('visitDate').value;
             if (!visitDate) { showToast('방문일을 선택하세요', 'error'); return; }
             
+            const title = document.getElementById('visitTitle').value.trim();
             const { data: visit, error } = await db.from('project_visits').insert({
                 project_id: currentProject.id,
                 visit_date: visitDate,
-                title: document.getElementById('visitTitle').value.trim(),
+                title: title,
                 content: document.getElementById('visitContent').value.trim(),
                 created_by: currentUser.id
             }).select().single();
@@ -4528,6 +4885,15 @@
                     });
                 }
             }
+            
+            // 다른 사용자들에게 알림 보내기
+            await notifyOtherUsers(
+                'visit',
+                `${currentUser.name}님이 새 기록을 추가했습니다`,
+                `${currentProject.name}: ${title || '방문 기록'}`,
+                currentProject.id,
+                visit.id
+            );
             
             visitFiles = [];
             document.getElementById('visitTitle').value = '';

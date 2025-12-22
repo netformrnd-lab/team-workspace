@@ -2985,6 +2985,45 @@
         </div>
     </div>
 
+    <!-- 개인일정 수정 모달 -->
+    <div class="modal" id="editPersonalScheduleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">👤 개인일정</h2>
+                <button class="modal-close" onclick="closeModal('editPersonalSchedule')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">일정 제목 *</label>
+                    <input type="text" class="form-input" id="editPersonalTitle">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">날짜 *</label>
+                    <input type="date" class="form-input" id="editPersonalDate">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">메모</label>
+                    <textarea class="form-textarea" id="editPersonalDesc"></textarea>
+                </div>
+                <div class="personal-schedule-preview">
+                    <span>내 일정 색상:</span>
+                    <div class="personal-color-preview" id="editPersonalColorPreview"></div>
+                </div>
+                <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--light-200);">
+                    <div class="danger-zone">
+                        <div class="danger-zone-title">⚠️ 삭제</div>
+                        <div class="danger-zone-desc">이 개인일정을 삭제합니다.</div>
+                        <button class="btn btn-danger btn-sm" onclick="deletePersonalSchedule()">🗑️ 삭제하기</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('editPersonalSchedule')">취소</button>
+                <button class="btn btn-primary" onclick="saveEditPersonalSchedule()">저장하기</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
@@ -3023,6 +3062,7 @@
         let personalSchedules = [];
         let calendarScheduleType = 'project'; // 'project' or 'personal'
         let newProjectScheduleType = 'project'; // 새 프로젝트 모달용
+        let editingPersonalScheduleId = null; // 수정 중인 개인일정 ID
         let visitFiles = [];
         let allFiles = [];
         let checklist = {}; // 프로젝트별 체크리스트 (로컬 저장)
@@ -4599,7 +4639,7 @@
                         </div>
                         <div class="day-events">
                             ${events.map(e => e.type === 'personal' ? `
-                                <div class="day-event personal-event" style="background: ${e.color}20; color: ${e.color}; border-left: 3px solid ${e.color};" title="${e.name}">
+                                <div class="day-event personal-event" style="background: ${e.color}20; color: ${e.color}; border-left: 3px solid ${e.color};" title="${e.name}" onclick="event.stopPropagation(); openEditPersonalSchedule('${e.personalId}')">
                                     ${e.name}
                                 </div>
                             ` : `
@@ -4616,10 +4656,14 @@
 
         function openCalendarAdd(dateStr) {
             calendarSelectedDate = dateStr;
-            const date = new Date(dateStr);
-            document.getElementById('calendarAddDate').textContent = date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+            // 타임존 문제 방지: 문자열 직접 파싱
+            const [year, month, day] = dateStr.split('-').map(Number);
+            const dateDisplay = `${year}년 ${month}월 ${day}일`;
+            document.getElementById('calendarAddDate').textContent = dateDisplay;
             document.getElementById('calendarProjectName').value = '';
             document.getElementById('calendarProjectDesc').value = '';
+            document.getElementById('personalScheduleTitle').value = '';
+            document.getElementById('personalScheduleDesc').value = '';
             calendarSelectedColor = '#FC8181';
             document.querySelectorAll('#calendarMeetingTypeOptions .meeting-type-option').forEach(el => {
                 el.classList.remove('selected');
@@ -4627,7 +4671,7 @@
             });
             // 일정 타입 초기화
             calendarScheduleType = 'project';
-            document.querySelectorAll('.schedule-type-option').forEach(el => {
+            document.querySelectorAll('#calendarAddModal .schedule-type-option').forEach(el => {
                 el.classList.remove('selected');
                 if (el.dataset.type === 'project') el.classList.add('selected');
             });
@@ -4711,6 +4755,83 @@
             if (!error) {
                 personalSchedules = data || [];
             }
+        }
+
+        // 개인일정 수정 모달 열기
+        function openEditPersonalSchedule(scheduleId) {
+            const schedule = personalSchedules.find(s => s.id === scheduleId);
+            if (!schedule) return;
+            
+            // 본인 일정만 수정 가능
+            if (schedule.user_id !== currentUser.id) {
+                showToast('본인의 일정만 수정할 수 있습니다', 'error');
+                return;
+            }
+            
+            editingPersonalScheduleId = scheduleId;
+            document.getElementById('editPersonalTitle').value = schedule.title;
+            document.getElementById('editPersonalDate').value = schedule.schedule_date;
+            document.getElementById('editPersonalDesc').value = schedule.description || '';
+            
+            const userColor = getUserPersonalColor(currentUser.id);
+            document.getElementById('editPersonalColorPreview').style.background = userColor;
+            
+            openModal('editPersonalSchedule');
+        }
+
+        // 개인일정 수정 저장
+        async function saveEditPersonalSchedule() {
+            if (!editingPersonalScheduleId) return;
+            
+            const title = document.getElementById('editPersonalTitle').value.trim();
+            const date = document.getElementById('editPersonalDate').value;
+            
+            if (!title) { showToast('일정 제목을 입력하세요', 'error'); return; }
+            if (!date) { showToast('날짜를 선택하세요', 'error'); return; }
+            
+            const { error } = await db.from('personal_schedules')
+                .update({
+                    title,
+                    schedule_date: date,
+                    description: document.getElementById('editPersonalDesc').value.trim()
+                })
+                .eq('id', editingPersonalScheduleId);
+            
+            if (error) { showToast('저장 실패', 'error'); return; }
+            
+            // 로컬 데이터 업데이트
+            const idx = personalSchedules.findIndex(s => s.id === editingPersonalScheduleId);
+            if (idx !== -1) {
+                personalSchedules[idx].title = title;
+                personalSchedules[idx].schedule_date = date;
+                personalSchedules[idx].description = document.getElementById('editPersonalDesc').value.trim();
+            }
+            
+            renderCalendar();
+            renderMiniCalendar();
+            closeModal('editPersonalSchedule');
+            showToast('개인일정이 수정되었습니다', 'success');
+        }
+
+        // 개인일정 삭제
+        async function deletePersonalSchedule() {
+            if (!editingPersonalScheduleId) return;
+            
+            if (!confirm('이 개인일정을 삭제하시겠습니까?')) return;
+            
+            const { error } = await db.from('personal_schedules')
+                .delete()
+                .eq('id', editingPersonalScheduleId);
+            
+            if (error) { showToast('삭제 실패', 'error'); return; }
+            
+            // 로컬 데이터에서 제거
+            personalSchedules = personalSchedules.filter(s => s.id !== editingPersonalScheduleId);
+            
+            renderCalendar();
+            renderMiniCalendar();
+            closeModal('editPersonalSchedule');
+            showToast('개인일정이 삭제되었습니다', 'success');
         }
 
         async function saveCalendarProject() {

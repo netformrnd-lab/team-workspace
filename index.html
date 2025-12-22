@@ -3043,6 +3043,11 @@
         let miniCalendarDate = new Date();
         let selectedColor = '#FC8181'; // 기본값: 외부미팅
 
+        // 로컬 날짜 문자열 반환 (타임존 문제 방지)
+        function getLocalDateString(date = new Date()) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        }
+
         // 미팅 타입 선택
         function selectMeetingType(el) {
             document.querySelectorAll('.meeting-type-option').forEach(e => e.classList.remove('selected'));
@@ -4628,7 +4633,8 @@
                 date.setDate(date.getDate() + i);
                 const isOtherMonth = date.getMonth() !== month;
                 const isToday = date.toDateString() === today.toDateString();
-                const dateStr = date.toISOString().split('T')[0];
+                // 로컬 날짜 문자열 (타임존 문제 방지)
+                const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
                 const events = getCalendarEvents(dateStr);
                 
                 html += `
@@ -4893,7 +4899,8 @@
                 date.setDate(date.getDate() + i);
                 const isOtherMonth = date.getMonth() !== month;
                 const isToday = date.toDateString() === today.toDateString();
-                const dateStr = date.toISOString().split('T')[0];
+                // 로컬 날짜 문자열 (타임존 문제 방지)
+                const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
                 const hasEvent = projects.some(p => p.next_visit_date === dateStr);
                 
                 html += `
@@ -5029,7 +5036,7 @@
                 });
             }
             if (type === 'newVisit') {
-                document.getElementById('visitDate').value = new Date().toISOString().split('T')[0];
+                document.getElementById('visitDate').value = getLocalDateString();
                 visitFiles = [];
                 document.getElementById('selectedVisitFiles').innerHTML = '';
             }
@@ -5168,7 +5175,7 @@
                 const userColor = getUserPersonalColor(currentUser.id);
                 document.getElementById('newPersonalColorPreview').style.background = userColor;
                 // 오늘 날짜 기본값
-                document.getElementById('newPersonalDate').value = new Date().toISOString().split('T')[0];
+                document.getElementById('newPersonalDate').value = getLocalDateString();
             }
         }
 

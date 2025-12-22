@@ -2473,7 +2473,7 @@
                 <div class="dashboard-grid">
                     <div class="mini-calendar">
                         <div class="mini-calendar-header">
-                            <div class="mini-calendar-title" id="miniCalendarTitle">2024년 12월</div>
+                            <div class="mini-calendar-title" id="miniCalendarTitle"></div>
                             <div class="mini-calendar-nav">
                                 <button onclick="miniCalendarPrev()">←</button>
                                 <button onclick="miniCalendarNext()">→</button>
@@ -2572,7 +2572,7 @@
                     <div class="calendar-header">
                         <div class="calendar-nav">
                             <button class="calendar-nav-btn" onclick="prevMonth()">←</button>
-                            <span class="calendar-month" id="calendarMonth">2024년 12월</span>
+                            <span class="calendar-month" id="calendarMonth"></span>
                             <button class="calendar-nav-btn" onclick="nextMonth()">→</button>
                         </div>
                     </div>
@@ -2667,39 +2667,75 @@
                 <button class="modal-close" onclick="closeModal('newProject')">✕</button>
             </div>
             <div class="modal-body">
+                <!-- 일정 타입 선택 -->
                 <div class="form-group">
-                    <label class="form-label">프로젝트명 *</label>
-                    <input type="text" class="form-input" id="projectNameInput" placeholder="프로젝트명을 입력하세요">
+                    <label class="form-label">일정 타입</label>
+                    <div class="schedule-type-options">
+                        <div class="schedule-type-option selected" data-type="project" onclick="selectNewProjectType('project')">
+                            📋 프로젝트
+                        </div>
+                        <div class="schedule-type-option" data-type="personal" onclick="selectNewProjectType('personal')">
+                            👤 개인일정
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">설명</label>
-                    <textarea class="form-textarea" id="projectDescInput" placeholder="프로젝트 설명 (선택사항)"></textarea>
+                
+                <!-- 프로젝트 입력 영역 -->
+                <div id="newProjectInputArea">
+                    <div class="form-group">
+                        <label class="form-label">프로젝트명 *</label>
+                        <input type="text" class="form-input" id="projectNameInput" placeholder="프로젝트명을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">설명</label>
+                        <textarea class="form-textarea" id="projectDescInput" placeholder="프로젝트 설명 (선택사항)"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">미팅 타입</label>
+                        <div class="meeting-type-options">
+                            <div class="meeting-type-option selected" data-color="#FC8181" onclick="selectMeetingType(this)">
+                                <div class="meeting-type-color" style="background: #FC8181"></div>
+                                <span>🔴 외부미팅</span>
+                            </div>
+                            <div class="meeting-type-option" data-color="#63B3ED" onclick="selectMeetingType(this)">
+                                <div class="meeting-type-color" style="background: #63B3ED"></div>
+                                <span>🔵 협업미팅</span>
+                            </div>
+                            <div class="meeting-type-option" data-color="#03CF5D" onclick="selectMeetingType(this)">
+                                <div class="meeting-type-color" style="background: #03CF5D"></div>
+                                <span>🟢 내부회의</span>
+                            </div>
+                            <div class="meeting-type-option" data-color="#F6AD55" onclick="selectMeetingType(this)">
+                                <div class="meeting-type-color" style="background: #F6AD55"></div>
+                                <span>🟡 개인프로젝트</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">미팅 타입</label>
-                    <div class="meeting-type-options">
-                        <div class="meeting-type-option selected" data-color="#FC8181" onclick="selectMeetingType(this)">
-                            <div class="meeting-type-color" style="background: #FC8181"></div>
-                            <span>🔴 외부미팅</span>
-                        </div>
-                        <div class="meeting-type-option" data-color="#63B3ED" onclick="selectMeetingType(this)">
-                            <div class="meeting-type-color" style="background: #63B3ED"></div>
-                            <span>🔵 협업미팅</span>
-                        </div>
-                        <div class="meeting-type-option" data-color="#03CF5D" onclick="selectMeetingType(this)">
-                            <div class="meeting-type-color" style="background: #03CF5D"></div>
-                            <span>🟢 내부회의</span>
-                        </div>
-                        <div class="meeting-type-option" data-color="#F6AD55" onclick="selectMeetingType(this)">
-                            <div class="meeting-type-color" style="background: #F6AD55"></div>
-                            <span>🟡 개인프로젝트</span>
-                        </div>
+                
+                <!-- 개인일정 입력 영역 -->
+                <div id="newPersonalInputArea" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">일정 제목 *</label>
+                        <input type="text" class="form-input" id="newPersonalTitle" placeholder="예: 휴가, 외출, 재택근무 등">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">날짜 *</label>
+                        <input type="date" class="form-input" id="newPersonalDate">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">메모</label>
+                        <textarea class="form-textarea" id="newPersonalDesc" placeholder="메모 (선택)"></textarea>
+                    </div>
+                    <div class="personal-schedule-preview">
+                        <span>내 일정 색상:</span>
+                        <div class="personal-color-preview" id="newPersonalColorPreview"></div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('newProject')">취소</button>
-                <button class="btn btn-primary" onclick="saveProject()">생성하기</button>
+                <button class="btn btn-primary" onclick="saveNewSchedule()">생성하기</button>
             </div>
         </div>
     </div>
@@ -2986,6 +3022,7 @@
         let calendarSelectedDate = null;
         let personalSchedules = [];
         let calendarScheduleType = 'project'; // 'project' or 'personal'
+        let newProjectScheduleType = 'project'; // 새 프로젝트 모달용
         let visitFiles = [];
         let allFiles = [];
         let checklist = {}; // 프로젝트별 체크리스트 (로컬 저장)
@@ -3257,6 +3294,7 @@
             await loadRecentActivities();
             await loadNotifications();
             await loadPersonalSchedules();
+            renderCalendar();
             renderMiniCalendar();
             updateDashboardStats();
             showToast(`${currentUser.name}님 환영합니다!`, 'success');
@@ -3273,14 +3311,19 @@
             const tomorrow = new Date(today);
             tomorrow.setDate(tomorrow.getDate() + 1);
             
-            const todayStr = today.toISOString().split('T')[0];
-            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+            // 로컬 날짜 문자열 (YYYY-MM-DD)
+            const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            const tomorrowStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
+            
+            console.log('D-day 체크:', todayStr, tomorrowStr, projects.map(p => p.next_visit_date));
             
             // D-day 일정 (오늘)
             const todaySchedules = projects.filter(p => p.next_visit_date === todayStr);
             
             // D-1 일정 (내일)
             const tomorrowSchedules = projects.filter(p => p.next_visit_date === tomorrowStr);
+            
+            console.log('오늘 일정:', todaySchedules.length, '내일 일정:', tomorrowSchedules.length);
             
             // D-day 알림
             todaySchedules.forEach(p => {
@@ -3541,7 +3584,7 @@
             
             list.innerHTML = notifications.map(n => {
                 const icon = getNotificationIcon(n.type);
-                const timeAgo = getRelativeTime(n.created_at);
+                const timeAgo = getTimeAgo(n.created_at);
                 return `
                     <div class="notification-item ${n.is_read ? '' : 'unread'}" onclick="clickNotification('${n.id}', '${n.link_project_id || ''}', '${n.link_visit_id || ''}')">
                         <div class="notification-item-header">
@@ -4843,6 +4886,27 @@
         // ========== 모달 ==========
         function openModal(type) {
             document.getElementById(`${type}Modal`).classList.add('active');
+            if (type === 'newProject') {
+                // 일정 타입 초기화
+                newProjectScheduleType = 'project';
+                document.querySelectorAll('#newProjectModal .schedule-type-option').forEach(el => {
+                    el.classList.remove('selected');
+                    if (el.dataset.type === 'project') el.classList.add('selected');
+                });
+                document.getElementById('newProjectInputArea').style.display = 'block';
+                document.getElementById('newPersonalInputArea').style.display = 'none';
+                // 입력값 초기화
+                document.getElementById('projectNameInput').value = '';
+                document.getElementById('projectDescInput').value = '';
+                document.getElementById('newPersonalTitle').value = '';
+                document.getElementById('newPersonalDesc').value = '';
+                // 미팅 타입 초기화
+                selectedColor = '#FC8181';
+                document.querySelectorAll('#newProjectModal .meeting-type-option').forEach(el => {
+                    el.classList.remove('selected');
+                    if (el.dataset.color === '#FC8181') el.classList.add('selected');
+                });
+            }
             if (type === 'newVisit') {
                 document.getElementById('visitDate').value = new Date().toISOString().split('T')[0];
                 visitFiles = [];
@@ -4963,6 +5027,62 @@
             await loadProjects();
             showSection('dashboard');
             showToast('프로젝트가 삭제되었습니다', 'success');
+        }
+
+        // 새 프로젝트 모달 - 일정 타입 선택
+        function selectNewProjectType(type) {
+            newProjectScheduleType = type;
+            document.querySelectorAll('#newProjectModal .schedule-type-option').forEach(el => {
+                el.classList.remove('selected');
+                if (el.dataset.type === type) el.classList.add('selected');
+            });
+            
+            if (type === 'project') {
+                document.getElementById('newProjectInputArea').style.display = 'block';
+                document.getElementById('newPersonalInputArea').style.display = 'none';
+            } else {
+                document.getElementById('newProjectInputArea').style.display = 'none';
+                document.getElementById('newPersonalInputArea').style.display = 'block';
+                // 현재 사용자 색상 미리보기
+                const userColor = getUserPersonalColor(currentUser.id);
+                document.getElementById('newPersonalColorPreview').style.background = userColor;
+                // 오늘 날짜 기본값
+                document.getElementById('newPersonalDate').value = new Date().toISOString().split('T')[0];
+            }
+        }
+
+        // 새 프로젝트 모달에서 개인일정 저장
+        async function saveNewPersonalSchedule() {
+            const title = document.getElementById('newPersonalTitle').value.trim();
+            const date = document.getElementById('newPersonalDate').value;
+            if (!title) { showToast('일정 제목을 입력하세요', 'error'); return; }
+            if (!date) { showToast('날짜를 선택하세요', 'error'); return; }
+            
+            const { data, error } = await db.from('personal_schedules').insert({
+                user_id: currentUser.id,
+                title,
+                description: document.getElementById('newPersonalDesc').value.trim(),
+                schedule_date: date
+            }).select().single();
+            
+            if (error) { showToast('저장 실패', 'error'); return; }
+            
+            personalSchedules.push(data);
+            renderCalendar();
+            renderMiniCalendar();
+            closeModal('newProject');
+            document.getElementById('newPersonalTitle').value = '';
+            document.getElementById('newPersonalDesc').value = '';
+            showToast('개인일정이 등록되었습니다', 'success');
+        }
+
+        // 새 프로젝트/개인일정 통합 저장
+        async function saveNewSchedule() {
+            if (newProjectScheduleType === 'personal') {
+                await saveNewPersonalSchedule();
+            } else {
+                await saveProject();
+            }
         }
 
         // 프로젝트 저장

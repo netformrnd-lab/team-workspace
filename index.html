@@ -406,6 +406,86 @@
             white-space: nowrap;
         }
 
+        .project-assignee {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .assignee-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .assignee-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border: 2px solid var(--light-200);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .assignee-option:hover {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .assignee-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .assignee-option .assignee-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .project-assignee-info {
+            margin-top: 8px;
+        }
+
+        .assignee-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: var(--light-100);
+            border-radius: var(--radius-full);
+            font-size: 13px;
+            color: var(--dark-600);
+        }
+
+        .assignee-avatar-small {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+        }
+
         .sidebar-footer {
             margin-top: auto;
             padding-top: 20px;
@@ -2227,6 +2307,7 @@
                             <div class="project-title-area">
                                 <h1 id="projectName">프로젝트명</h1>
                                 <p class="project-description" id="projectDescription">설명</p>
+                                <div class="project-assignee-info" id="projectAssigneeInfo"></div>
                             </div>
                         </div>
                         <select class="project-status-select" id="projectStatusSelect" onchange="updateProjectStatus()">
@@ -2609,6 +2690,10 @@
                         <option value="보류">⏸️ 보류</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label class="form-label">👤 담당자</label>
+                    <div class="assignee-options" id="editProjectAssignee"></div>
+                </div>
                 <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--light-200);">
                     <div class="danger-zone">
                         <div class="danger-zone-title">⚠️ 위험 영역</div>
@@ -2750,12 +2835,32 @@
                 }).subscribe();
 
             db.channel('projects_changes')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, (payload) => {
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'projects' }, async (payload) => {
+                    // 새 프로젝트 생성 알림 (내가 만든 게 아닐 때만)
+                    if (payload.new && payload.new.created_by !== currentUser?.id) {
+                        const { data: creator } = await db.from('users').select('*').eq('id', payload.new.created_by).single();
+                        const meetingType = getMeetingType(payload.new.color);
+                        if (creator) {
+                            showNotification(
+                                `🆕 ${creator.name}님이 새 프로젝트를 생성했습니다`, 
+                                `[${meetingType.name}] ${payload.new.name}`,
+                                { type: 'project', projectId: payload.new.id }
+                            );
+                        }
+                    }
+                    loadProjects();
+                    loadRecentActivities();
+                })
+                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'projects' }, (payload) => {
                     loadProjects();
                     if (currentProject && payload.new && payload.new.id === currentProject.id) {
                         currentProject = payload.new;
                         renderProjectDetail();
                     }
+                    loadRecentActivities();
+                })
+                .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'projects' }, () => {
+                    loadProjects();
                     loadRecentActivities();
                 }).subscribe();
 
@@ -3142,7 +3247,9 @@
 
         // ========== 프로젝트 ==========
         async function loadProjects() {
-            const { data, error } = await db.from('projects').select('*').order('created_at', { ascending: false });
+            const { data, error } = await db.from('projects')
+                .select('*, assignee:users!assigned_to(id, name, avatar_initial, avatar_color), creator:users!created_by(id, name, avatar_initial, avatar_color)')
+                .order('created_at', { ascending: false });
             if (!error) {
                 projects = data;
                 renderProjectList();
@@ -3204,10 +3311,14 @@
             const renderProjectItem = (p) => {
                 const meetingType = getMeetingType(p.color);
                 const activeClass = currentProject?.id === p.id ? 'active' : '';
+                const assignee = p.assignee;
+                const assigneeAvatar = assignee ? 
+                    `<div class="project-assignee" style="background: ${assignee.avatar_color}" title="${assignee.name}">${assignee.avatar_initial}</div>` : '';
                 return `
                     <div class="nav-item ${activeClass}" onclick="selectProject('${p.id}')">
                         <div class="project-color" style="background: ${p.color}"></div>
                         <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.name}</span>
+                        ${assigneeAvatar}
                         <span class="project-type-tag">${meetingType.name}</span>
                     </div>
                 `;
@@ -3303,6 +3414,7 @@
 
         // 프로젝트 설정 모달용 변수
         let editProjectColor = '#FC8181';
+        let editProjectAssignee = null;
 
         // 프로젝트 설정 미팅 타입 선택
         function selectEditProjectMeetingType(el) {
@@ -3400,6 +3512,20 @@
             document.getElementById('projectName').textContent = currentProject.name;
             document.getElementById('projectDescription').textContent = currentProject.description || '';
             document.getElementById('projectStatusSelect').value = currentProject.status || '시작전';
+            
+            // 담당자 정보 표시
+            const assigneeInfo = document.getElementById('projectAssigneeInfo');
+            if (currentProject.assignee) {
+                assigneeInfo.innerHTML = `
+                    <div class="assignee-badge">
+                        <div class="assignee-avatar-small" style="background: ${currentProject.assignee.avatar_color}">${currentProject.assignee.avatar_initial}</div>
+                        <span>👤 담당자: ${currentProject.assignee.name}</span>
+                    </div>
+                `;
+            } else {
+                assigneeInfo.innerHTML = '';
+            }
+            
             renderNextVisit();
         }
 
@@ -4013,7 +4139,8 @@
                 color: calendarSelectedColor,
                 status: '시작전',
                 next_visit_date: calendarSelectedDate,
-                created_by: currentUser.id
+                created_by: currentUser.id,
+                assigned_to: currentUser.id
             }).select().single();
             
             if (error) { showToast('저장 실패', 'error'); return; }
@@ -4180,6 +4307,7 @@
                 document.getElementById('editProjectDesc').value = currentProject.description || '';
                 document.getElementById('editProjectStatus').value = currentProject.status || '시작전';
                 editProjectColor = currentProject.color;
+                editProjectAssignee = currentProject.assigned_to;
                 
                 // 미팅 타입 선택 업데이트
                 document.querySelectorAll('#editProjectMeetingTypeOptions .meeting-type-option').forEach(el => {
@@ -4188,7 +4316,34 @@
                         el.classList.add('selected');
                     }
                 });
+                
+                // 담당자 선택 렌더링
+                renderAssigneeOptions();
             }
+        }
+        
+        // 담당자 선택 렌더링
+        function renderAssigneeOptions() {
+            const container = document.getElementById('editProjectAssignee');
+            container.innerHTML = users.map(u => `
+                <div class="assignee-option ${editProjectAssignee === u.id ? 'selected' : ''}" 
+                     data-user-id="${u.id}" 
+                     onclick="selectAssignee('${u.id}')">
+                    <div class="assignee-avatar" style="background: ${u.avatar_color}">${u.avatar_initial}</div>
+                    <span>${u.name}</span>
+                </div>
+            `).join('');
+        }
+        
+        // 담당자 선택
+        function selectAssignee(userId) {
+            editProjectAssignee = userId;
+            document.querySelectorAll('.assignee-option').forEach(el => {
+                el.classList.remove('selected');
+                if (el.dataset.userId === userId) {
+                    el.classList.add('selected');
+                }
+            });
         }
 
         function closeModal(type) {
@@ -4222,7 +4377,8 @@
                 name,
                 description: document.getElementById('editProjectDesc').value.trim(),
                 color: editProjectColor,
-                status: document.getElementById('editProjectStatus').value
+                status: document.getElementById('editProjectStatus').value,
+                assigned_to: editProjectAssignee
             }).eq('id', currentProject.id);
             
             if (error) { showToast('저장 실패', 'error'); return; }
@@ -4232,6 +4388,7 @@
             currentProject.description = document.getElementById('editProjectDesc').value.trim();
             currentProject.color = editProjectColor;
             currentProject.status = document.getElementById('editProjectStatus').value;
+            currentProject.assigned_to = editProjectAssignee;
             
             renderProjectDetail();
             await loadProjects();
@@ -4268,7 +4425,8 @@
                 description: document.getElementById('projectDescInput').value.trim(),
                 color: selectedColor,
                 status: '시작전',
-                created_by: currentUser.id
+                created_by: currentUser.id,
+                assigned_to: currentUser.id
             }).select().single();
             
             if (error) { showToast('저장 실패', 'error'); return; }

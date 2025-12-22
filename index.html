@@ -1977,6 +1977,23 @@
         .toast.notification:hover {
             transform: translateX(-4px);
         }
+        
+        .toast.schedule-alert {
+            min-width: 300px;
+            cursor: pointer;
+            border-left: 4px solid;
+        }
+        .toast.schedule-alert.today {
+            background: linear-gradient(135deg, #FC8181 0%, #F56565 100%);
+            border-left-color: #C53030;
+        }
+        .toast.schedule-alert.tomorrow {
+            background: linear-gradient(135deg, #63B3ED 0%, #4299E1 100%);
+            border-left-color: #2B6CB0;
+        }
+        .toast.schedule-alert:hover {
+            transform: translateX(-4px);
+        }
 
         /* ========== 빈 상태 ========== */
         .empty-state {
@@ -2065,12 +2082,12 @@
                 
                 <!-- 프로젝트 검색 -->
                 <div class="project-search-box">
-                    <input type="text" class="project-search-input" placeholder="🔍 프로젝트 검색..." oninput="filterProjects(this.value)">
+                    <input type="text" class="project-search-input" id="projectSearchInput" placeholder="🔍 프로젝트 검색..." oninput="filterProjects(this.value)">
                 </div>
                 
                 <!-- 진행중 섹션 -->
                 <div class="project-group">
-                    <div class="project-group-header" onclick="toggleProjectGroup('ongoing')">
+                    <div class="project-group-header" id="ongoingHeader" onclick="toggleProjectGroup('ongoing')">
                         <span>진행중 <span id="ongoingCount">(0)</span></span>
                     </div>
                     <div id="ongoingProjectList" class="project-group-list"></div>
@@ -2078,10 +2095,18 @@
                 
                 <!-- 완료 섹션 -->
                 <div class="project-group">
-                    <div class="project-group-header" onclick="toggleProjectGroup('completed')">
+                    <div class="project-group-header" id="completedHeader" onclick="toggleProjectGroup('completed')">
                         <span>완료 <span id="completedCount">(0)</span></span>
                     </div>
                     <div id="completedProjectList" class="project-group-list"></div>
+                </div>
+                
+                <!-- 보류 섹션 -->
+                <div class="project-group">
+                    <div class="project-group-header" id="holdHeader" onclick="toggleProjectGroup('hold')">
+                        <span>보류 <span id="holdCount">(0)</span></span>
+                    </div>
+                    <div id="holdProjectList" class="project-group-list"></div>
                 </div>
             </nav>
 
@@ -2633,9 +2658,10 @@
         // 프로젝트 검색어
         let projectSearchQuery = '';
         
-        // 진행중/완료 토글 상태
+        // 진행중/완료/보류 토글 상태
         let ongoingExpanded = true;
-        let completedExpanded = true;
+        let completedExpanded = false;
+        let holdExpanded = false;
 
         // 현재 열린 방문기록 상태 저장
         function saveExpandedState() {
@@ -2834,6 +2860,91 @@
             renderMiniCalendar();
             updateDashboardStats();
             showToast(`${currentUser.name}님 환영합니다!`, 'success');
+            
+            // 일정 알림 체크 (D-day, D-1)
+            setTimeout(() => checkScheduleAlerts(), 1000);
+        }
+
+        // 일정 알림 체크 (D-day, D-1)
+        function checkScheduleAlerts() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            const todayStr = today.toISOString().split('T')[0];
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+            
+            // D-day 일정 (오늘)
+            const todaySchedules = projects.filter(p => p.next_visit_date === todayStr);
+            
+            // D-1 일정 (내일)
+            const tomorrowSchedules = projects.filter(p => p.next_visit_date === tomorrowStr);
+            
+            // D-day 알림
+            todaySchedules.forEach(p => {
+                const meetingType = getMeetingType(p.color);
+                showScheduleAlert(
+                    `🔔 오늘 일정 (D-day)`,
+                    `[${meetingType.name}] ${p.name}`,
+                    p.id,
+                    'today'
+                );
+            });
+            
+            // D-1 알림 (D-day가 없을 때만, 또는 있어도 보여줌)
+            setTimeout(() => {
+                tomorrowSchedules.forEach(p => {
+                    const meetingType = getMeetingType(p.color);
+                    showScheduleAlert(
+                        `📅 내일 일정 (D-1)`,
+                        `[${meetingType.name}] ${p.name}`,
+                        p.id,
+                        'tomorrow'
+                    );
+                });
+            }, todaySchedules.length > 0 ? 3000 : 0);
+        }
+        
+        // 일정 알림 표시
+        function showScheduleAlert(title, message, projectId, type) {
+            // 알림 권한 요청
+            requestNotificationPermission();
+            
+            // 토스트 알림
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast schedule-alert ${type}`;
+            toast.style.cursor = 'pointer';
+            toast.onclick = () => {
+                selectProject(projectId);
+                toast.remove();
+            };
+            
+            toast.innerHTML = `
+                <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                    <strong style="font-size: 14px;">${title}</strong>
+                    <span style="font-size: 13px;">${message}</span>
+                </div>
+                <span style="font-size: 11px; opacity: 0.7;">클릭하여 이동 →</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 10000); // 10초
+
+            // 브라우저 알림
+            if (Notification.permission === 'granted') {
+                const notification = new Notification(title, { 
+                    body: message, 
+                    icon: type === 'today' ? '🔔' : '📅',
+                    tag: `schedule-${projectId}`
+                });
+                notification.onclick = () => {
+                    window.focus();
+                    selectProject(projectId);
+                    notification.close();
+                };
+            }
         }
 
         function logout() {
@@ -3016,19 +3127,30 @@
         function renderProjectList() {
             // 검색 필터 적용
             let filtered = projects;
-            if (projectSearchQuery) {
+            const isSearching = projectSearchQuery.length > 0;
+            
+            if (isSearching) {
                 filtered = projects.filter(p => 
                     p.name.toLowerCase().includes(projectSearchQuery.toLowerCase())
                 );
             }
             
-            // 진행중 / 완료 분리
+            // 진행중 / 완료 / 보류 분리
             const ongoing = filtered.filter(p => (p.status || '진행중') === '진행중');
             const completed = filtered.filter(p => (p.status || '진행중') === '완료');
+            const hold = filtered.filter(p => (p.status || '진행중') === '보류');
             
             // 카운트 업데이트
             document.getElementById('ongoingCount').textContent = `(${ongoing.length})`;
             document.getElementById('completedCount').textContent = `(${completed.length})`;
+            document.getElementById('holdCount').textContent = `(${hold.length})`;
+            
+            // 검색 중일 때 결과가 있는 폴더 자동 펼침
+            if (isSearching) {
+                if (ongoing.length > 0) expandGroup('ongoing', true);
+                if (completed.length > 0) expandGroup('completed', true);
+                if (hold.length > 0) expandGroup('hold', true);
+            }
             
             // 진행중 프로젝트 렌더링
             const ongoingContainer = document.getElementById('ongoingProjectList');
@@ -3061,6 +3183,55 @@
                     </div>
                 `}).join('');
             }
+            
+            // 보류 프로젝트 렌더링
+            const holdContainer = document.getElementById('holdProjectList');
+            if (hold.length === 0) {
+                holdContainer.innerHTML = '<div class="nav-item" style="color: var(--dark-600); font-size: 12px; padding-left: 24px;">프로젝트 없음</div>';
+            } else {
+                holdContainer.innerHTML = hold.map(p => {
+                    const meetingType = getMeetingType(p.color);
+                    return `
+                    <div class="nav-item ${currentProject?.id === p.id ? 'active' : ''}" onclick="selectProject('${p.id}')">
+                        <div class="project-color" style="background: ${p.color}"></div>
+                        <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.name}</span>
+                        <span class="project-type-tag">${meetingType.name}</span>
+                    </div>
+                `}).join('');
+            }
+            
+            // 초기 토글 상태 적용
+            applyGroupToggleState();
+        }
+        
+        // 그룹 토글 상태 적용
+        function applyGroupToggleState() {
+            const groups = [
+                { name: 'ongoing', expanded: ongoingExpanded },
+                { name: 'completed', expanded: completedExpanded },
+                { name: 'hold', expanded: holdExpanded }
+            ];
+            
+            groups.forEach(g => {
+                const list = document.getElementById(`${g.name}ProjectList`);
+                const header = document.getElementById(`${g.name}Header`);
+                if (list && header) {
+                    if (g.expanded) {
+                        list.classList.remove('collapsed');
+                        header.classList.remove('collapsed');
+                    } else {
+                        list.classList.add('collapsed');
+                        header.classList.add('collapsed');
+                    }
+                }
+            });
+        }
+        
+        // 그룹 펼침/접기 (내부용)
+        function expandGroup(group, expand) {
+            if (group === 'ongoing') ongoingExpanded = expand;
+            else if (group === 'completed') completedExpanded = expand;
+            else if (group === 'hold') holdExpanded = expand;
         }
 
         // 프로젝트 검색 필터
@@ -3069,31 +3240,16 @@
             renderProjectList();
         }
 
-        // 프로젝트 그룹 토글 (진행중/완료)
+        // 프로젝트 그룹 토글 (진행중/완료/보류)
         function toggleProjectGroup(group) {
             if (group === 'ongoing') {
                 ongoingExpanded = !ongoingExpanded;
-                const list = document.getElementById('ongoingProjectList');
-                const header = list.previousElementSibling;
-                if (ongoingExpanded) {
-                    list.classList.remove('collapsed');
-                    header.classList.remove('collapsed');
-                } else {
-                    list.classList.add('collapsed');
-                    header.classList.add('collapsed');
-                }
-            } else {
+            } else if (group === 'completed') {
                 completedExpanded = !completedExpanded;
-                const list = document.getElementById('completedProjectList');
-                const header = list.previousElementSibling;
-                if (completedExpanded) {
-                    list.classList.remove('collapsed');
-                    header.classList.remove('collapsed');
-                } else {
-                    list.classList.add('collapsed');
-                    header.classList.add('collapsed');
-                }
+            } else if (group === 'hold') {
+                holdExpanded = !holdExpanded;
             }
+            applyGroupToggleState();
         }
 
         // 프로젝트 설정 모달용 변수

@@ -317,6 +317,83 @@
             opacity: 0;
         }
 
+        .project-search-box {
+            padding: 8px 16px;
+        }
+
+        .project-search-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--light-200);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            background: var(--white);
+            transition: all 0.2s;
+        }
+
+        .project-search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--white);
+        }
+
+        .project-group {
+            margin-bottom: 8px;
+        }
+
+        .project-group-header {
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--dark-600);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+
+        .project-group-header:hover {
+            color: var(--dark-900);
+            background: var(--light-50);
+        }
+
+        .project-group-header.collapsed span:first-child::before {
+            content: '▶';
+        }
+
+        .project-group-header span:first-child::before {
+            content: '▼';
+            margin-right: 6px;
+            font-size: 10px;
+        }
+
+        .project-group-header span:first-child {
+            display: flex;
+            align-items: center;
+        }
+
+        .project-group-list {
+            max-height: 300px;
+            overflow-y: auto;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+        }
+
+        .project-group-list.collapsed {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        .project-type-tag {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: var(--light-100);
+            color: var(--dark-600);
+            white-space: nowrap;
+        }
+
         .sidebar-footer {
             margin-top: auto;
             padding-top: 20px;
@@ -1794,6 +1871,41 @@
         .color-option:hover { transform: scale(1.1); }
         .color-option.selected { border-color: var(--dark-900); }
 
+        .meeting-type-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .meeting-type-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border: 2px solid var(--light-200);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            background: var(--white);
+        }
+
+        .meeting-type-option:hover {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .meeting-type-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .meeting-type-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
         .modal-footer {
             padding: 20px 24px;
             border-top: 1px solid var(--light-200);
@@ -1946,14 +2058,31 @@
             </nav>
 
             <nav class="nav-section">
-                <div class="nav-section-title" onclick="toggleProjectList()" style="cursor: pointer;">
-                    <span style="display: flex; align-items: center; gap: 8px;">
-                        프로젝트
-                        <span id="projectToggleIcon" style="font-size: 10px; transition: transform 0.2s;">▼</span>
-                    </span>
+                <div class="nav-section-title">
+                    <span>프로젝트</span>
                     <button class="add-btn" onclick="event.stopPropagation(); openModal('newProject')">+</button>
                 </div>
-                <div id="projectList" class="project-list-container"></div>
+                
+                <!-- 프로젝트 검색 -->
+                <div class="project-search-box">
+                    <input type="text" class="project-search-input" placeholder="🔍 프로젝트 검색..." oninput="filterProjects(this.value)">
+                </div>
+                
+                <!-- 진행중 섹션 -->
+                <div class="project-group">
+                    <div class="project-group-header" onclick="toggleProjectGroup('ongoing')">
+                        <span>진행중 <span id="ongoingCount">(0)</span></span>
+                    </div>
+                    <div id="ongoingProjectList" class="project-group-list"></div>
+                </div>
+                
+                <!-- 완료 섹션 -->
+                <div class="project-group">
+                    <div class="project-group-header" onclick="toggleProjectGroup('completed')">
+                        <span>완료 <span id="completedCount">(0)</span></span>
+                    </div>
+                    <div id="completedProjectList" class="project-group-list"></div>
+                </div>
             </nav>
 
             <div class="sidebar-footer">
@@ -2212,14 +2341,24 @@
                     <textarea class="form-textarea" id="projectDescInput" placeholder="프로젝트 설명 (선택사항)"></textarea>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">색상</label>
-                    <div class="color-options">
-                        <div class="color-option selected" data-color="#03CF5D" style="background: #03CF5D"></div>
-                        <div class="color-option" data-color="#63B3ED" style="background: #63B3ED"></div>
-                        <div class="color-option" data-color="#F6AD55" style="background: #F6AD55"></div>
-                        <div class="color-option" data-color="#FC8181" style="background: #FC8181"></div>
-                        <div class="color-option" data-color="#B794F4" style="background: #B794F4"></div>
-                        <div class="color-option" data-color="#718D96" style="background: #718D96"></div>
+                    <label class="form-label">미팅 타입</label>
+                    <div class="meeting-type-options">
+                        <div class="meeting-type-option selected" data-color="#FC8181" onclick="selectMeetingType(this)">
+                            <div class="meeting-type-color" style="background: #FC8181"></div>
+                            <span>🔴 외부미팅</span>
+                        </div>
+                        <div class="meeting-type-option" data-color="#63B3ED" onclick="selectMeetingType(this)">
+                            <div class="meeting-type-color" style="background: #63B3ED"></div>
+                            <span>🔵 협업미팅</span>
+                        </div>
+                        <div class="meeting-type-option" data-color="#03CF5D" onclick="selectMeetingType(this)">
+                            <div class="meeting-type-color" style="background: #03CF5D"></div>
+                            <span>🟢 내부회의</span>
+                        </div>
+                        <div class="meeting-type-option" data-color="#F6AD55" onclick="selectMeetingType(this)">
+                            <div class="meeting-type-color" style="background: #F6AD55"></div>
+                            <span>🟡 개인프로젝트</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2246,12 +2385,24 @@
                     <textarea class="form-textarea" id="calendarProjectDesc" placeholder="설명 (선택)"></textarea>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">색상</label>
-                    <div class="color-options" id="calendarColorOptions">
-                        <div class="color-option selected" data-color="#03CF5D" style="background: #03CF5D"></div>
-                        <div class="color-option" data-color="#63B3ED" style="background: #63B3ED"></div>
-                        <div class="color-option" data-color="#F6AD55" style="background: #F6AD55"></div>
-                        <div class="color-option" data-color="#FC8181" style="background: #FC8181"></div>
+                    <label class="form-label">미팅 타입</label>
+                    <div class="meeting-type-options" id="calendarMeetingTypeOptions">
+                        <div class="meeting-type-option selected" data-color="#FC8181" onclick="selectCalendarMeetingType(this)">
+                            <div class="meeting-type-color" style="background: #FC8181"></div>
+                            <span>🔴 외부미팅</span>
+                        </div>
+                        <div class="meeting-type-option" data-color="#63B3ED" onclick="selectCalendarMeetingType(this)">
+                            <div class="meeting-type-color" style="background: #63B3ED"></div>
+                            <span>🔵 협업미팅</span>
+                        </div>
+                        <div class="meeting-type-option" data-color="#03CF5D" onclick="selectCalendarMeetingType(this)">
+                            <div class="meeting-type-color" style="background: #03CF5D"></div>
+                            <span>🟢 내부회의</span>
+                        </div>
+                        <div class="meeting-type-option" data-color="#F6AD55" onclick="selectCalendarMeetingType(this)">
+                            <div class="meeting-type-color" style="background: #F6AD55"></div>
+                            <span>🟡 개인프로젝트</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2383,14 +2534,24 @@
                     <textarea class="form-textarea" id="editProjectDesc"></textarea>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">색상</label>
-                    <div class="color-options" id="editProjectColorOptions">
-                        <div class="color-option" data-color="#03CF5D" style="background: #03CF5D"></div>
-                        <div class="color-option" data-color="#63B3ED" style="background: #63B3ED"></div>
-                        <div class="color-option" data-color="#F6AD55" style="background: #F6AD55"></div>
-                        <div class="color-option" data-color="#FC8181" style="background: #FC8181"></div>
-                        <div class="color-option" data-color="#B794F4" style="background: #B794F4"></div>
-                        <div class="color-option" data-color="#718D96" style="background: #718D96"></div>
+                    <label class="form-label">미팅 타입</label>
+                    <div class="meeting-type-options" id="editProjectMeetingTypeOptions">
+                        <div class="meeting-type-option" data-color="#FC8181" onclick="selectEditProjectMeetingType(this)">
+                            <div class="meeting-type-color" style="background: #FC8181"></div>
+                            <span>🔴 외부미팅</span>
+                        </div>
+                        <div class="meeting-type-option" data-color="#63B3ED" onclick="selectEditProjectMeetingType(this)">
+                            <div class="meeting-type-color" style="background: #63B3ED"></div>
+                            <span>🔵 협업미팅</span>
+                        </div>
+                        <div class="meeting-type-option" data-color="#03CF5D" onclick="selectEditProjectMeetingType(this)">
+                            <div class="meeting-type-color" style="background: #03CF5D"></div>
+                            <span>🟢 내부회의</span>
+                        </div>
+                        <div class="meeting-type-option" data-color="#F6AD55" onclick="selectEditProjectMeetingType(this)">
+                            <div class="meeting-type-color" style="background: #F6AD55"></div>
+                            <span>🟡 개인프로젝트</span>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -2432,8 +2593,23 @@
         let currentProject = null;
         let currentDate = new Date();
         let miniCalendarDate = new Date();
-        let selectedColor = '#03CF5D';
-        let calendarSelectedColor = '#03CF5D';
+        let selectedColor = '#FC8181'; // 기본값: 외부미팅
+
+        // 미팅 타입 선택
+        function selectMeetingType(el) {
+            document.querySelectorAll('.meeting-type-option').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedColor = el.dataset.color;
+        }
+        let calendarSelectedColor = '#FC8181'; // 기본값: 외부미팅
+
+        // 캘린더 미팅 타입 선택
+        function selectCalendarMeetingType(el) {
+            const container = document.getElementById('calendarMeetingTypeOptions');
+            container.querySelectorAll('.meeting-type-option').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            calendarSelectedColor = el.dataset.color;
+        }
         let calendarSelectedDate = null;
         let visitFiles = [];
         let allFiles = [];
@@ -2441,6 +2617,25 @@
         let recentActivities = []; // 최근 활동
         let currentVisits = []; // 현재 프로젝트의 방문 기록
         let expandedVisitIds = new Set(); // 열려있는 방문 기록 ID들
+
+        // 미팅 타입 정의 (색상 ↔ 타입 매핑)
+        const MEETING_TYPES = {
+            '#FC8181': { name: '외부미팅', emoji: '🔴' },
+            '#63B3ED': { name: '협업미팅', emoji: '🔵' },
+            '#03CF5D': { name: '내부회의', emoji: '🟢' },
+            '#F6AD55': { name: '개인프로젝트', emoji: '🟡' }
+        };
+
+        function getMeetingType(color) {
+            return MEETING_TYPES[color] || { name: '기타', emoji: '⚪' };
+        }
+
+        // 프로젝트 검색어
+        let projectSearchQuery = '';
+        
+        // 진행중/완료 토글 상태
+        let ongoingExpanded = true;
+        let completedExpanded = true;
 
         // 현재 열린 방문기록 상태 저장
         function saveExpandedState() {
@@ -2565,6 +2760,9 @@
         async function navigateToNotification(linkData) {
             if (!linkData || !linkData.projectId) return;
             
+            // 알림 클릭 시 권한 요청
+            requestNotificationPermission();
+            
             // 프로젝트로 이동
             await selectProject(linkData.projectId);
             
@@ -2629,9 +2827,6 @@
             document.getElementById('currentUserAvatar').textContent = currentUser.avatar_initial;
             document.getElementById('currentUserAvatar').style.background = currentUser.avatar_color;
             document.getElementById('currentUserName').textContent = currentUser.name;
-            
-            // 알림 권한 요청
-            requestNotificationPermission();
             
             await loadProjects();
             await loadAllFiles();
@@ -2819,39 +3014,98 @@
         }
 
         function renderProjectList() {
-            const container = document.getElementById('projectList');
-            if (projects.length === 0) {
-                container.innerHTML = '<div class="nav-item" style="color: var(--dark-600); font-size: 13px;">프로젝트 없음</div>';
-                return;
+            // 검색 필터 적용
+            let filtered = projects;
+            if (projectSearchQuery) {
+                filtered = projects.filter(p => 
+                    p.name.toLowerCase().includes(projectSearchQuery.toLowerCase())
+                );
             }
-            container.innerHTML = projects.map(p => `
-                <div class="nav-item ${currentProject?.id === p.id ? 'active' : ''}" onclick="selectProject('${p.id}')">
-                    <div class="project-color" style="background: ${p.color}"></div>
-                    <span style="flex:1">${p.name}</span>
-                    <span class="project-status-tag status-${p.status || '진행중'}">${p.status || '진행중'}</span>
-                </div>
-            `).join('');
+            
+            // 진행중 / 완료 분리
+            const ongoing = filtered.filter(p => (p.status || '진행중') === '진행중');
+            const completed = filtered.filter(p => (p.status || '진행중') === '완료');
+            
+            // 카운트 업데이트
+            document.getElementById('ongoingCount').textContent = `(${ongoing.length})`;
+            document.getElementById('completedCount').textContent = `(${completed.length})`;
+            
+            // 진행중 프로젝트 렌더링
+            const ongoingContainer = document.getElementById('ongoingProjectList');
+            if (ongoing.length === 0) {
+                ongoingContainer.innerHTML = '<div class="nav-item" style="color: var(--dark-600); font-size: 12px; padding-left: 24px;">프로젝트 없음</div>';
+            } else {
+                ongoingContainer.innerHTML = ongoing.map(p => {
+                    const meetingType = getMeetingType(p.color);
+                    return `
+                    <div class="nav-item ${currentProject?.id === p.id ? 'active' : ''}" onclick="selectProject('${p.id}')">
+                        <div class="project-color" style="background: ${p.color}"></div>
+                        <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.name}</span>
+                        <span class="project-type-tag">${meetingType.name}</span>
+                    </div>
+                `}).join('');
+            }
+            
+            // 완료 프로젝트 렌더링
+            const completedContainer = document.getElementById('completedProjectList');
+            if (completed.length === 0) {
+                completedContainer.innerHTML = '<div class="nav-item" style="color: var(--dark-600); font-size: 12px; padding-left: 24px;">프로젝트 없음</div>';
+            } else {
+                completedContainer.innerHTML = completed.map(p => {
+                    const meetingType = getMeetingType(p.color);
+                    return `
+                    <div class="nav-item ${currentProject?.id === p.id ? 'active' : ''}" onclick="selectProject('${p.id}')">
+                        <div class="project-color" style="background: ${p.color}"></div>
+                        <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.name}</span>
+                        <span class="project-type-tag">${meetingType.name}</span>
+                    </div>
+                `}).join('');
+            }
         }
 
-        // ========== 프로젝트 목록 토글 ==========
-        let projectListCollapsed = false;
-        
-        function toggleProjectList() {
-            const container = document.getElementById('projectList');
-            const icon = document.getElementById('projectToggleIcon');
-            projectListCollapsed = !projectListCollapsed;
-            
-            if (projectListCollapsed) {
-                container.classList.add('collapsed');
-                icon.style.transform = 'rotate(-90deg)';
+        // 프로젝트 검색 필터
+        function filterProjects(query) {
+            projectSearchQuery = query;
+            renderProjectList();
+        }
+
+        // 프로젝트 그룹 토글 (진행중/완료)
+        function toggleProjectGroup(group) {
+            if (group === 'ongoing') {
+                ongoingExpanded = !ongoingExpanded;
+                const list = document.getElementById('ongoingProjectList');
+                const header = list.previousElementSibling;
+                if (ongoingExpanded) {
+                    list.classList.remove('collapsed');
+                    header.classList.remove('collapsed');
+                } else {
+                    list.classList.add('collapsed');
+                    header.classList.add('collapsed');
+                }
             } else {
-                container.classList.remove('collapsed');
-                icon.style.transform = 'rotate(0deg)';
+                completedExpanded = !completedExpanded;
+                const list = document.getElementById('completedProjectList');
+                const header = list.previousElementSibling;
+                if (completedExpanded) {
+                    list.classList.remove('collapsed');
+                    header.classList.remove('collapsed');
+                } else {
+                    list.classList.add('collapsed');
+                    header.classList.add('collapsed');
+                }
             }
         }
 
         // 프로젝트 설정 모달용 변수
-        let editProjectColor = '#03CF5D';
+        let editProjectColor = '#FC8181';
+
+        // 프로젝트 설정 미팅 타입 선택
+        function selectEditProjectMeetingType(el) {
+            const container = document.getElementById('editProjectMeetingTypeOptions');
+            container.querySelectorAll('.meeting-type-option').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            editProjectColor = el.dataset.color;
+        }
 
         // 프로젝트 목록 모달 열기
         function openProjectListModal(status) {
@@ -3522,10 +3776,10 @@
             document.getElementById('calendarAddDate').textContent = date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
             document.getElementById('calendarProjectName').value = '';
             document.getElementById('calendarProjectDesc').value = '';
-            calendarSelectedColor = '#03CF5D';
-            document.querySelectorAll('#calendarColorOptions .color-option').forEach(el => {
+            calendarSelectedColor = '#FC8181';
+            document.querySelectorAll('#calendarMeetingTypeOptions .meeting-type-option').forEach(el => {
                 el.classList.remove('selected');
-                if (el.dataset.color === '#03CF5D') el.classList.add('selected');
+                if (el.dataset.color === '#FC8181') el.classList.add('selected');
             });
             openModal('calendarAdd');
         }
@@ -3707,8 +3961,8 @@
                 document.getElementById('editProjectStatus').value = currentProject.status || '진행중';
                 editProjectColor = currentProject.color;
                 
-                // 색상 선택 업데이트
-                document.querySelectorAll('#editProjectColorOptions .color-option').forEach(el => {
+                // 미팅 타입 선택 업데이트
+                document.querySelectorAll('#editProjectMeetingTypeOptions .meeting-type-option').forEach(el => {
                     el.classList.remove('selected');
                     if (el.dataset.color === currentProject.color) {
                         el.classList.add('selected');

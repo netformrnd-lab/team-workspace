@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
             /* 메인 컬러 팔레트 */
@@ -1446,12 +1447,129 @@
         .visit-content {
             font-size: 15px;
             line-height: 1.8;
-            white-space: pre-wrap;
             color: var(--dark-800);
             padding: 20px;
             background: var(--light-50);
             border-radius: var(--radius-sm);
             margin-bottom: 20px;
+        }
+
+        /* 마크다운 스타일 */
+        .visit-content.markdown-body h1 {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin: 1em 0 0.5em 0;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid var(--light-200);
+        }
+        
+        .visit-content.markdown-body h2 {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin: 1em 0 0.5em 0;
+            padding-bottom: 0.2em;
+            border-bottom: 1px solid var(--light-100);
+        }
+        
+        .visit-content.markdown-body h3 {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin: 0.8em 0 0.4em 0;
+        }
+        
+        .visit-content.markdown-body p {
+            margin: 0.5em 0;
+        }
+        
+        .visit-content.markdown-body ul, 
+        .visit-content.markdown-body ol {
+            padding-left: 1.5em;
+            margin: 0.5em 0;
+        }
+        
+        .visit-content.markdown-body li {
+            margin: 0.3em 0;
+        }
+        
+        .visit-content.markdown-body ul li {
+            list-style-type: disc;
+        }
+        
+        .visit-content.markdown-body ol li {
+            list-style-type: decimal;
+        }
+        
+        .visit-content.markdown-body blockquote {
+            margin: 0.8em 0;
+            padding: 0.5em 1em;
+            border-left: 4px solid var(--primary);
+            background: rgba(3, 207, 93, 0.05);
+            border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+        }
+        
+        .visit-content.markdown-body blockquote p {
+            margin: 0;
+        }
+        
+        .visit-content.markdown-body strong {
+            font-weight: 700;
+            color: var(--dark-900);
+        }
+        
+        .visit-content.markdown-body em {
+            font-style: italic;
+        }
+        
+        .visit-content.markdown-body code {
+            background: var(--light-200);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+        
+        .visit-content.markdown-body pre {
+            background: var(--dark-800);
+            color: #f8f8f2;
+            padding: 1em;
+            border-radius: var(--radius-sm);
+            overflow-x: auto;
+            margin: 0.8em 0;
+        }
+        
+        .visit-content.markdown-body pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+        
+        .visit-content.markdown-body hr {
+            border: none;
+            border-top: 1px solid var(--light-200);
+            margin: 1em 0;
+        }
+        
+        .visit-content.markdown-body a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+        
+        .visit-content.markdown-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.8em 0;
+        }
+        
+        .visit-content.markdown-body th,
+        .visit-content.markdown-body td {
+            border: 1px solid var(--light-200);
+            padding: 0.5em 0.8em;
+            text-align: left;
+        }
+        
+        .visit-content.markdown-body th {
+            background: var(--light-100);
+            font-weight: 600;
         }
 
         .visit-files {
@@ -4674,6 +4792,25 @@
             }
         }
 
+        // 마크다운 렌더링 함수
+        function renderMarkdown(content) {
+            if (!content) return '<p>내용 없음</p>';
+            
+            try {
+                // marked 옵션 설정
+                marked.setOptions({
+                    breaks: true,  // 줄바꿈을 <br>로 변환
+                    gfm: true,     // GitHub Flavored Markdown
+                    sanitize: false
+                });
+                
+                return marked.parse(content);
+            } catch (e) {
+                // marked 로드 실패 시 기본 텍스트로 표시
+                return `<p>${content.replace(/\n/g, '<br>')}</p>`;
+            }
+        }
+
         function renderVisits(visits) {
             currentVisits = visits; // 전역 변수에 저장
             document.getElementById('visitsCount').textContent = visits.length;
@@ -4778,7 +4915,7 @@
                             <span class="visit-toggle">▼</span>
                         </div>
                         <div class="visit-body">
-                            <div class="visit-content">${visit.content || '내용 없음'}</div>
+                            <div class="visit-content markdown-body">${renderMarkdown(visit.content)}</div>
                             ${filesHtml}
                             ${commentsHtml}
                         </div>

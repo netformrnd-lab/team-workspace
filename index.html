@@ -2261,6 +2261,81 @@
             border-radius: 4px;
         }
 
+        .status-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .status-option {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            border: 2px solid var(--light-200);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            background: var(--white);
+        }
+
+        .status-option:hover {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .status-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .personal-type-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .personal-type-option {
+            flex: 1;
+            min-width: calc(50% - 5px);
+            padding: 12px 16px;
+            border: 2px solid var(--light-200);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+            background: var(--white);
+        }
+
+        .personal-type-option:hover {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .personal-type-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .date-range-inputs {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .date-range-inputs .form-input {
+            flex: 1;
+        }
+
+        .date-range-separator {
+            font-weight: 600;
+            color: var(--dark-400);
+        }
+
         .schedule-type-options {
             display: flex;
             gap: 12px;
@@ -2789,6 +2864,38 @@
                 padding: 12px;
             }
             
+            .status-options {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .status-option {
+                padding: 10px 12px;
+            }
+            
+            .personal-type-options {
+                gap: 8px;
+            }
+            
+            .personal-type-option {
+                min-width: calc(50% - 4px);
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+            
+            .date-range-inputs {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .date-range-separator {
+                display: none;
+            }
+            
+            .date-range-inputs .form-input::before {
+                content: attr(data-label);
+            }
+            
             /* 담당자 옵션 */
             .assignee-options {
                 flex-direction: column;
@@ -3304,17 +3411,61 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">📅 다음 방문 예정일</label>
+                        <input type="date" class="form-input" id="newProjectDate">
+                        <small style="color: var(--light-400); font-size: 12px; margin-top: 4px; display: block;">비워두면 미지정 상태로 생성됩니다</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">📊 상태</label>
+                        <div class="status-options" id="newProjectStatusOptions">
+                            <div class="status-option selected" data-status="시작전" onclick="selectNewProjectStatus(this)">
+                                <span>🆕 시작 전</span>
+                            </div>
+                            <div class="status-option" data-status="진행중" onclick="selectNewProjectStatus(this)">
+                                <span>🔥 진행중</span>
+                            </div>
+                            <div class="status-option" data-status="완료" onclick="selectNewProjectStatus(this)">
+                                <span>✅ 완료</span>
+                            </div>
+                            <div class="status-option" data-status="보류" onclick="selectNewProjectStatus(this)">
+                                <span>⏸️ 보류</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- 개인일정 입력 영역 -->
                 <div id="newPersonalInputArea" style="display: none;">
                     <div class="form-group">
+                        <label class="form-label">일정 유형 *</label>
+                        <div class="personal-type-options" id="personalTypeOptions">
+                            <div class="personal-type-option selected" data-type="휴가" onclick="selectPersonalType(this)">
+                                🏖️ 휴가
+                            </div>
+                            <div class="personal-type-option" data-type="외출" onclick="selectPersonalType(this)">
+                                🚗 외출
+                            </div>
+                            <div class="personal-type-option" data-type="재택근무" onclick="selectPersonalType(this)">
+                                🏠 재택근무
+                            </div>
+                            <div class="personal-type-option" data-type="기타" onclick="selectPersonalType(this)">
+                                ✏️ 기타
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" id="customTitleGroup" style="display: none;">
                         <label class="form-label">일정 제목 *</label>
-                        <input type="text" class="form-input" id="newPersonalTitle" placeholder="예: 휴가, 외출, 재택근무 등">
+                        <input type="text" class="form-input" id="newPersonalTitle" placeholder="일정 제목을 입력하세요">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">날짜 *</label>
-                        <input type="date" class="form-input" id="newPersonalDate">
+                        <label class="form-label">📅 기간 *</label>
+                        <div class="date-range-inputs">
+                            <input type="date" class="form-input" id="newPersonalStartDate">
+                            <span class="date-range-separator">~</span>
+                            <input type="date" class="form-input" id="newPersonalEndDate">
+                        </div>
+                        <small style="color: var(--light-400); font-size: 12px; margin-top: 4px; display: block;">하루만 선택하려면 같은 날짜를 선택하세요</small>
                     </div>
                     <div class="form-group">
                         <label class="form-label">메모</label>
@@ -3660,6 +3811,7 @@
         let personalSchedules = [];
         let calendarScheduleType = 'project'; // 'project' or 'personal'
         let newProjectScheduleType = 'project'; // 새 프로젝트 모달용
+        let newProjectStatus = '시작전'; // 새 프로젝트 상태
         let editingPersonalScheduleId = null; // 수정 중인 개인일정 ID
         let visitFiles = [];
         let allFiles = [];
@@ -3667,6 +3819,13 @@
         let recentActivities = []; // 최근 활동
         let currentVisits = []; // 현재 프로젝트의 방문 기록
         let expandedVisitIds = new Set(); // 열려있는 방문 기록 ID들
+        
+        // 새 프로젝트 상태 선택
+        function selectNewProjectStatus(el) {
+            document.querySelectorAll('#newProjectStatusOptions .status-option').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            newProjectStatus = el.dataset.status;
+        }
 
         // 미팅 타입 정의 (색상 ↔ 타입 매핑)
         const MEETING_TYPES = {
@@ -4796,19 +4955,142 @@
         function renderMarkdown(content) {
             if (!content) return '<p>내용 없음</p>';
             
-            try {
-                // marked 옵션 설정
-                marked.setOptions({
-                    breaks: true,  // 줄바꿈을 <br>로 변환
-                    gfm: true,     // GitHub Flavored Markdown
-                    sanitize: false
-                });
-                
-                return marked.parse(content);
-            } catch (e) {
-                // marked 로드 실패 시 기본 텍스트로 표시
-                return `<p>${content.replace(/\n/g, '<br>')}</p>`;
+            // 마크다운 문법이 있는지 확인 (더 엄격하게)
+            const hasMarkdown = /^#{1,6}\s.+|^\* \*\*|^>\s|^```|^\*\*[^*]+\*\*:/m.test(content);
+            
+            if (hasMarkdown) {
+                // 마크다운 문법이 있으면 marked로 파싱
+                try {
+                    marked.setOptions({
+                        breaks: true,
+                        gfm: true,
+                        sanitize: false
+                    });
+                    return marked.parse(content);
+                } catch (e) {
+                    return `<p>${content.replace(/\n/g, '<br>')}</p>`;
+                }
+            } else {
+                // 일반 텍스트 자동 포맷팅
+                return formatPlainText(content);
             }
+        }
+        
+        // 일반 텍스트를 예쁘게 포맷팅 (GPT 드래그 복사 대응)
+        function formatPlainText(content) {
+            const lines = content.split('\n').filter(line => line.trim() !== '');
+            let html = '';
+            let i = 0;
+            
+            // 이모지 패턴
+            const emojiPattern = /^(📝|📋|🔑|✅|☑️|💡|🎯|📌|🚀|💬|📊|📈|🔍|⚠️|❗|❓|💭|📅|🗓️|1️⃣|2️⃣|3️⃣|4️⃣|5️⃣|🔴|🟡|🟢|🔵|⚫|⬛|🟥|🟨|🟩|🟦|🔶|🔷|📎|🗂️|📁|🗒️|🔧|⚙️|🛠️|👉|✨|⭐|🌟|💫|🔥|💪|👍|🙌|👏|🤝|✔️|❌|⏰|📞|📧|💼|🏢|🔸|🔹|🔻|🔺)/;
+            
+            // 소제목 키워드
+            const subheadingKeywords = ['정보', '수준', '영역', '이슈', '정리', '목표', '계획', '요약', '결과', '현황', '내용', '사항', '배경', '목적', '결론', '참고', '기타', '일정', '항목', '조치'];
+            
+            while (i < lines.length) {
+                const line = lines[i].trim();
+                
+                // 1. 이모지로 시작 → 대제목 (h3)
+                if (emojiPattern.test(line)) {
+                    html += `<h3>${line}</h3>`;
+                    i++;
+                    continue;
+                }
+                
+                // 2. 짧은 줄 (2-15자) + 소제목 키워드 포함 → 소제목
+                const isSubheading = line.length >= 2 && line.length <= 15 && 
+                    subheadingKeywords.some(kw => line.includes(kw));
+                
+                if (isSubheading) {
+                    html += `<p><strong>${line}</strong></p>`;
+                    i++;
+                    
+                    // 다음 줄들을 목록으로 수집
+                    let listItems = [];
+                    while (i < lines.length) {
+                        const nextLine = lines[i].trim();
+                        // 다음 제목/소제목이 나오면 중단
+                        if (emojiPattern.test(nextLine) || 
+                            (nextLine.length <= 15 && subheadingKeywords.some(kw => nextLine.includes(kw))) ||
+                            nextLine.match(/^.+[:：]$/) // 콜론만으로 끝나는 줄
+                        ) {
+                            break;
+                        }
+                        listItems.push(nextLine);
+                        i++;
+                    }
+                    
+                    if (listItems.length > 0) {
+                        html += '<ul>';
+                        listItems.forEach(item => {
+                            // "라벨: 값" 형태 처리
+                            const colonMatch = item.match(/^(.+?)[:：]\s*(.+)$/);
+                            if (colonMatch && colonMatch[1].length < 15) {
+                                html += `<li><strong>${colonMatch[1]}:</strong> ${colonMatch[2]}</li>`;
+                            } else {
+                                html += `<li>${item}</li>`;
+                            }
+                        });
+                        html += '</ul>';
+                    }
+                    continue;
+                }
+                
+                // 3. "라벨:" 또는 "라벨：" (콜론만으로 끝남) → 다음 줄들이 하위 목록
+                const labelOnlyMatch = line.match(/^(.+?)[:：]$/);
+                if (labelOnlyMatch && labelOnlyMatch[1].length < 15) {
+                    // 하위 항목 수집
+                    let subItems = [];
+                    i++;
+                    while (i < lines.length) {
+                        const nextLine = lines[i].trim();
+                        // 새로운 라벨이나 제목이 나오면 중단
+                        if (nextLine.match(/^.+[:：]/) || emojiPattern.test(nextLine) ||
+                            (nextLine.length <= 15 && subheadingKeywords.some(kw => nextLine.includes(kw)))) {
+                            break;
+                        }
+                        subItems.push(nextLine);
+                        i++;
+                    }
+                    
+                    html += `<ul><li><strong>${labelOnlyMatch[1]}:</strong>`;
+                    if (subItems.length > 0) {
+                        html += '<ul>';
+                        subItems.forEach(item => {
+                            html += `<li>${item}</li>`;
+                        });
+                        html += '</ul>';
+                    }
+                    html += '</li></ul>';
+                    continue;
+                }
+                
+                // 4. "라벨: 값" 형태 → 목록 항목
+                const colonMatch = line.match(/^(.+?)[:：]\s*(.+)$/);
+                if (colonMatch && colonMatch[1].length < 15) {
+                    html += `<ul><li><strong>${colonMatch[1]}:</strong> ${colonMatch[2]}</li></ul>`;
+                    i++;
+                    continue;
+                }
+                
+                // 5. 글머리 기호가 있는 경우
+                const bulletMatch = line.match(/^[•·\-\*]\s*(.+)/);
+                if (bulletMatch) {
+                    html += `<ul><li>${bulletMatch[1]}</li></ul>`;
+                    i++;
+                    continue;
+                }
+                
+                // 6. 일반 텍스트
+                html += `<p>${line}</p>`;
+                i++;
+            }
+            
+            // 연속된 ul 태그 병합
+            html = html.replace(/<\/ul>\s*<ul>/g, '');
+            
+            return html || '<p>내용 없음</p>';
         }
 
         function renderVisits(visits) {
@@ -5728,6 +6010,14 @@
                 document.getElementById('projectDescInput').value = '';
                 document.getElementById('newPersonalTitle').value = '';
                 document.getElementById('newPersonalDesc').value = '';
+                // 날짜 초기화 (오늘 날짜로)
+                document.getElementById('newProjectDate').value = getLocalDateString();
+                // 상태 초기화 (시작전으로)
+                newProjectStatus = '시작전';
+                document.querySelectorAll('#newProjectStatusOptions .status-option').forEach(el => {
+                    el.classList.remove('selected');
+                    if (el.dataset.status === '시작전') el.classList.add('selected');
+                });
                 // 미팅 타입 초기화
                 selectedColor = '#FC8181';
                 document.querySelectorAll('#newProjectModal .meeting-type-option').forEach(el => {
@@ -5858,6 +6148,22 @@
         }
 
         // 새 프로젝트 모달 - 일정 타입 선택
+        // 개인일정 유형 선택
+        let selectedPersonalType = '휴가';
+        
+        function selectPersonalType(el) {
+            document.querySelectorAll('#personalTypeOptions .personal-type-option').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedPersonalType = el.dataset.type;
+            
+            // 기타 선택 시 제목 입력 필드 표시
+            if (selectedPersonalType === '기타') {
+                document.getElementById('customTitleGroup').style.display = 'block';
+            } else {
+                document.getElementById('customTitleGroup').style.display = 'none';
+            }
+        }
+
         function selectNewProjectType(type) {
             newProjectScheduleType = type;
             document.querySelectorAll('#newProjectModal .schedule-type-option').forEach(el => {
@@ -5875,33 +6181,64 @@
                 const userColor = getUserPersonalColor(currentUser.id);
                 document.getElementById('newPersonalColorPreview').style.background = userColor;
                 // 오늘 날짜 기본값
-                document.getElementById('newPersonalDate').value = getLocalDateString();
+                const today = getLocalDateString();
+                document.getElementById('newPersonalStartDate').value = today;
+                document.getElementById('newPersonalEndDate').value = today;
+                // 일정 유형 초기화
+                selectedPersonalType = '휴가';
+                document.querySelectorAll('#personalTypeOptions .personal-type-option').forEach(el => {
+                    el.classList.remove('selected');
+                    if (el.dataset.type === '휴가') el.classList.add('selected');
+                });
+                document.getElementById('customTitleGroup').style.display = 'none';
+                document.getElementById('newPersonalTitle').value = '';
             }
         }
 
-        // 새 프로젝트 모달에서 개인일정 저장
+        // 새 프로젝트 모달에서 개인일정 저장 (기간 지원)
         async function saveNewPersonalSchedule() {
-            const title = document.getElementById('newPersonalTitle').value.trim();
-            const date = document.getElementById('newPersonalDate').value;
-            if (!title) { showToast('일정 제목을 입력하세요', 'error'); return; }
-            if (!date) { showToast('날짜를 선택하세요', 'error'); return; }
+            let title = selectedPersonalType;
+            if (selectedPersonalType === '기타') {
+                title = document.getElementById('newPersonalTitle').value.trim();
+                if (!title) { showToast('일정 제목을 입력하세요', 'error'); return; }
+            }
             
-            const { data, error } = await db.from('personal_schedules').insert({
-                user_id: currentUser.id,
-                title,
-                description: document.getElementById('newPersonalDesc').value.trim(),
-                schedule_date: date
-            }).select().single();
+            const startDate = document.getElementById('newPersonalStartDate').value;
+            const endDate = document.getElementById('newPersonalEndDate').value;
+            
+            if (!startDate || !endDate) { showToast('기간을 선택하세요', 'error'); return; }
+            if (startDate > endDate) { showToast('종료일이 시작일보다 빠를 수 없습니다', 'error'); return; }
+            
+            const description = document.getElementById('newPersonalDesc').value.trim();
+            
+            // 기간 내 모든 날짜에 대해 일정 생성
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const schedules = [];
+            
+            for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                const dateStr = getLocalDateString(d);
+                schedules.push({
+                    user_id: currentUser.id,
+                    title,
+                    description,
+                    schedule_date: dateStr
+                });
+            }
+            
+            const { data, error } = await db.from('personal_schedules').insert(schedules).select();
             
             if (error) { showToast('저장 실패', 'error'); return; }
             
-            personalSchedules.push(data);
+            personalSchedules.push(...data);
             renderCalendar();
             renderMiniCalendar();
             closeModal('newProject');
             document.getElementById('newPersonalTitle').value = '';
             document.getElementById('newPersonalDesc').value = '';
-            showToast('개인일정이 등록되었습니다', 'success');
+            
+            const dayCount = schedules.length;
+            showToast(`개인일정이 ${dayCount}일간 등록되었습니다`, 'success');
         }
 
         // 새 프로젝트/개인일정 통합 저장
@@ -5918,11 +6255,14 @@
             const name = document.getElementById('projectNameInput').value.trim();
             if (!name) { showToast('프로젝트명을 입력하세요', 'error'); return; }
             
+            const nextVisitDate = document.getElementById('newProjectDate').value || null;
+            
             const { data, error } = await db.from('projects').insert({
                 name,
                 description: document.getElementById('projectDescInput').value.trim(),
                 color: selectedColor,
-                status: '시작전',
+                status: newProjectStatus,
+                next_visit_date: nextVisitDate,
                 created_by: currentUser.id,
                 assigned_to: currentUser.id
             }).select().single();
@@ -5940,9 +6280,12 @@
             
             projects.unshift(data);
             renderProjectList();
+            renderCalendar();
+            renderMiniCalendar();
             closeModal('newProject');
             document.getElementById('projectNameInput').value = '';
             document.getElementById('projectDescInput').value = '';
+            document.getElementById('newProjectDate').value = '';
             showToast('프로젝트가 생성되었습니다', 'success');
             selectProject(data.id);
             updateDashboardStats();

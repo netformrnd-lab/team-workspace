@@ -2207,6 +2207,64 @@
         }
 
         .form-textarea { resize: vertical; min-height: 100px; }
+        
+        #visitContent {
+            min-height: 180px;
+            line-height: 1.6;
+        }
+        
+        #visitContent::placeholder {
+            color: var(--light-400);
+            font-size: 13px;
+        }
+        
+        .gpt-tip-box {
+            background: var(--light-50);
+            border: 1px dashed var(--light-300);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .gpt-tip-text {
+            font-size: 12px;
+            color: var(--light-500);
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        .gpt-tip-copy {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .gpt-tip-copy code {
+            flex: 1;
+            background: var(--white);
+            border: 1px solid var(--light-200);
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: var(--dark-600);
+            font-family: inherit;
+        }
+        
+        .gpt-copy-btn {
+            padding: 8px 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+        
+        .gpt-copy-btn:hover {
+            background: var(--primary-dark);
+        }
 
         .color-options {
             display: flex;
@@ -2498,6 +2556,20 @@
         }
 
         @media (max-width: 768px) {
+            /* GPT 팁 박스 */
+            .gpt-tip-copy {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .gpt-tip-copy code {
+                font-size: 12px;
+            }
+            
+            .gpt-copy-btn {
+                text-align: center;
+            }
+            
             /* 사이드바 */
             .sidebar { 
                 transform: translateX(-100%); 
@@ -3577,7 +3649,14 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">내용</label>
-                    <textarea class="form-textarea" id="visitContent" placeholder="방문 내용"></textarea>
+                    <div class="gpt-tip-box">
+                        <span class="gpt-tip-text">💡 GPT에게 아래 문구를 붙여넣으면 서식이 유지됩니다:</span>
+                        <div class="gpt-tip-copy">
+                            <code id="gptPromptText">마크다운 코드블록으로 출력해줘</code>
+                            <button type="button" class="gpt-copy-btn" onclick="copyGptPrompt()">📋 복사</button>
+                        </div>
+                    </div>
+                    <textarea class="form-textarea" id="visitContent" rows="8" placeholder="방문 내용을 입력하세요"></textarea>
                 </div>
                 <div class="form-group">
                     <label class="form-label">파일 첨부</label>
@@ -6401,6 +6480,23 @@
         }
 
         // 토스트
+        // GPT 프롬프트 복사
+        function copyGptPrompt() {
+            const text = document.getElementById('gptPromptText').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('복사되었습니다! GPT에 붙여넣기 하세요', 'success');
+            }).catch(() => {
+                // fallback
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('복사되었습니다! GPT에 붙여넣기 하세요', 'success');
+            });
+        }
+
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');

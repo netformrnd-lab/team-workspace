@@ -1753,6 +1753,11 @@
         @media (max-width: 768px) {
             .growth-info-row {
                 flex-direction: column;
+                gap: 12px;
+            }
+            
+            .growth-info-card.half {
+                width: 100%;
             }
         }
 
@@ -3661,6 +3666,10 @@
                 margin-left: 0; 
                 padding: 16px; 
                 padding-top: 70px;
+                overflow-x: hidden;
+                width: 100%;
+                max-width: 100vw;
+                box-sizing: border-box;
             }
             
             /* 모바일 헤더 */
@@ -4038,6 +4047,53 @@
             /* 프로젝트 상세 */
             .project-detail {
                 padding: 16px;
+                width: 100%;
+                max-width: 100%;
+                overflow-x: hidden;
+                box-sizing: border-box;
+            }
+            
+            .project-detail .content-header {
+                margin-bottom: 12px;
+            }
+            
+            .project-header-card {
+                padding: 16px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            
+            .project-header-top {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .project-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                width: 100%;
+            }
+            
+            .project-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 24px;
+            }
+            
+            .project-title-area h1 {
+                font-size: 18px;
+                word-break: break-word;
+            }
+            
+            .project-description {
+                font-size: 13px;
+            }
+            
+            .project-status-select {
+                width: 100%;
+                padding: 10px 12px;
+                font-size: 14px;
             }
             
             .project-header {
@@ -4062,14 +4118,47 @@
                 font-size: 12px;
             }
             
-            .project-meta {
-                flex-wrap: wrap;
-                gap: 8px;
-            }
-            
             .meta-badge {
                 font-size: 11px;
                 padding: 4px 8px;
+            }
+            
+            /* Growth 정보 섹션 모바일 */
+            .growth-info-section {
+                margin-bottom: 16px;
+            }
+            
+            .growth-info-card {
+                margin-bottom: 12px;
+            }
+            
+            .growth-info-header {
+                padding: 12px 16px;
+            }
+            
+            .growth-info-header h3 {
+                font-size: 13px;
+            }
+            
+            .growth-info-body {
+                padding: 12px 16px;
+            }
+            
+            .problem-definition-text {
+                font-size: 13px;
+                word-break: break-word;
+            }
+            
+            .info-item {
+                flex-wrap: wrap;
+            }
+            
+            .info-label {
+                font-size: 12px;
+            }
+            
+            .info-value {
+                font-size: 13px;
             }
             
             /* 방문 기록 */

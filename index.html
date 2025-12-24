@@ -6340,6 +6340,17 @@
                         renderMiniCalendar();
                     });
                 }).subscribe();
+
+            // 체크리스트 실시간 구독
+            db.channel('checklists_changes')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'checklists' }, (payload) => {
+                    // 현재 프로젝트의 체크리스트면 즉시 업데이트
+                    if (currentProject && payload.new?.project_id === currentProject.id) {
+                        loadChecklist();
+                    }
+                    // 대시보드 할 일 카드 업데이트
+                    loadAllChecklists();
+                }).subscribe();
         }
 
         // 알림 표시 함수
@@ -6457,6 +6468,7 @@
             await loadRecentActivities();
             await loadNotifications();
             await loadPersonalSchedules();
+            await loadAllChecklists();
             renderCalendar();
             renderMiniCalendar();
             updateDashboardStats();
@@ -7314,20 +7326,61 @@
         }
 
         // ========== 체크리스트 (로컬 저장) ==========
-        function loadChecklist() {
+        async function loadChecklist() {
             if (!currentProject) return;
-            // localStorage에서 체크리스트 불러오기
-            const saved = localStorage.getItem('workspace_checklist');
-            if (saved) {
-                checklist = JSON.parse(saved);
+            
+            try {
+                const { data, error } = await db
+                    .from('checklists')
+                    .select('*')
+                    .eq('project_id', currentProject.id)
+                    .order('created_at', { ascending: true });
+                
+                if (error) throw error;
+                
+                checklist[currentProject.id] = data || [];
+                renderChecklist();
+            } catch (err) {
+                console.error('체크리스트 로드 실패:', err);
+                // 폴백: localStorage에서 로드 시도
+                const saved = localStorage.getItem('workspace_checklist');
+                if (saved) {
+                    const localData = JSON.parse(saved);
+                    checklist[currentProject.id] = localData[currentProject.id] || [];
+                } else {
+                    checklist[currentProject.id] = [];
+                }
+                renderChecklist();
             }
-            if (!checklist[currentProject.id]) {
-                checklist[currentProject.id] = [];
+        }
+
+        // 모든 프로젝트의 체크리스트 로드 (대시보드용)
+        async function loadAllChecklists() {
+            try {
+                const { data, error } = await db
+                    .from('checklists')
+                    .select('*')
+                    .order('created_at', { ascending: true });
+                
+                if (error) throw error;
+                
+                // 프로젝트별로 그룹화
+                checklist = {};
+                (data || []).forEach(item => {
+                    if (!checklist[item.project_id]) {
+                        checklist[item.project_id] = [];
+                    }
+                    checklist[item.project_id].push(item);
+                });
+                
+                renderTodoCards();
+            } catch (err) {
+                console.error('전체 체크리스트 로드 실패:', err);
             }
-            renderChecklist();
         }
 
         function saveChecklistToStorage() {
+            // 이제 Supabase에 저장하므로 localStorage는 백업용으로만 사용
             localStorage.setItem('workspace_checklist', JSON.stringify(checklist));
             updateDashboardStats();
         }
@@ -7354,12 +7407,12 @@
                 container.innerHTML = '<div style="color: var(--dark-600); font-size: 14px; padding: 20px 0; text-align: center;">할 일을 추가해보세요</div>';
             } else {
                 container.innerHTML = items.map((item, idx) => `
-                    <div class="checklist-item ${item.completed ? 'completed' : ''}" id="checklist-item-${idx}">
-                        <div class="checkbox ${item.completed ? 'checked' : ''}" onclick="toggleChecklist(${idx})"></div>
+                    <div class="checklist-item ${item.completed ? 'completed' : ''}" id="checklist-item-${idx}" data-id="${item.id}">
+                        <div class="checkbox ${item.completed ? 'checked' : ''}" onclick="toggleChecklist('${item.id}', ${idx})"></div>
                         <span class="checklist-text">${escapeHtml(item.text)}</span>
                         <div class="checklist-actions">
                             <button class="checklist-edit" onclick="editChecklistItem(${idx})" title="수정">✏️</button>
-                            <button class="checklist-delete" onclick="deleteChecklistItem(${idx})" title="삭제">✕</button>
+                            <button class="checklist-delete" onclick="deleteChecklistItem('${item.id}', ${idx})" title="삭제">✕</button>
                         </div>
                     </div>
                 `).join('');
@@ -7382,11 +7435,12 @@
             
             const itemElement = document.getElementById(`checklist-item-${idx}`);
             const currentText = items[idx].text;
+            const itemId = items[idx].id;
             
             itemElement.innerHTML = `
-                <input type="text" class="checklist-edit-input" id="checklist-edit-input-${idx}" value="${escapeHtml(currentText)}" onkeypress="if(event.key==='Enter')saveChecklistEdit(${idx})" onkeydown="if(event.key==='Escape')renderChecklist()">
+                <input type="text" class="checklist-edit-input" id="checklist-edit-input-${idx}" value="${escapeHtml(currentText)}" onkeypress="if(event.key==='Enter')saveChecklistEdit('${itemId}', ${idx})" onkeydown="if(event.key==='Escape')renderChecklist()">
                 <div class="checklist-edit-actions">
-                    <button class="checklist-edit-btn save" onclick="saveChecklistEdit(${idx})">저장</button>
+                    <button class="checklist-edit-btn save" onclick="saveChecklistEdit('${itemId}', ${idx})">저장</button>
                     <button class="checklist-edit-btn cancel" onclick="renderChecklist()">취소</button>
                 </div>
             `;
@@ -7397,7 +7451,7 @@
         }
 
         // 체크리스트 수정 저장
-        function saveChecklistEdit(idx) {
+        async function saveChecklistEdit(itemId, idx) {
             const input = document.getElementById(`checklist-edit-input-${idx}`);
             const newText = input.value.trim();
             
@@ -7406,46 +7460,105 @@
                 return;
             }
             
-            const items = checklist[currentProject.id];
-            if (items && items[idx]) {
-                items[idx].text = newText;
+            try {
+                const { error } = await db
+                    .from('checklists')
+                    .update({ text: newText })
+                    .eq('id', itemId);
+                
+                if (error) throw error;
+                
+                // 로컬 데이터 업데이트
+                const items = checklist[currentProject.id];
+                if (items && items[idx]) {
+                    items[idx].text = newText;
+                }
                 saveChecklistToStorage();
                 renderChecklist();
                 showToast('수정되었습니다', 'success');
+            } catch (err) {
+                console.error('체크리스트 수정 실패:', err);
+                showToast('수정 실패', 'error');
             }
         }
 
-        function toggleChecklist(idx) {
+        async function toggleChecklist(itemId, idx) {
             const items = checklist[currentProject.id];
-            if (items && items[idx]) {
-                items[idx].completed = !items[idx].completed;
+            if (!items || !items[idx]) return;
+            
+            const newCompleted = !items[idx].completed;
+            
+            try {
+                const { error } = await db
+                    .from('checklists')
+                    .update({ completed: newCompleted })
+                    .eq('id', itemId);
+                
+                if (error) throw error;
+                
+                items[idx].completed = newCompleted;
                 saveChecklistToStorage();
                 renderChecklist();
+            } catch (err) {
+                console.error('체크리스트 토글 실패:', err);
             }
         }
 
-        function deleteChecklistItem(idx) {
-            const items = checklist[currentProject.id];
-            if (items) {
-                items.splice(idx, 1);
+        async function deleteChecklistItem(itemId, idx) {
+            if (!confirm('이 항목을 삭제하시겠습니까?')) return;
+            
+            try {
+                const { error } = await db
+                    .from('checklists')
+                    .delete()
+                    .eq('id', itemId);
+                
+                if (error) throw error;
+                
+                const items = checklist[currentProject.id];
+                if (items) {
+                    items.splice(idx, 1);
+                }
                 saveChecklistToStorage();
                 renderChecklist();
+                showToast('삭제되었습니다', 'success');
+            } catch (err) {
+                console.error('체크리스트 삭제 실패:', err);
+                showToast('삭제 실패', 'error');
             }
         }
 
-        function addChecklistItem() {
+        async function addChecklistItem() {
             const input = document.getElementById('newChecklistItem');
             const text = input.value.trim();
             if (!text || !currentProject) return;
 
-            if (!checklist[currentProject.id]) {
-                checklist[currentProject.id] = [];
+            try {
+                const { data, error } = await db
+                    .from('checklists')
+                    .insert({
+                        project_id: currentProject.id,
+                        text: text,
+                        completed: false,
+                        created_by: currentUser.id
+                    })
+                    .select()
+                    .single();
+                
+                if (error) throw error;
+                
+                if (!checklist[currentProject.id]) {
+                    checklist[currentProject.id] = [];
+                }
+                checklist[currentProject.id].push(data);
+                saveChecklistToStorage();
+                input.value = '';
+                renderChecklist();
+                showToast('할 일이 추가되었습니다', 'success');
+            } catch (err) {
+                console.error('체크리스트 추가 실패:', err);
+                showToast('추가 실패', 'error');
             }
-            checklist[currentProject.id].push({ text, completed: false });
-            saveChecklistToStorage();
-            input.value = '';
-            renderChecklist();
-            showToast('할 일이 추가되었습니다', 'success');
         }
 
         // ========== 방문 기록 ==========
@@ -8400,9 +8513,8 @@
             const container = document.getElementById('todoSection');
             if (!container) return;
             
-            // localStorage에서 체크리스트 불러오기
-            const saved = localStorage.getItem('workspace_checklist');
-            const allChecklist = saved ? JSON.parse(saved) : {};
+            // checklist 변수 사용 (Supabase에서 로드된 데이터)
+            const allChecklist = checklist;
             
             // 진행중인 프로젝트만 필터링
             const activeProjects = projects.filter(p => 
@@ -8732,6 +8844,7 @@
                     document.getElementById('dashboardSection').classList.add('active');
                     renderMiniCalendar();
                     loadRecentActivities();
+                    loadAllChecklists();
                     break;
                 case 'calendar':
                     document.getElementById('calendarSection').classList.add('active');

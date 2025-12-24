@@ -484,6 +484,63 @@
             background: var(--white);
         }
 
+        /* 프로젝트 카테고리 (2단 구조) */
+        .project-category {
+            margin-bottom: 8px;
+        }
+
+        .project-category-header {
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--dark-800);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+            border-radius: var(--radius-sm);
+            margin: 4px 8px;
+            background: var(--light-50);
+        }
+
+        .project-category-header:hover {
+            background: var(--light-200);
+        }
+
+        .category-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .category-name {
+            flex: 1;
+        }
+
+        .category-toggle {
+            font-size: 10px;
+            color: var(--dark-400);
+            transition: transform 0.2s;
+        }
+
+        .project-category.expanded .category-toggle {
+            transform: rotate(90deg);
+        }
+
+        .project-category-content {
+            display: none;
+            padding-left: 12px;
+        }
+
+        .project-category.expanded .project-category-content {
+            display: block;
+        }
+
         .project-group {
             margin-bottom: 4px;
         }
@@ -2348,6 +2405,42 @@
             background: var(--primary-soft);
         }
 
+        .category-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .category-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px;
+            border: 2px solid var(--light-200);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            background: var(--white);
+        }
+
+        .category-option:hover {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .category-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .category-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
         .personal-type-options {
             display: flex;
             flex-wrap: wrap;
@@ -3142,35 +3235,68 @@
                 </div>
                 
                 <!-- 시작 전 섹션 -->
-                <div class="project-group">
-                    <div class="project-group-header ready" id="readyHeader" onclick="toggleProjectGroup('ready')">
-                        <span>🆕 시작 전 <span id="readyCount">(0)</span></span>
+                <!-- 📈 그로스 이니셔티브 -->
+                <div class="project-category" id="growthCategory">
+                    <div class="project-category-header" onclick="toggleCategory('growth')">
+                        <span class="category-icon" style="background: #3B82F6;">📈</span>
+                        <span class="category-name">그로스 이니셔티브</span>
+                        <span class="category-toggle" id="growthToggle">▶</span>
                     </div>
-                    <div id="readyProjectList" class="project-group-list"></div>
+                    <div class="project-category-content" id="growthContent">
+                        <!-- 진행중 -->
+                        <div class="project-group">
+                            <div class="project-group-header ongoing" onclick="toggleProjectGroup('growthOngoing')">
+                                <span>🔥 진행중 <span id="growthOngoingCount">(0)</span></span>
+                            </div>
+                            <div id="growthOngoingList" class="project-group-list"></div>
+                        </div>
+                        <!-- 완료 -->
+                        <div class="project-group">
+                            <div class="project-group-header completed" onclick="toggleProjectGroup('growthCompleted')">
+                                <span>✅ 완료 <span id="growthCompletedCount">(0)</span></span>
+                            </div>
+                            <div id="growthCompletedList" class="project-group-list"></div>
+                        </div>
+                        <!-- 보류 -->
+                        <div class="project-group">
+                            <div class="project-group-header hold" onclick="toggleProjectGroup('growthHold')">
+                                <span>⏸️ 보류 <span id="growthHoldCount">(0)</span></span>
+                            </div>
+                            <div id="growthHoldList" class="project-group-list"></div>
+                        </div>
+                    </div>
                 </div>
                 
-                <!-- 진행중 섹션 -->
-                <div class="project-group">
-                    <div class="project-group-header ongoing" id="ongoingHeader" onclick="toggleProjectGroup('ongoing')">
-                        <span>🔥 진행중 <span id="ongoingCount">(0)</span></span>
+                <!-- 📄 일반업무 -->
+                <div class="project-category" id="generalCategory">
+                    <div class="project-category-header" onclick="toggleCategory('general')">
+                        <span class="category-icon" style="background: #03CF5D;">📄</span>
+                        <span class="category-name">일반업무</span>
+                        <span class="category-toggle" id="generalToggle">▶</span>
                     </div>
-                    <div id="ongoingProjectList" class="project-group-list"></div>
-                </div>
-                
-                <!-- 완료 섹션 -->
-                <div class="project-group">
-                    <div class="project-group-header completed" id="completedHeader" onclick="toggleProjectGroup('completed')">
-                        <span>✅ 완료 <span id="completedCount">(0)</span></span>
+                    <div class="project-category-content" id="generalContent">
+                        <!-- 진행중 -->
+                        <div class="project-group">
+                            <div class="project-group-header ongoing" onclick="toggleProjectGroup('generalOngoing')">
+                                <span>🔥 진행중 <span id="generalOngoingCount">(0)</span></span>
+                            </div>
+                            <div id="generalOngoingList" class="project-group-list"></div>
+                        </div>
+                        <!-- 완료 -->
+                        <div class="project-group">
+                            <div class="project-group-header completed" onclick="toggleProjectGroup('generalCompleted')">
+                                <span>✅ 완료 <span id="generalCompletedCount">(0)</span></span>
+                            </div>
+                            <div id="generalCompletedList" class="project-group-list"></div>
+                        </div>
+                        <!-- 보류 -->
+                        <div class="project-group">
+                            <div class="project-group-header hold" onclick="toggleProjectGroup('generalHold')">
+                                <span>⏸️ 보류 <span id="generalHoldCount">(0)</span></span>
+                            </div>
+                            <div id="generalHoldList" class="project-group-list"></div>
+                        </div>
                     </div>
-                    <div id="completedProjectList" class="project-group-list"></div>
-                </div>
-                
-                <!-- 보류 섹션 -->
-                <div class="project-group">
-                    <div class="project-group-header hold" id="holdHeader" onclick="toggleProjectGroup('hold')">
-                        <span>⏸️ 보류 <span id="holdCount">(0)</span></span>
-                    </div>
-                    <div id="holdProjectList" class="project-group-list"></div>
                 </div>
             </nav>
 
@@ -3463,25 +3589,18 @@
                         <textarea class="form-textarea" id="projectDescInput" placeholder="프로젝트 설명 (선택사항)"></textarea>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">미팅 타입</label>
-                        <div class="meeting-type-options">
-                            <div class="meeting-type-option selected" data-color="#FC8181" onclick="selectMeetingType(this)">
-                                <div class="meeting-type-color" style="background: #FC8181"></div>
-                                <span>🔴 외부미팅</span>
+                        <label class="form-label">📁 카테고리 *</label>
+                        <div class="category-options" id="newProjectCategoryOptions">
+                            <div class="category-option selected" data-category="growth" onclick="selectNewProjectCategory(this)">
+                                <span class="category-color" style="background: #3B82F6;"></span>
+                                <span>📈 그로스 이니셔티브</span>
                             </div>
-                            <div class="meeting-type-option" data-color="#63B3ED" onclick="selectMeetingType(this)">
-                                <div class="meeting-type-color" style="background: #63B3ED"></div>
-                                <span>🔵 협업미팅</span>
-                            </div>
-                            <div class="meeting-type-option" data-color="#03CF5D" onclick="selectMeetingType(this)">
-                                <div class="meeting-type-color" style="background: #03CF5D"></div>
-                                <span>🟢 내부회의</span>
-                            </div>
-                            <div class="meeting-type-option" data-color="#F6AD55" onclick="selectMeetingType(this)">
-                                <div class="meeting-type-color" style="background: #F6AD55"></div>
-                                <span>🟡 개인프로젝트</span>
+                            <div class="category-option" data-category="general" onclick="selectNewProjectCategory(this)">
+                                <span class="category-color" style="background: #03CF5D;"></span>
+                                <span>📄 일반업무</span>
                             </div>
                         </div>
+                        <small style="color: var(--light-400); font-size: 12px; margin-top: 4px; display: block;">그로스: 회사 구조/성과 변화 | 일반: 단발성 업무</small>
                     </div>
                     <div class="form-group">
                         <label class="form-label">📅 다음 방문 예정일</label>
@@ -3491,10 +3610,7 @@
                     <div class="form-group">
                         <label class="form-label">📊 상태</label>
                         <div class="status-options" id="newProjectStatusOptions">
-                            <div class="status-option selected" data-status="시작전" onclick="selectNewProjectStatus(this)">
-                                <span>🆕 시작 전</span>
-                            </div>
-                            <div class="status-option" data-status="진행중" onclick="selectNewProjectStatus(this)">
+                            <div class="status-option selected" data-status="진행중" onclick="selectNewProjectStatus(this)">
                                 <span>🔥 진행중</span>
                             </div>
                             <div class="status-option" data-status="완료" onclick="selectNewProjectStatus(this)">
@@ -3587,23 +3703,15 @@
                         <textarea class="form-textarea" id="calendarProjectDesc" placeholder="설명 (선택)"></textarea>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">미팅 타입</label>
-                        <div class="meeting-type-options" id="calendarMeetingTypeOptions">
-                            <div class="meeting-type-option selected" data-color="#FC8181" onclick="selectCalendarMeetingType(this)">
-                                <div class="meeting-type-color" style="background: #FC8181"></div>
-                                <span>🔴 외부미팅</span>
+                        <label class="form-label">📁 카테고리</label>
+                        <div class="category-options" id="calendarCategoryOptions">
+                            <div class="category-option selected" data-category="growth" onclick="selectCalendarCategory(this)">
+                                <span class="category-color" style="background: #3B82F6;"></span>
+                                <span>📈 그로스 이니셔티브</span>
                             </div>
-                            <div class="meeting-type-option" data-color="#63B3ED" onclick="selectCalendarMeetingType(this)">
-                                <div class="meeting-type-color" style="background: #63B3ED"></div>
-                                <span>🔵 협업미팅</span>
-                            </div>
-                            <div class="meeting-type-option" data-color="#03CF5D" onclick="selectCalendarMeetingType(this)">
-                                <div class="meeting-type-color" style="background: #03CF5D"></div>
-                                <span>🟢 내부회의</span>
-                            </div>
-                            <div class="meeting-type-option" data-color="#F6AD55" onclick="selectCalendarMeetingType(this)">
-                                <div class="meeting-type-color" style="background: #F6AD55"></div>
-                                <span>🟡 개인프로젝트</span>
+                            <div class="category-option" data-category="general" onclick="selectCalendarCategory(this)">
+                                <span class="category-color" style="background: #03CF5D;"></span>
+                                <span>📄 일반업무</span>
                             </div>
                         </div>
                     </div>
@@ -3760,30 +3868,21 @@
                     <textarea class="form-textarea" id="editProjectDesc"></textarea>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">미팅 타입</label>
-                    <div class="meeting-type-options" id="editProjectMeetingTypeOptions">
-                        <div class="meeting-type-option" data-color="#FC8181" onclick="selectEditProjectMeetingType(this)">
-                            <div class="meeting-type-color" style="background: #FC8181"></div>
-                            <span>🔴 외부미팅</span>
+                    <label class="form-label">📁 카테고리</label>
+                    <div class="category-options" id="editProjectCategoryOptions">
+                        <div class="category-option" data-category="growth" onclick="selectEditProjectCategory(this)">
+                            <span class="category-color" style="background: #3B82F6;"></span>
+                            <span>📈 그로스 이니셔티브</span>
                         </div>
-                        <div class="meeting-type-option" data-color="#63B3ED" onclick="selectEditProjectMeetingType(this)">
-                            <div class="meeting-type-color" style="background: #63B3ED"></div>
-                            <span>🔵 협업미팅</span>
-                        </div>
-                        <div class="meeting-type-option" data-color="#03CF5D" onclick="selectEditProjectMeetingType(this)">
-                            <div class="meeting-type-color" style="background: #03CF5D"></div>
-                            <span>🟢 내부회의</span>
-                        </div>
-                        <div class="meeting-type-option" data-color="#F6AD55" onclick="selectEditProjectMeetingType(this)">
-                            <div class="meeting-type-color" style="background: #F6AD55"></div>
-                            <span>🟡 개인프로젝트</span>
+                        <div class="category-option" data-category="general" onclick="selectEditProjectCategory(this)">
+                            <span class="category-color" style="background: #03CF5D;"></span>
+                            <span>📄 일반업무</span>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">상태</label>
                     <select class="form-input" id="editProjectStatus">
-                        <option value="시작전">🆕 시작 전</option>
                         <option value="진행중">🔥 진행중</option>
                         <option value="완료">✅ 완료</option>
                         <option value="보류">⏸️ 보류</option>
@@ -3877,20 +3976,21 @@
             el.classList.add('selected');
             selectedColor = el.dataset.color;
         }
-        let calendarSelectedColor = '#FC8181'; // 기본값: 외부미팅
+        let calendarSelectedCategory = 'growth'; // 기본값: 그로스
 
-        // 캘린더 미팅 타입 선택
-        function selectCalendarMeetingType(el) {
-            const container = document.getElementById('calendarMeetingTypeOptions');
-            container.querySelectorAll('.meeting-type-option').forEach(e => e.classList.remove('selected'));
+        // 캘린더 카테고리 선택
+        function selectCalendarCategory(el) {
+            const container = document.getElementById('calendarCategoryOptions');
+            container.querySelectorAll('.category-option').forEach(e => e.classList.remove('selected'));
             el.classList.add('selected');
-            calendarSelectedColor = el.dataset.color;
+            calendarSelectedCategory = el.dataset.category;
         }
         let calendarSelectedDate = null;
         let personalSchedules = [];
         let calendarScheduleType = 'project'; // 'project' or 'personal'
         let newProjectScheduleType = 'project'; // 새 프로젝트 모달용
-        let newProjectStatus = '시작전'; // 새 프로젝트 상태
+        let newProjectStatus = '진행중'; // 새 프로젝트 상태
+        let newProjectCategory = 'growth'; // 새 프로젝트 카테고리
         let editingPersonalScheduleId = null; // 수정 중인 개인일정 ID
         let visitFiles = [];
         let allFiles = [];
@@ -3905,13 +4005,31 @@
             el.classList.add('selected');
             newProjectStatus = el.dataset.status;
         }
+        
+        // 새 프로젝트 카테고리 선택
+        function selectNewProjectCategory(el) {
+            document.querySelectorAll('#newProjectCategoryOptions .category-option').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            newProjectCategory = el.dataset.category;
+        }
 
-        // 미팅 타입 정의 (색상 ↔ 타입 매핑)
+        // 카테고리 정의 (색상 매핑)
+        const CATEGORY_COLORS = {
+            'growth': '#3B82F6',
+            'general': '#03CF5D'
+        };
+        
+        function getCategoryColor(category) {
+            return CATEGORY_COLORS[category] || '#3B82F6';
+        }
+
+        // 미팅 타입 정의 (색상 ↔ 타입 매핑) - 호환성 유지
         const MEETING_TYPES = {
             '#FC8181': { name: '외부미팅', emoji: '🔴' },
             '#63B3ED': { name: '협업미팅', emoji: '🔵' },
             '#03CF5D': { name: '내부회의', emoji: '🟢' },
-            '#F6AD55': { name: '개인프로젝트', emoji: '🟡' }
+            '#F6AD55': { name: '개인프로젝트', emoji: '🟡' },
+            '#3B82F6': { name: '그로스', emoji: '📈' }
         };
 
         function getMeetingType(color) {
@@ -3921,11 +4039,19 @@
         // 프로젝트 검색어
         let projectSearchQuery = '';
         
-        // 시작전/진행중/완료/보류 토글 상태 (초기: 모두 닫힘)
-        let readyExpanded = false;
-        let ongoingExpanded = false;
-        let completedExpanded = false;
-        let holdExpanded = false;
+        // 카테고리 토글 상태
+        let growthExpanded = true;
+        let generalExpanded = true;
+        
+        // 상태별 토글 상태 (카테고리별)
+        let groupExpanded = {
+            growthOngoing: false,
+            growthCompleted: false,
+            growthHold: false,
+            generalOngoing: false,
+            generalCompleted: false,
+            generalHold: false
+        };
         
         // 검색 전 폴더 상태 저장
         let savedFolderState = null;
@@ -4619,12 +4745,7 @@
             if (isSearching) {
                 // 검색 시작 시 폴더 상태 저장 (처음 검색할 때만)
                 if (savedFolderState === null) {
-                    savedFolderState = {
-                        ready: readyExpanded,
-                        ongoing: ongoingExpanded,
-                        completed: completedExpanded,
-                        hold: holdExpanded
-                    };
+                    savedFolderState = { ...groupExpanded };
                 }
                 
                 filtered = projects.filter(p => 
@@ -4633,117 +4754,135 @@
             } else {
                 // 검색어 지웠을 때 폴더 상태 복원
                 if (savedFolderState !== null) {
-                    readyExpanded = savedFolderState.ready;
-                    ongoingExpanded = savedFolderState.ongoing;
-                    completedExpanded = savedFolderState.completed;
-                    holdExpanded = savedFolderState.hold;
+                    groupExpanded = { ...savedFolderState };
                     savedFolderState = null;
                 }
             }
             
-            // 시작 전 / 진행중 / 완료 / 보류 분리
-            const ready = filtered.filter(p => (p.status || '시작전') === '시작전');
-            const ongoing = filtered.filter(p => p.status === '진행중');
-            const completed = filtered.filter(p => p.status === '완료');
-            const hold = filtered.filter(p => p.status === '보류');
+            // 카테고리별로 분류 (기본값: growth)
+            const growth = filtered.filter(p => (p.category || 'growth') === 'growth');
+            const general = filtered.filter(p => p.category === 'general');
+            
+            // 상태별로 분류
+            const growthOngoing = growth.filter(p => (p.status || '진행중') === '진행중' || p.status === '시작전');
+            const growthCompleted = growth.filter(p => p.status === '완료');
+            const growthHold = growth.filter(p => p.status === '보류');
+            
+            const generalOngoing = general.filter(p => (p.status || '진행중') === '진행중' || p.status === '시작전');
+            const generalCompleted = general.filter(p => p.status === '완료');
+            const generalHold = general.filter(p => p.status === '보류');
             
             // 카운트 업데이트
-            document.getElementById('readyCount').textContent = `(${ready.length})`;
-            document.getElementById('ongoingCount').textContent = `(${ongoing.length})`;
-            document.getElementById('completedCount').textContent = `(${completed.length})`;
-            document.getElementById('holdCount').textContent = `(${hold.length})`;
+            document.getElementById('growthOngoingCount').textContent = `(${growthOngoing.length})`;
+            document.getElementById('growthCompletedCount').textContent = `(${growthCompleted.length})`;
+            document.getElementById('growthHoldCount').textContent = `(${growthHold.length})`;
+            document.getElementById('generalOngoingCount').textContent = `(${generalOngoing.length})`;
+            document.getElementById('generalCompletedCount').textContent = `(${generalCompleted.length})`;
+            document.getElementById('generalHoldCount').textContent = `(${generalHold.length})`;
             
             // 검색 중일 때 결과가 있는 폴더만 자동 펼침
             if (isSearching) {
-                readyExpanded = ready.length > 0;
-                ongoingExpanded = ongoing.length > 0;
-                completedExpanded = completed.length > 0;
-                holdExpanded = hold.length > 0;
+                growthExpanded = growth.length > 0;
+                generalExpanded = general.length > 0;
+                groupExpanded.growthOngoing = growthOngoing.length > 0;
+                groupExpanded.growthCompleted = growthCompleted.length > 0;
+                groupExpanded.growthHold = growthHold.length > 0;
+                groupExpanded.generalOngoing = generalOngoing.length > 0;
+                groupExpanded.generalCompleted = generalCompleted.length > 0;
+                groupExpanded.generalHold = generalHold.length > 0;
             }
             
-            // 프로젝트 아이템 렌더링 함수 (강조 색상 없음)
+            // 카테고리 색상 정의
+            const categoryColors = {
+                growth: '#3B82F6',
+                general: '#03CF5D'
+            };
+            
+            // 프로젝트 아이템 렌더링 함수
             const renderProjectItem = (p) => {
-                const meetingType = getMeetingType(p.color);
                 const activeClass = currentProject?.id === p.id ? 'active' : '';
                 const assignee = p.assignee;
                 const assigneeAvatar = assignee ? 
                     `<div class="project-assignee" style="background: ${assignee.avatar_color}" title="${assignee.name}">${assignee.avatar_initial}</div>` : '';
+                const categoryColor = categoryColors[p.category || 'growth'];
                 return `
                     <div class="nav-item ${activeClass}" onclick="selectProject('${p.id}')">
-                        <div class="project-color" style="background: ${p.color}"></div>
+                        <div class="project-color" style="background: ${categoryColor}"></div>
                         <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.name}</span>
                         ${assigneeAvatar}
-                        <span class="project-type-tag">${meetingType.name}</span>
                     </div>
                 `;
             };
             
-            // 시작 전 프로젝트 렌더링
-            const readyContainer = document.getElementById('readyProjectList');
-            if (ready.length === 0) {
-                readyContainer.innerHTML = '<div class="nav-item" style="color: var(--dark-600); font-size: 12px; padding-left: 24px;">프로젝트 없음</div>';
-            } else {
-                readyContainer.innerHTML = ready.map(renderProjectItem).join('');
-            }
+            // 렌더링 헬퍼 함수
+            const renderList = (containerId, items) => {
+                const container = document.getElementById(containerId);
+                if (items.length === 0) {
+                    container.innerHTML = '<div class="nav-item" style="color: var(--dark-600); font-size: 12px; padding-left: 24px;">프로젝트 없음</div>';
+                } else {
+                    container.innerHTML = items.map(renderProjectItem).join('');
+                }
+            };
             
-            // 진행중 프로젝트 렌더링
-            const ongoingContainer = document.getElementById('ongoingProjectList');
-            if (ongoing.length === 0) {
-                ongoingContainer.innerHTML = '<div class="nav-item" style="color: var(--dark-600); font-size: 12px; padding-left: 24px;">프로젝트 없음</div>';
-            } else {
-                ongoingContainer.innerHTML = ongoing.map(renderProjectItem).join('');
-            }
+            // 그로스 이니셔티브 렌더링
+            renderList('growthOngoingList', growthOngoing);
+            renderList('growthCompletedList', growthCompleted);
+            renderList('growthHoldList', growthHold);
             
-            // 완료 프로젝트 렌더링
-            const completedContainer = document.getElementById('completedProjectList');
-            if (completed.length === 0) {
-                completedContainer.innerHTML = '<div class="nav-item" style="color: var(--dark-600); font-size: 12px; padding-left: 24px;">프로젝트 없음</div>';
-            } else {
-                completedContainer.innerHTML = completed.map(renderProjectItem).join('');
-            }
+            // 일반업무 렌더링
+            renderList('generalOngoingList', generalOngoing);
+            renderList('generalCompletedList', generalCompleted);
+            renderList('generalHoldList', generalHold);
             
-            // 보류 프로젝트 렌더링
-            const holdContainer = document.getElementById('holdProjectList');
-            if (hold.length === 0) {
-                holdContainer.innerHTML = '<div class="nav-item" style="color: var(--dark-600); font-size: 12px; padding-left: 24px;">프로젝트 없음</div>';
-            } else {
-                holdContainer.innerHTML = hold.map(renderProjectItem).join('');
-            }
-            
-            // 초기 토글 상태 적용
+            // 토글 상태 적용
+            applyCategoryToggleState();
             applyGroupToggleState();
         }
         
-        // 그룹 토글 상태 적용
-        function applyGroupToggleState() {
-            const groups = [
-                { name: 'ready', expanded: readyExpanded },
-                { name: 'ongoing', expanded: ongoingExpanded },
-                { name: 'completed', expanded: completedExpanded },
-                { name: 'hold', expanded: holdExpanded }
+        // 카테고리 토글 상태 적용
+        function applyCategoryToggleState() {
+            const categories = [
+                { name: 'growth', expanded: growthExpanded },
+                { name: 'general', expanded: generalExpanded }
             ];
             
-            groups.forEach(g => {
-                const list = document.getElementById(`${g.name}ProjectList`);
-                const header = document.getElementById(`${g.name}Header`);
-                if (list && header) {
-                    if (g.expanded) {
-                        list.classList.remove('collapsed');
-                        header.classList.remove('collapsed');
+            categories.forEach(c => {
+                const categoryEl = document.getElementById(`${c.name}Category`);
+                if (categoryEl) {
+                    if (c.expanded) {
+                        categoryEl.classList.add('expanded');
                     } else {
-                        list.classList.add('collapsed');
-                        header.classList.add('collapsed');
+                        categoryEl.classList.remove('expanded');
                     }
                 }
             });
         }
         
-        // 그룹 펼침/접기 (내부용)
-        function expandGroup(group, expand) {
-            if (group === 'ready') readyExpanded = expand;
-            else if (group === 'ongoing') ongoingExpanded = expand;
-            else if (group === 'completed') completedExpanded = expand;
-            else if (group === 'hold') holdExpanded = expand;
+        // 그룹 토글 상태 적용
+        function applyGroupToggleState() {
+            Object.keys(groupExpanded).forEach(groupName => {
+                const list = document.getElementById(`${groupName}List`);
+                const headerEl = list?.previousElementSibling;
+                if (list && headerEl) {
+                    if (groupExpanded[groupName]) {
+                        list.classList.remove('collapsed');
+                        headerEl.classList.remove('collapsed');
+                    } else {
+                        list.classList.add('collapsed');
+                        headerEl.classList.add('collapsed');
+                    }
+                }
+            });
+        }
+        
+        // 카테고리 토글
+        function toggleCategory(category) {
+            if (category === 'growth') {
+                growthExpanded = !growthExpanded;
+            } else if (category === 'general') {
+                generalExpanded = !generalExpanded;
+            }
+            applyCategoryToggleState();
         }
 
         // 프로젝트 검색 필터
@@ -4752,30 +4891,24 @@
             renderProjectList();
         }
 
-        // 프로젝트 그룹 토글 (시작전/진행중/완료/보류)
+        // 프로젝트 그룹 토글
         function toggleProjectGroup(group) {
-            if (group === 'ready') {
-                readyExpanded = !readyExpanded;
-            } else if (group === 'ongoing') {
-                ongoingExpanded = !ongoingExpanded;
-            } else if (group === 'completed') {
-                completedExpanded = !completedExpanded;
-            } else if (group === 'hold') {
-                holdExpanded = !holdExpanded;
+            if (groupExpanded.hasOwnProperty(group)) {
+                groupExpanded[group] = !groupExpanded[group];
+                applyGroupToggleState();
             }
-            applyGroupToggleState();
         }
 
         // 프로젝트 설정 모달용 변수
-        let editProjectColor = '#FC8181';
+        let editProjectCategory = 'growth';
         let editProjectAssignee = null;
 
-        // 프로젝트 설정 미팅 타입 선택
-        function selectEditProjectMeetingType(el) {
-            const container = document.getElementById('editProjectMeetingTypeOptions');
-            container.querySelectorAll('.meeting-type-option').forEach(e => e.classList.remove('selected'));
+        // 프로젝트 설정 카테고리 선택
+        function selectEditProjectCategory(el) {
+            const container = document.getElementById('editProjectCategoryOptions');
+            container.querySelectorAll('.category-option').forEach(e => e.classList.remove('selected'));
             el.classList.add('selected');
-            editProjectColor = el.dataset.color;
+            editProjectCategory = el.dataset.category;
         }
 
         // 프로젝트 목록 모달 열기
@@ -4789,11 +4922,14 @@
                 title = '전체 프로젝트';
                 icon = '📋';
             } else {
-                filtered = projects.filter(p => (p.status || '시작전') === status);
-                if (status === '시작전') {
-                    title = '시작 전 프로젝트';
-                    icon = '🆕';
-                } else if (status === '진행중') {
+                // 시작전도 진행중으로 처리
+                if (status === '진행중') {
+                    filtered = projects.filter(p => (p.status || '진행중') === '진행중' || p.status === '시작전');
+                } else {
+                    filtered = projects.filter(p => p.status === status);
+                }
+                
+                if (status === '진행중') {
                     title = '진행중인 프로젝트';
                     icon = '🔥';
                 } else if (status === '완료') {
@@ -4817,21 +4953,24 @@
                     </div>
                 `;
             } else {
-                content.innerHTML = filtered.map(p => `
+                const categoryColors = { growth: '#3B82F6', general: '#03CF5D' };
+                content.innerHTML = filtered.map(p => {
+                    const color = categoryColors[p.category || 'growth'] || '#3B82F6';
+                    return `
                     <div style="display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 12px; cursor: pointer; transition: all 0.2s; border: 1px solid var(--light-200); margin-bottom: 12px;"
                          onmouseover="this.style.background='var(--light-50)'; this.style.borderColor='var(--primary)'"
                          onmouseout="this.style.background=''; this.style.borderColor='var(--light-200)'"
                          onclick="closeModal('projectList'); selectProject('${p.id}')">
-                        <div style="width: 48px; height: 48px; background: ${p.color}; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;">
-                            📋
+                        <div style="width: 48px; height: 48px; background: ${color}; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;">
+                            ${p.category === 'general' ? '📄' : '📈'}
                         </div>
                         <div style="flex: 1;">
                             <div style="font-weight: 700; font-size: 16px; margin-bottom: 4px;">${p.name}</div>
                             <div style="font-size: 13px; color: var(--dark-600);">${p.description || '설명 없음'}</div>
                         </div>
-                        <span class="project-status-tag status-${p.status || '진행중'}">${getStatusLabel(p.status)}</span>
+                        <span class="project-status-tag status-${p.status === '시작전' ? '진행중' : (p.status || '진행중')}">${getStatusLabel(p.status)}</span>
                     </div>
-                `).join('');
+                `}).join('');
             }
             
             openModal('projectList');
@@ -4840,12 +4979,12 @@
         // 상태 라벨 변환
         function getStatusLabel(status) {
             const statusMap = {
-                '시작전': '시작 전',
+                '시작전': '진행중',  // 시작전도 진행중으로 표시
                 '진행중': '진행중',
                 '완료': '완료',
                 '보류': '보류'
             };
-            return statusMap[status] || '시작 전';
+            return statusMap[status] || '진행중';
         }
 
         async function selectProject(projectId) {
@@ -5578,10 +5717,11 @@
         // ========== 캘린더 ==========
         function getCalendarEvents(dateStr) {
             const events = [];
-            // 프로젝트 일정
+            // 프로젝트 일정 (카테고리 색상 사용)
             projects.forEach(p => {
                 if (p.next_visit_date === dateStr) {
-                    events.push({ type: 'project', name: `📅 ${p.name}`, color: p.color, projectId: p.id });
+                    const categoryColor = getCategoryColor(p.category || 'growth');
+                    events.push({ type: 'project', name: `📅 ${p.name}`, color: categoryColor, projectId: p.id });
                 }
             });
             // 개인일정
@@ -5658,10 +5798,11 @@
             document.getElementById('calendarProjectDesc').value = '';
             document.getElementById('personalScheduleTitle').value = '';
             document.getElementById('personalScheduleDesc').value = '';
-            calendarSelectedColor = '#FC8181';
-            document.querySelectorAll('#calendarMeetingTypeOptions .meeting-type-option').forEach(el => {
+            // 카테고리 초기화 (그로스)
+            calendarSelectedCategory = 'growth';
+            document.querySelectorAll('#calendarCategoryOptions .category-option').forEach(el => {
                 el.classList.remove('selected');
-                if (el.dataset.color === '#FC8181') el.classList.add('selected');
+                if (el.dataset.category === 'growth') el.classList.add('selected');
             });
             // 일정 타입 초기화
             calendarScheduleType = 'project';
@@ -5832,11 +5973,14 @@
             const name = document.getElementById('calendarProjectName').value.trim();
             if (!name) { showToast('프로젝트명을 입력하세요', 'error'); return; }
             
+            const categoryColor = getCategoryColor(calendarSelectedCategory);
+            
             const { data, error } = await db.from('projects').insert({
                 name,
                 description: document.getElementById('calendarProjectDesc').value.trim(),
-                color: calendarSelectedColor,
-                status: '시작전',
+                category: calendarSelectedCategory,
+                color: categoryColor,
+                status: '진행중',
                 next_visit_date: calendarSelectedDate,
                 created_by: currentUser.id,
                 assigned_to: currentUser.id
@@ -5845,11 +5989,11 @@
             if (error) { showToast('저장 실패', 'error'); return; }
             
             // 다른 사용자들에게 알림 보내기
-            const meetingType = getMeetingType(calendarSelectedColor);
+            const categoryName = calendarSelectedCategory === 'growth' ? '그로스 이니셔티브' : '일반업무';
             await notifyOtherUsers(
                 'project_created',
                 `${currentUser.name}님이 새 프로젝트를 생성했습니다`,
-                `[${meetingType.name}] ${name}`,
+                `[${categoryName}] ${name}`,
                 data.id
             );
             
@@ -5961,8 +6105,8 @@
             // 전체 프로젝트
             document.getElementById('totalProjects').textContent = projects.length;
             
-            // 진행중 프로젝트
-            document.getElementById('activeProjects').textContent = projects.filter(p => p.status === '진행중').length;
+            // 진행중 프로젝트 (시작전도 포함)
+            document.getElementById('activeProjects').textContent = projects.filter(p => p.status === '진행중' || p.status === '시작전' || !p.status).length;
             
             // 완료된 프로젝트
             document.getElementById('completedProjects').textContent = projects.filter(p => p.status === '완료').length;
@@ -6091,17 +6235,17 @@
                 document.getElementById('newPersonalDesc').value = '';
                 // 날짜 초기화 (오늘 날짜로)
                 document.getElementById('newProjectDate').value = getLocalDateString();
-                // 상태 초기화 (시작전으로)
-                newProjectStatus = '시작전';
+                // 카테고리 초기화 (그로스로)
+                newProjectCategory = 'growth';
+                document.querySelectorAll('#newProjectCategoryOptions .category-option').forEach(el => {
+                    el.classList.remove('selected');
+                    if (el.dataset.category === 'growth') el.classList.add('selected');
+                });
+                // 상태 초기화 (진행중으로)
+                newProjectStatus = '진행중';
                 document.querySelectorAll('#newProjectStatusOptions .status-option').forEach(el => {
                     el.classList.remove('selected');
-                    if (el.dataset.status === '시작전') el.classList.add('selected');
-                });
-                // 미팅 타입 초기화
-                selectedColor = '#FC8181';
-                document.querySelectorAll('#newProjectModal .meeting-type-option').forEach(el => {
-                    el.classList.remove('selected');
-                    if (el.dataset.color === '#FC8181') el.classList.add('selected');
+                    if (el.dataset.status === '진행중') el.classList.add('selected');
                 });
             }
             if (type === 'newVisit') {
@@ -6116,14 +6260,16 @@
             if (type === 'projectSettings' && currentProject) {
                 document.getElementById('editProjectName').value = currentProject.name;
                 document.getElementById('editProjectDesc').value = currentProject.description || '';
-                document.getElementById('editProjectStatus').value = currentProject.status || '시작전';
-                editProjectColor = currentProject.color;
+                // 시작전 상태는 진행중으로 변경
+                const status = currentProject.status === '시작전' ? '진행중' : (currentProject.status || '진행중');
+                document.getElementById('editProjectStatus').value = status;
+                editProjectCategory = currentProject.category || 'growth';
                 editProjectAssignee = currentProject.assigned_to;
                 
-                // 미팅 타입 선택 업데이트
-                document.querySelectorAll('#editProjectMeetingTypeOptions .meeting-type-option').forEach(el => {
+                // 카테고리 선택 업데이트
+                document.querySelectorAll('#editProjectCategoryOptions .category-option').forEach(el => {
                     el.classList.remove('selected');
-                    if (el.dataset.color === currentProject.color) {
+                    if (el.dataset.category === editProjectCategory) {
                         el.classList.add('selected');
                     }
                 });
@@ -6161,22 +6307,6 @@
             document.getElementById(`${type}Modal`).classList.remove('active');
         }
 
-        // 색상 선택
-        document.querySelectorAll('.color-option').forEach(el => {
-            el.addEventListener('click', function() {
-                const parent = this.closest('.color-options');
-                parent.querySelectorAll('.color-option').forEach(e => e.classList.remove('selected'));
-                this.classList.add('selected');
-                if (parent.id === 'calendarColorOptions') {
-                    calendarSelectedColor = this.dataset.color;
-                } else if (parent.id === 'editProjectColorOptions') {
-                    editProjectColor = this.dataset.color;
-                } else {
-                    selectedColor = this.dataset.color;
-                }
-            });
-        });
-
         // 프로젝트 설정 저장
         async function saveProjectSettings() {
             if (!currentProject) return;
@@ -6184,10 +6314,13 @@
             const name = document.getElementById('editProjectName').value.trim();
             if (!name) { showToast('프로젝트명을 입력하세요', 'error'); return; }
             
+            const categoryColor = getCategoryColor(editProjectCategory);
+            
             const { error } = await db.from('projects').update({
                 name,
                 description: document.getElementById('editProjectDesc').value.trim(),
-                color: editProjectColor,
+                category: editProjectCategory,
+                color: categoryColor,
                 status: document.getElementById('editProjectStatus').value,
                 assigned_to: editProjectAssignee
             }).eq('id', currentProject.id);
@@ -6197,12 +6330,15 @@
             // 현재 프로젝트 업데이트
             currentProject.name = name;
             currentProject.description = document.getElementById('editProjectDesc').value.trim();
-            currentProject.color = editProjectColor;
+            currentProject.category = editProjectCategory;
+            currentProject.color = categoryColor;
             currentProject.status = document.getElementById('editProjectStatus').value;
             currentProject.assigned_to = editProjectAssignee;
             
             renderProjectDetail();
             await loadProjects();
+            renderCalendar();
+            renderMiniCalendar();
             closeModal('projectSettings');
             showToast('프로젝트가 수정되었습니다', 'success');
         }
@@ -6335,11 +6471,13 @@
             if (!name) { showToast('프로젝트명을 입력하세요', 'error'); return; }
             
             const nextVisitDate = document.getElementById('newProjectDate').value || null;
+            const categoryColor = getCategoryColor(newProjectCategory);
             
             const { data, error } = await db.from('projects').insert({
                 name,
                 description: document.getElementById('projectDescInput').value.trim(),
-                color: selectedColor,
+                color: categoryColor,
+                category: newProjectCategory,
                 status: newProjectStatus,
                 next_visit_date: nextVisitDate,
                 created_by: currentUser.id,
@@ -6349,11 +6487,11 @@
             if (error) { showToast('저장 실패', 'error'); return; }
             
             // 다른 사용자들에게 알림 보내기
-            const meetingType = getMeetingType(selectedColor);
+            const categoryName = newProjectCategory === 'growth' ? '그로스 이니셔티브' : '일반업무';
             await notifyOtherUsers(
                 'project_created',
                 `${currentUser.name}님이 새 프로젝트를 생성했습니다`,
-                `[${meetingType.name}] ${name}`,
+                `[${categoryName}] ${name}`,
                 data.id
             );
             

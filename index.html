@@ -3826,6 +3826,7 @@
             
             .todo-group {
                 margin-bottom: 12px;
+                overflow: visible;
             }
             
             .todo-group-header {
@@ -3859,22 +3860,26 @@
             
             .todo-card {
                 padding: 14px;
+                overflow: visible;
             }
             
             .todo-card.growth-card {
                 padding: 16px;
-                grid-template-columns: 1fr;
+                display: flex;
+                flex-direction: column;
                 gap: 12px;
+                position: relative;
+                overflow: visible;
+            }
+            
+            .todo-card.growth-card .todo-card-header {
+                padding-right: 70px;
             }
             
             .todo-card.growth-card .todo-dday {
                 position: absolute;
                 top: 16px;
                 right: 16px;
-            }
-            
-            .todo-card.growth-card {
-                position: relative;
             }
             
             .todo-card-header {
@@ -3895,15 +3900,18 @@
             
             .todo-card-name {
                 font-size: 14px;
+                word-break: break-word;
+                white-space: normal;
             }
             
             .growth-card .todo-card-name {
-                font-size: 16px;
+                font-size: 15px;
             }
             
             .todo-card-meta {
-                gap: 8px;
+                gap: 6px;
                 font-size: 11px;
+                flex-wrap: wrap;
             }
             
             .todo-dday {
@@ -3918,6 +3926,12 @@
             .todo-checklist-item {
                 font-size: 12px;
                 padding: 6px 0;
+            }
+            
+            .todo-checklist-text {
+                white-space: normal;
+                word-break: break-word;
+                line-height: 1.4;
             }
             
             .todo-done-badge {
@@ -4592,29 +4606,6 @@
                         </div>
                         <button class="btn btn-secondary btn-sm" onclick="showSection('calendar')">📅 캘린더</button>
                         <button class="btn btn-primary btn-sm" onclick="openModal('newProject')">+ 새 프로젝트</button>
-                    </div>
-                </div>
-
-                <div class="dashboard-stats">
-                    <div class="stat-card highlight" onclick="openProjectListModal('all')" title="전체 프로젝트 보기">
-                        <div class="stat-icon">📋</div>
-                        <div class="stat-value" id="totalProjects">0</div>
-                        <div class="stat-label">전체 프로젝트</div>
-                    </div>
-                    <div class="stat-card" onclick="openProjectListModal('진행중')" title="진행중 프로젝트 보기">
-                        <div class="stat-icon">🔥</div>
-                        <div class="stat-value" id="activeProjects">0</div>
-                        <div class="stat-label">진행중</div>
-                    </div>
-                    <div class="stat-card" onclick="openProjectListModal('완료')" title="완료된 프로젝트 보기">
-                        <div class="stat-icon">✅</div>
-                        <div class="stat-value" id="completedProjects">0</div>
-                        <div class="stat-label">완료</div>
-                    </div>
-                    <div class="stat-card" onclick="showSection('files')" title="파일함으로 이동">
-                        <div class="stat-icon">📎</div>
-                        <div class="stat-value" id="totalFiles">0</div>
-                        <div class="stat-label">전체 파일</div>
                     </div>
                 </div>
 
@@ -8561,18 +8552,6 @@
 
         // ========== 대시보드 통계 ==========
         function updateDashboardStats() {
-            // 전체 프로젝트
-            document.getElementById('totalProjects').textContent = projects.length;
-            
-            // 진행중 프로젝트 (시작전도 포함)
-            document.getElementById('activeProjects').textContent = projects.filter(p => p.status === '진행중' || p.status === '시작전' || !p.status).length;
-            
-            // 완료된 프로젝트
-            document.getElementById('completedProjects').textContent = projects.filter(p => p.status === '완료').length;
-            
-            // 전체 파일
-            document.getElementById('totalFiles').textContent = allFiles.length;
-            
             // 진행중인 할 일 카드 렌더링
             renderTodoCards();
         }

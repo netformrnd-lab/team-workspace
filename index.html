@@ -7354,8 +7354,77 @@
             }
         }
 
+        // localStorage 데이터를 Supabase로 마이그레이션
+        async function migrateLocalChecklistsToSupabase() {
+            const migrated = localStorage.getItem('checklist_migrated_to_supabase');
+            if (migrated === 'true') return; // 이미 마이그레이션됨
+            
+            const saved = localStorage.getItem('workspace_checklist');
+            if (!saved) {
+                localStorage.setItem('checklist_migrated_to_supabase', 'true');
+                return;
+            }
+            
+            try {
+                const localData = JSON.parse(saved);
+                const projectIds = Object.keys(localData);
+                
+                if (projectIds.length === 0) {
+                    localStorage.setItem('checklist_migrated_to_supabase', 'true');
+                    return;
+                }
+                
+                console.log('localStorage 체크리스트 마이그레이션 시작...', projectIds.length, '개 프로젝트');
+                
+                // 각 프로젝트의 체크리스트 마이그레이션
+                for (const projectId of projectIds) {
+                    const items = localData[projectId];
+                    if (!items || items.length === 0) continue;
+                    
+                    // 이미 Supabase에 있는지 확인
+                    const { data: existing } = await db
+                        .from('checklists')
+                        .select('id')
+                        .eq('project_id', projectId)
+                        .limit(1);
+                    
+                    if (existing && existing.length > 0) {
+                        console.log(`프로젝트 ${projectId}는 이미 마이그레이션됨`);
+                        continue;
+                    }
+                    
+                    // Supabase에 삽입
+                    const insertData = items.map(item => ({
+                        project_id: projectId,
+                        text: item.text,
+                        completed: item.completed || false,
+                        created_by: currentUser.id
+                    }));
+                    
+                    const { error } = await db
+                        .from('checklists')
+                        .insert(insertData);
+                    
+                    if (error) {
+                        console.error(`프로젝트 ${projectId} 마이그레이션 실패:`, error);
+                    } else {
+                        console.log(`프로젝트 ${projectId} 마이그레이션 완료:`, items.length, '개 항목');
+                    }
+                }
+                
+                localStorage.setItem('checklist_migrated_to_supabase', 'true');
+                showToast('기존 체크리스트가 동기화되었습니다!', 'success');
+                console.log('마이그레이션 완료!');
+            } catch (err) {
+                console.error('마이그레이션 실패:', err);
+            }
+        }
+
         // 모든 프로젝트의 체크리스트 로드 (대시보드용)
         async function loadAllChecklists() {
+            // 먼저 localStorage 데이터 마이그레이션 체크
+            await migrateLocalChecklistsToSupabase();
+            
             try {
                 const { data, error } = await db
                     .from('checklists')

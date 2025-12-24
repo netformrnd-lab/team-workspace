@@ -7272,6 +7272,11 @@
             renderProjectDetail();
             await loadVisits();
             loadChecklist();
+            
+            // 스크롤을 맨 위로 이동
+            window.scrollTo(0, 0);
+            document.querySelector('.main-content')?.scrollTo(0, 0);
+            document.getElementById('projectDetail')?.scrollTo(0, 0);
         }
 
         function renderProjectDetail() {

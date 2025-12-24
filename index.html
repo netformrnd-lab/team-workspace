@@ -1239,6 +1239,124 @@
             background: var(--primary-soft);
         }
 
+        /* ========== Growth Initiative 정보 섹션 ========== */
+        .growth-info-section {
+            margin-bottom: 24px;
+        }
+
+        .growth-info-card {
+            background: var(--white);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .growth-info-card.half {
+            flex: 1;
+        }
+
+        .growth-info-row {
+            display: flex;
+            gap: 16px;
+        }
+
+        .growth-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--light-200);
+            background: var(--light-50);
+        }
+
+        .growth-info-header h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--dark-900);
+            margin: 0;
+        }
+
+        .growth-info-body {
+            padding: 16px 20px;
+        }
+
+        .problem-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .problem-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            background: rgba(59, 130, 246, 0.1);
+            color: #3B82F6;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .problem-definition-text {
+            font-size: 14px;
+            color: var(--dark-700);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .problem-definition-text:empty::after {
+            content: '문제 정의가 작성되지 않았습니다.';
+            color: var(--dark-600);
+            font-style: italic;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            font-size: 13px;
+            color: var(--dark-600);
+            min-width: 50px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-900);
+        }
+
+        .result-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .result-tag {
+            padding: 4px 10px;
+            background: var(--light-100);
+            color: var(--dark-700);
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .growth-info-row {
+                flex-direction: column;
+            }
+        }
+
         /* ========== 체크리스트 섹션 ========== */
         .checklist-section {
             background: var(--white);
@@ -1364,6 +1482,64 @@
 
         .checklist-delete:hover {
             color: var(--danger);
+        }
+
+        .checklist-edit {
+            background: none;
+            border: none;
+            color: var(--light-300);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px;
+            opacity: 0;
+            transition: all 0.2s;
+        }
+
+        .checklist-item:hover .checklist-edit {
+            opacity: 1;
+        }
+
+        .checklist-edit:hover {
+            color: var(--primary);
+        }
+
+        .checklist-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .checklist-edit-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid var(--primary);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .checklist-edit-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .checklist-edit-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .checklist-edit-btn.save {
+            background: var(--primary);
+            color: white;
+        }
+
+        .checklist-edit-btn.cancel {
+            background: var(--light-200);
+            color: var(--dark-700);
         }
 
         .checklist-add {
@@ -2441,6 +2617,412 @@
             border-radius: 4px;
         }
 
+        /* ========== Growth Initiative 스텝 모달 ========== */
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--light-200);
+        }
+
+        .step-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--light-200);
+            color: var(--dark-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .step-dot.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .step-dot.completed {
+            background: var(--primary);
+            color: white;
+        }
+
+        .step-line {
+            width: 40px;
+            height: 2px;
+            background: var(--light-200);
+            transition: all 0.3s;
+        }
+
+        .step-line.active {
+            background: var(--primary);
+        }
+
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 타입 선택 카드 */
+        .type-selection-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .type-card {
+            padding: 20px;
+            border: 2px solid var(--light-200);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--white);
+        }
+
+        .type-card:hover {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .type-card.selected {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .type-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .type-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .type-card-icon.growth {
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        .type-card-icon.general {
+            background: rgba(3, 207, 93, 0.15);
+        }
+
+        .type-card-icon.personal {
+            background: rgba(168, 85, 247, 0.15);
+        }
+
+        .type-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark-900);
+        }
+
+        .type-card-desc {
+            font-size: 13px;
+            color: var(--dark-600);
+            line-height: 1.5;
+        }
+
+        /* 조건 체크 카드 */
+        .condition-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .condition-card {
+            padding: 16px;
+            border: 2px solid var(--light-200);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--white);
+        }
+
+        .condition-card:hover {
+            border-color: #3B82F6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .condition-card.checked {
+            border-color: #3B82F6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .condition-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .condition-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--light-300);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+            margin-top: 2px;
+        }
+
+        .condition-card.checked .condition-checkbox {
+            background: #3B82F6;
+            border-color: #3B82F6;
+            color: white;
+        }
+
+        .condition-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--dark-900);
+            line-height: 1.5;
+        }
+
+        .condition-result {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+
+        .condition-result.success {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid #3B82F6;
+        }
+
+        .condition-result.fail {
+            background: rgba(3, 207, 93, 0.1);
+            border: 1px solid var(--primary);
+        }
+
+        .condition-result-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .condition-result-text {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* 문제 카테고리 카드 */
+        .problem-category-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .problem-category-card {
+            padding: 14px 16px;
+            border: 2px solid var(--light-200);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--white);
+        }
+
+        .problem-category-card:hover {
+            border-color: #3B82F6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .problem-category-card.selected {
+            border-color: #3B82F6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .problem-category-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .problem-category-check {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--light-300);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .problem-category-card.selected .problem-category-check {
+            background: #3B82F6;
+            border-color: #3B82F6;
+            color: white;
+        }
+
+        .problem-category-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-900);
+        }
+
+        .problem-category-desc {
+            margin-top: 8px;
+            padding-left: 30px;
+            font-size: 12px;
+            color: var(--dark-600);
+            line-height: 1.5;
+        }
+
+        /* 솔루션/결과물 옵션 */
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .option-item {
+            padding: 12px;
+            border: 2px solid var(--light-200);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+            background: var(--white);
+        }
+
+        .option-item:hover {
+            border-color: #3B82F6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .option-item.selected {
+            border-color: #3B82F6;
+            background: rgba(59, 130, 246, 0.1);
+            color: #3B82F6;
+        }
+
+        /* 운영 상태 라디오 */
+        .operation-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .operation-option {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--light-200);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+            background: var(--white);
+        }
+
+        .operation-option:hover {
+            border-color: #3B82F6;
+        }
+
+        .operation-option.selected {
+            border-color: #3B82F6;
+            background: rgba(59, 130, 246, 0.1);
+            color: #3B82F6;
+        }
+
+        /* KPI 체크박스 */
+        .kpi-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .kpi-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border: 2px solid var(--light-200);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--white);
+        }
+
+        .kpi-item:hover {
+            border-color: #3B82F6;
+        }
+
+        .kpi-item.selected {
+            border-color: #3B82F6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .kpi-check {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--light-300);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .kpi-item.selected .kpi-check {
+            background: #3B82F6;
+            border-color: #3B82F6;
+            color: white;
+        }
+
+        /* 섹션 구분 */
+        .form-section {
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--light-200);
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .form-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--dark-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .personal-type-options {
             display: flex;
             flex-wrap: wrap;
@@ -2839,44 +3421,75 @@
             }
             
             /* 캘린더 */
+            .calendar-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
             .calendar-header {
                 flex-wrap: wrap;
                 gap: 8px;
+                padding: 16px;
             }
             
             .calendar-month {
                 font-size: 18px;
             }
             
-            .calendar-nav button {
+            .calendar-nav {
+                gap: 12px;
+            }
+            
+            .calendar-nav-btn {
                 width: 32px;
                 height: 32px;
+                font-size: 16px;
             }
             
             .calendar-grid {
                 font-size: 12px;
+                min-width: 100%;
             }
             
             .calendar-day-header {
-                padding: 8px 4px;
-                font-size: 11px;
+                padding: 8px 2px;
+                font-size: 10px;
             }
             
             .calendar-day {
-                min-height: 70px;
-                padding: 4px;
+                min-height: 80px;
+                padding: 4px 2px;
             }
             
             .day-number {
-                font-size: 12px;
+                font-size: 11px;
+                margin-bottom: 4px;
+            }
+            
+            .day-number span {
+                font-size: 11px;
+            }
+            
+            .calendar-day.today .day-number span {
+                width: 22px;
+                height: 22px;
+            }
+            
+            .day-events {
+                gap: 2px;
             }
             
             .day-event {
-                font-size: 10px;
-                padding: 2px 4px;
+                font-size: 9px;
+                padding: 2px 3px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                border-radius: 3px;
+            }
+            
+            .day-event.personal-event {
+                border-left-width: 2px !important;
             }
             
             .day-add-btn {
@@ -2965,10 +3578,62 @@
             /* 댓글 */
             .comment-item {
                 padding: 10px;
+                gap: 8px;
+            }
+            
+            .comment-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 11px;
+            }
+            
+            .comment-meta {
+                flex-wrap: wrap;
+                gap: 4px 8px;
+            }
+            
+            .comment-author {
+                font-size: 12px;
+            }
+            
+            .comment-time {
+                font-size: 10px;
             }
             
             .comment-text {
                 font-size: 13px;
+            }
+            
+            .comment-bubble {
+                padding: 10px 12px;
+            }
+            
+            .comment-actions {
+                margin-left: 4px;
+            }
+            
+            .comment-actions button {
+                font-size: 11px;
+                padding: 2px;
+            }
+            
+            .comment-input-area {
+                gap: 8px;
+            }
+            
+            .comment-input {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+            
+            .comment-submit {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            
+            .comment-submit .btn {
+                width: 100%;
             }
             
             /* 모달 */
@@ -3104,9 +3769,19 @@
             
             /* 스케줄 알림 */
             .toast.schedule-alert {
-                flex-direction: column;
-                align-items: flex-start;
+                flex-direction: row;
+                align-items: center;
                 gap: 8px;
+                min-width: auto;
+                padding: 10px 14px;
+            }
+            
+            .toast.schedule-alert strong {
+                font-size: 12px !important;
+            }
+            
+            .toast.schedule-alert span {
+                font-size: 11px !important;
             }
             
             /* 사용자 정보 */
@@ -3154,12 +3829,82 @@
                 grid-template-columns: 1fr;
             }
             
+            /* 캘린더 - 아주 작은 화면 */
+            .calendar-header {
+                padding: 12px;
+            }
+            
+            .calendar-month {
+                font-size: 16px;
+            }
+            
+            .calendar-nav-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+            
+            .calendar-day-header {
+                padding: 6px 1px;
+                font-size: 9px;
+            }
+            
             .calendar-day {
                 min-height: 60px;
+                padding: 2px 1px;
+            }
+            
+            .day-number {
+                font-size: 10px;
+            }
+            
+            .calendar-day.today .day-number span {
+                width: 18px;
+                height: 18px;
+                font-size: 10px;
             }
             
             .day-event {
+                font-size: 8px;
+                padding: 1px 2px;
+            }
+            
+            /* 댓글 - 아주 작은 화면 */
+            .comment-item {
+                gap: 6px;
+            }
+            
+            .comment-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 10px;
+            }
+            
+            .comment-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+            }
+            
+            .comment-author {
+                font-size: 11px;
+            }
+            
+            .comment-time {
                 font-size: 9px;
+            }
+            
+            .comment-bubble {
+                padding: 8px 10px;
+            }
+            
+            .comment-text {
+                font-size: 12px;
+            }
+            
+            .comment-actions {
+                margin-left: 0;
+                margin-top: 4px;
             }
         }
     </style>
@@ -3235,11 +3980,11 @@
                 </div>
                 
                 <!-- 시작 전 섹션 -->
-                <!-- 📈 그로스 이니셔티브 -->
+                <!-- 📈 Growth Initiative -->
                 <div class="project-category" id="growthCategory">
                     <div class="project-category-header" onclick="toggleCategory('growth')">
                         <span class="category-icon" style="background: #3B82F6;">📈</span>
-                        <span class="category-name">그로스 이니셔티브</span>
+                        <span class="category-name">Growth Initiative</span>
                         <span class="category-toggle" id="growthToggle">▶</span>
                     </div>
                     <div class="project-category-content" id="growthContent">
@@ -3426,6 +4171,54 @@
                     <div id="nextVisitArea"></div>
                 </div>
 
+                <!-- Growth Initiative 상세 정보 -->
+                <div class="growth-info-section" id="growthInfoSection" style="display: none;">
+                    <div class="growth-info-card">
+                        <div class="growth-info-header">
+                            <h3>🔍 문제 정의</h3>
+                            <button class="btn btn-ghost btn-sm" onclick="openGrowthEditModal('problem')">수정</button>
+                        </div>
+                        <div class="growth-info-body">
+                            <div class="problem-tags" id="problemCategoryTags"></div>
+                            <p class="problem-definition-text" id="problemDefinitionText"></p>
+                        </div>
+                    </div>
+                    <div class="growth-info-row">
+                        <div class="growth-info-card half">
+                            <div class="growth-info-header">
+                                <h3>🔧 해결 구조</h3>
+                                <button class="btn btn-ghost btn-sm" onclick="openGrowthEditModal('solution')">수정</button>
+                            </div>
+                            <div class="growth-info-body">
+                                <div class="info-item">
+                                    <span class="info-label">유형:</span>
+                                    <span class="info-value" id="solutionTypeValue">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">결과물:</span>
+                                    <div class="result-tags" id="resultTypeTags"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="growth-info-card half">
+                            <div class="growth-info-header">
+                                <h3>📈 운영 & 성과</h3>
+                                <button class="btn btn-ghost btn-sm" onclick="openGrowthEditModal('kpi')">수정</button>
+                            </div>
+                            <div class="growth-info-body">
+                                <div class="info-item">
+                                    <span class="info-label">운영:</span>
+                                    <span class="info-value" id="operationStatusValue">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">KPI:</span>
+                                    <span class="info-value" id="kpiStatusValue">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 체크리스트 섹션 -->
                 <div class="checklist-section">
                     <div class="checklist-header">
@@ -3448,7 +4241,7 @@
 
                 <div class="visits-section">
                     <div class="visits-header">
-                        <h2 class="visits-title">📝 방문 기록 <span class="visits-count" id="visitsCount">0</span></h2>
+                        <h2 class="visits-title">📝 기록일지 <span class="visits-count" id="visitsCount">0</span></h2>
                         <button class="btn btn-primary btn-sm" onclick="openModal('newVisit')">+ 기록 추가</button>
                     </div>
                     <div id="visitsList"></div>
@@ -3511,14 +4304,14 @@
                             <div class="settings-item">
                                 <div>
                                     <div class="settings-label">새 댓글 알림</div>
-                                    <div class="settings-desc">방문 기록에 새 댓글이 달리면 알림</div>
+                                    <div class="settings-desc">기록일지에 새 댓글이 달리면 알림</div>
                                 </div>
                                 <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
                             </div>
                             <div class="settings-item">
                                 <div>
                                     <div class="settings-label">일정 알림</div>
-                                    <div class="settings-desc">다음 방문 일정 하루 전 알림</div>
+                                    <div class="settings-desc">다음 일정 하루 전 알림</div>
                                 </div>
                                 <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
                             </div>
@@ -3538,20 +4331,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="settings-card" style="grid-column: 1 / -1;">
-                        <div class="settings-card-header">
-                            <h3 class="settings-card-title">🗑️ 데이터 관리</h3>
-                        </div>
-                        <div class="settings-card-body">
-                            <div class="danger-zone">
-                                <div class="danger-zone-title">⚠️ 위험 영역</div>
-                                <div class="danger-zone-desc">아래 작업은 되돌릴 수 없습니다.</div>
-                                <div style="display: flex; gap: 12px;">
-                                    <button class="btn btn-danger btn-sm" onclick="clearAllChecklist()">🗑️ 모든 체크리스트 초기화</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </section>
         </main>
@@ -3559,87 +4338,250 @@
 
     <!-- 모달들 -->
     <div class="modal" id="newProjectModal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 520px;">
             <div class="modal-header">
-                <h2 class="modal-title">새 프로젝트</h2>
+                <h2 class="modal-title" id="newProjectModalTitle">새 프로젝트</h2>
                 <button class="modal-close" onclick="closeModal('newProject')">✕</button>
             </div>
             <div class="modal-body">
-                <!-- 일정 타입 선택 -->
-                <div class="form-group">
-                    <label class="form-label">일정 타입</label>
-                    <div class="schedule-type-options">
-                        <div class="schedule-type-option selected" data-type="project" onclick="selectNewProjectType('project')">
-                            📋 프로젝트
-                        </div>
-                        <div class="schedule-type-option" data-type="personal" onclick="selectNewProjectType('personal')">
-                            👤 개인일정
+                <!-- 스텝 인디케이터 -->
+                <div class="step-indicator" id="newProjectStepIndicator">
+                    <div class="step-dot active" id="stepDot1">1</div>
+                    <div class="step-line" id="stepLine1"></div>
+                    <div class="step-dot" id="stepDot2">2</div>
+                    <div class="step-line" id="stepLine2"></div>
+                    <div class="step-dot" id="stepDot3">3</div>
+                </div>
+
+                <!-- Step 1: 타입 선택 -->
+                <div class="step-content active" id="newProjectStep1">
+                    <div class="form-group">
+                        <label class="form-label" style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">어떤 유형의 일정인가요?</label>
+                        <div class="type-selection-cards">
+                            <div class="type-card" data-type="growth" onclick="selectProjectType('growth')">
+                                <div class="type-card-header">
+                                    <div class="type-card-icon growth">📈</div>
+                                    <div class="type-card-title">Growth Initiative</div>
+                                </div>
+                                <div class="type-card-desc">회사의 구조적 성장에 기여하는 과제<br>문제 정의 → 해결 설계 → 결과물까지 책임</div>
+                            </div>
+                            <div class="type-card" data-type="general" onclick="selectProjectType('general')">
+                                <div class="type-card-header">
+                                    <div class="type-card-icon general">📄</div>
+                                    <div class="type-card-title">일반 업무</div>
+                                </div>
+                                <div class="type-card-desc">단발성 요청, 반복 업무, 일상적인 태스크</div>
+                            </div>
+                            <div class="type-card" data-type="personal" onclick="selectProjectType('personal')">
+                                <div class="type-card-header">
+                                    <div class="type-card-icon personal">👤</div>
+                                    <div class="type-card-title">개인일정</div>
+                                </div>
+                                <div class="type-card-desc">휴가, 외출, 재택근무 등 개인 스케줄</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- 프로젝트 입력 영역 -->
-                <div id="newProjectInputArea">
+
+                <!-- Step 2: Growth 조건 체크 -->
+                <div class="step-content" id="newProjectStep2">
+                    <div class="form-group">
+                        <label class="form-label" style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Growth Initiative 조건 확인</label>
+                        <p style="font-size: 13px; color: var(--dark-600); margin-bottom: 16px;">아래 4가지 조건을 모두 충족해야 Growth Initiative로 등록됩니다.</p>
+                        <div class="condition-cards">
+                            <div class="condition-card" data-condition="1" onclick="toggleCondition(this)">
+                                <div class="condition-header">
+                                    <div class="condition-checkbox">✓</div>
+                                    <div class="condition-text">회사의 성장(매출·운영·조직·경영)에 <strong>실질적 영향</strong>을 주는 문제일 것</div>
+                                </div>
+                            </div>
+                            <div class="condition-card" data-condition="2" onclick="toggleCondition(this)">
+                                <div class="condition-header">
+                                    <div class="condition-checkbox">✓</div>
+                                    <div class="condition-text">단순 요청이 아니라 <strong>구조·방식·수단을 바꿔야</strong> 해결되는 문제일 것</div>
+                                </div>
+                            </div>
+                            <div class="condition-card" data-condition="3" onclick="toggleCondition(this)">
+                                <div class="condition-header">
+                                    <div class="condition-checkbox">✓</div>
+                                    <div class="condition-text">그로스팀이 문제 정의부터 해결 구조 설계, <strong>실행 결과물까지 책임</strong>질 것</div>
+                                </div>
+                            </div>
+                            <div class="condition-card" data-condition="4" onclick="toggleCondition(this)">
+                                <div class="condition-header">
+                                    <div class="condition-checkbox">✓</div>
+                                    <div class="condition-text">결과가 <strong>재사용 가능</strong>하거나, 다음 성과로 이어질 구조를 남길 것</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="condition-result" id="conditionResult" style="display: none;">
+                            <div class="condition-result-icon" id="conditionResultIcon"></div>
+                            <div class="condition-result-text" id="conditionResultText"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Growth Initiative 상세 폼 -->
+                <div class="step-content" id="newProjectStep3Growth">
+                    <div class="form-section">
+                        <div class="form-section-title">📌 기본 정보</div>
+                        <div class="form-group">
+                            <label class="form-label">Initiative 명 *</label>
+                            <input type="text" class="form-input" id="growthNameInput" placeholder="예: 플랜바이 기술영업 도구 구축">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">한 줄 설명</label>
+                            <input type="text" class="form-input" id="growthDescInput" placeholder="간략한 설명 (선택)">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">🔍 문제 정의</div>
+                        <div class="form-group">
+                            <label class="form-label">문제 카테고리 * <span style="font-weight: 400; color: var(--dark-600);">(1개 이상 선택)</span></label>
+                            <div class="problem-category-cards" id="problemCategoryCards">
+                                <div class="problem-category-card" data-category="sales" onclick="toggleProblemCategory(this)">
+                                    <div class="problem-category-header">
+                                        <div class="problem-category-check">✓</div>
+                                        <div class="problem-category-title">💰 매출/수주/설득 문제</div>
+                                    </div>
+                                    <div class="problem-category-desc">기술 설명이 어려워 계약이 어려움, 고객 설득 자료 부족</div>
+                                </div>
+                                <div class="problem-category-card" data-category="operation" onclick="toggleProblemCategory(this)">
+                                    <div class="problem-category-header">
+                                        <div class="problem-category-check">✓</div>
+                                        <div class="problem-category-title">⚙️ 운영 효율/병목 문제</div>
+                                    </div>
+                                    <div class="problem-category-desc">요청 처리 기준이 없어 업무가 쌓임, 반복 작업에 시간 과다 소요</div>
+                                </div>
+                                <div class="problem-category-card" data-category="organization" onclick="toggleProblemCategory(this)">
+                                    <div class="problem-category-header">
+                                        <div class="problem-category-check">✓</div>
+                                        <div class="problem-category-title">👥 조직/인사/평가 문제</div>
+                                    </div>
+                                    <div class="problem-category-desc">채용/평가 기준 부재로 판단이 흐림, 역할 분담 불명확</div>
+                                </div>
+                                <div class="problem-category-card" data-category="tech" onclick="toggleProblemCategory(this)">
+                                    <div class="problem-category-header">
+                                        <div class="problem-category-check">✓</div>
+                                        <div class="problem-category-title">🛠️ 기술/도구/시각화 문제</div>
+                                    </div>
+                                    <div class="problem-category-desc">설명은 되지만 임팩트 없음, 데이터 시각화 부재</div>
+                                </div>
+                                <div class="problem-category-card" data-category="investment" onclick="toggleProblemCategory(this)">
+                                    <div class="problem-category-header">
+                                        <div class="problem-category-check">✓</div>
+                                        <div class="problem-category-title">📊 투자/경영 설명 문제</div>
+                                    </div>
+                                    <div class="problem-category-desc">투자 질문에 구조적으로 답 못함, IR 자료 미흡</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">문제 정의</label>
+                            <textarea class="form-textarea" id="problemDefinitionInput" rows="3" placeholder="왜 이 문제가 발생했고, 지금 구조로는 왜 해결이 안 되는가?"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">🔧 해결 구조</div>
+                        <div class="form-group">
+                            <label class="form-label">해결 구조 유형</label>
+                            <div class="option-grid" id="solutionTypeOptions">
+                                <div class="option-item" data-value="사람" onclick="selectSolutionType(this)">👤 사람</div>
+                                <div class="option-item" data-value="기술" onclick="selectSolutionType(this)">💻 기술</div>
+                                <div class="option-item" data-value="서비스" onclick="selectSolutionType(this)">🚀 서비스</div>
+                                <div class="option-item" data-value="복합" onclick="selectSolutionType(this)">🔗 복합</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">수행 결과물 유형 <span style="font-weight: 400; color: var(--dark-600);">(복수 선택)</span></label>
+                            <div class="option-grid" id="resultTypeOptions">
+                                <div class="option-item" data-value="서비스" onclick="toggleResultType(this)">🌐 서비스</div>
+                                <div class="option-item" data-value="내부도구" onclick="toggleResultType(this)">🔧 내부 도구</div>
+                                <div class="option-item" data-value="문서" onclick="toggleResultType(this)">📄 문서/리포트</div>
+                                <div class="option-item" data-value="프로세스" onclick="toggleResultType(this)">📋 운영 프로세스</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">📈 운영 & 성과</div>
+                        <div class="form-group">
+                            <label class="form-label">운영 시작 여부</label>
+                            <div class="operation-options" id="operationStatusOptions">
+                                <div class="operation-option" data-value="미시작" onclick="selectOperationStatus(this)">⏳ 미시작</div>
+                                <div class="operation-option" data-value="준비중" onclick="selectOperationStatus(this)">🔄 준비중</div>
+                                <div class="operation-option" data-value="시작됨" onclick="selectOperationStatus(this)">✅ 시작됨</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">성과 추적 지표</label>
+                            <div class="kpi-options">
+                                <div class="kpi-item" data-kpi="activation" onclick="toggleKpi(this)">
+                                    <div class="kpi-check">✓</div>
+                                    <span>Activation 지표 연결</span>
+                                </div>
+                                <div class="kpi-item" data-kpi="usage" onclick="toggleKpi(this)">
+                                    <div class="kpi-check">✓</div>
+                                    <span>Usage / Count 지표 연결</span>
+                                </div>
+                            </div>
+                            <input type="text" class="form-input" id="kpiOtherInput" placeholder="기타 KPI (선택)" style="margin-top: 10px;">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">⚙️ 설정</div>
+                        <div class="form-group">
+                            <label class="form-label">📅 다음 방문 예정일</label>
+                            <input type="date" class="form-input" id="growthDateInput">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">📊 상태</label>
+                            <div class="status-options" id="growthStatusOptions">
+                                <div class="status-option selected" data-status="진행중" onclick="selectGrowthStatus(this)">🔥 진행중</div>
+                                <div class="status-option" data-status="완료" onclick="selectGrowthStatus(this)">✅ 완료</div>
+                                <div class="status-option" data-status="보류" onclick="selectGrowthStatus(this)">⏸️ 보류</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: 일반 업무 폼 -->
+                <div class="step-content" id="newProjectStep3General">
                     <div class="form-group">
                         <label class="form-label">프로젝트명 *</label>
-                        <input type="text" class="form-input" id="projectNameInput" placeholder="프로젝트명을 입력하세요">
+                        <input type="text" class="form-input" id="generalNameInput" placeholder="프로젝트명을 입력하세요">
                     </div>
                     <div class="form-group">
                         <label class="form-label">설명</label>
-                        <textarea class="form-textarea" id="projectDescInput" placeholder="프로젝트 설명 (선택사항)"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">📁 카테고리 *</label>
-                        <div class="category-options" id="newProjectCategoryOptions">
-                            <div class="category-option selected" data-category="growth" onclick="selectNewProjectCategory(this)">
-                                <span class="category-color" style="background: #3B82F6;"></span>
-                                <span>📈 그로스 이니셔티브</span>
-                            </div>
-                            <div class="category-option" data-category="general" onclick="selectNewProjectCategory(this)">
-                                <span class="category-color" style="background: #03CF5D;"></span>
-                                <span>📄 일반업무</span>
-                            </div>
-                        </div>
-                        <small style="color: var(--light-400); font-size: 12px; margin-top: 4px; display: block;">그로스: 회사 구조/성과 변화 | 일반: 단발성 업무</small>
+                        <textarea class="form-textarea" id="generalDescInput" placeholder="프로젝트 설명 (선택)"></textarea>
                     </div>
                     <div class="form-group">
                         <label class="form-label">📅 다음 방문 예정일</label>
-                        <input type="date" class="form-input" id="newProjectDate">
-                        <small style="color: var(--light-400); font-size: 12px; margin-top: 4px; display: block;">비워두면 미지정 상태로 생성됩니다</small>
+                        <input type="date" class="form-input" id="generalDateInput">
+                        <small style="color: var(--dark-600); font-size: 12px; margin-top: 4px; display: block;">비워두면 미지정 상태로 생성됩니다</small>
                     </div>
                     <div class="form-group">
                         <label class="form-label">📊 상태</label>
-                        <div class="status-options" id="newProjectStatusOptions">
-                            <div class="status-option selected" data-status="진행중" onclick="selectNewProjectStatus(this)">
-                                <span>🔥 진행중</span>
-                            </div>
-                            <div class="status-option" data-status="완료" onclick="selectNewProjectStatus(this)">
-                                <span>✅ 완료</span>
-                            </div>
-                            <div class="status-option" data-status="보류" onclick="selectNewProjectStatus(this)">
-                                <span>⏸️ 보류</span>
-                            </div>
+                        <div class="status-options" id="generalStatusOptions">
+                            <div class="status-option selected" data-status="진행중" onclick="selectGeneralStatus(this)">🔥 진행중</div>
+                            <div class="status-option" data-status="완료" onclick="selectGeneralStatus(this)">✅ 완료</div>
+                            <div class="status-option" data-status="보류" onclick="selectGeneralStatus(this)">⏸️ 보류</div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- 개인일정 입력 영역 -->
-                <div id="newPersonalInputArea" style="display: none;">
+
+                <!-- Step 3: 개인일정 폼 -->
+                <div class="step-content" id="newProjectStep3Personal">
                     <div class="form-group">
                         <label class="form-label">일정 유형 *</label>
                         <div class="personal-type-options" id="personalTypeOptions">
-                            <div class="personal-type-option selected" data-type="휴가" onclick="selectPersonalType(this)">
-                                🏖️ 휴가
-                            </div>
-                            <div class="personal-type-option" data-type="외출" onclick="selectPersonalType(this)">
-                                🚗 외출
-                            </div>
-                            <div class="personal-type-option" data-type="재택근무" onclick="selectPersonalType(this)">
-                                🏠 재택근무
-                            </div>
-                            <div class="personal-type-option" data-type="기타" onclick="selectPersonalType(this)">
-                                ✏️ 기타
-                            </div>
+                            <div class="personal-type-option selected" data-type="휴가" onclick="selectPersonalType(this)">🏖️ 휴가</div>
+                            <div class="personal-type-option" data-type="외출" onclick="selectPersonalType(this)">🚗 외출</div>
+                            <div class="personal-type-option" data-type="재택근무" onclick="selectPersonalType(this)">🏠 재택근무</div>
+                            <div class="personal-type-option" data-type="기타" onclick="selectPersonalType(this)">✏️ 기타</div>
                         </div>
                     </div>
                     <div class="form-group" id="customTitleGroup" style="display: none;">
@@ -3653,7 +4595,7 @@
                             <span class="date-range-separator">~</span>
                             <input type="date" class="form-input" id="newPersonalEndDate">
                         </div>
-                        <small style="color: var(--light-400); font-size: 12px; margin-top: 4px; display: block;">하루만 선택하려면 같은 날짜를 선택하세요</small>
+                        <small style="color: var(--dark-600); font-size: 12px; margin-top: 4px; display: block;">하루만 선택하려면 같은 날짜를 선택하세요</small>
                     </div>
                     <div class="form-group">
                         <label class="form-label">메모</label>
@@ -3666,76 +4608,195 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('newProject')">취소</button>
-                <button class="btn btn-primary" onclick="saveNewSchedule()">생성하기</button>
+                <button class="btn btn-secondary" id="newProjectBackBtn" onclick="prevProjectStep()" style="display: none;">← 이전</button>
+                <button class="btn btn-secondary" id="newProjectCancelBtn" onclick="closeModal('newProject')">취소</button>
+                <button class="btn btn-primary" id="newProjectNextBtn" onclick="nextProjectStep()">다음 →</button>
+                <button class="btn btn-primary" id="newProjectSaveBtn" onclick="saveNewProject()" style="display: none;">생성하기</button>
             </div>
         </div>
     </div>
 
     <div class="modal" id="calendarAddModal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 520px;">
             <div class="modal-header">
                 <h2 class="modal-title">📅 <span id="calendarAddDate"></span></h2>
                 <button class="modal-close" onclick="closeModal('calendarAdd')">✕</button>
             </div>
             <div class="modal-body">
-                <!-- 일정 타입 선택 -->
-                <div class="form-group">
-                    <label class="form-label">일정 타입</label>
-                    <div class="schedule-type-options">
-                        <div class="schedule-type-option selected" data-type="project" onclick="selectScheduleType('project')">
-                            📋 프로젝트
-                        </div>
-                        <div class="schedule-type-option" data-type="personal" onclick="selectScheduleType('personal')">
-                            👤 개인일정
+                <!-- 스텝 인디케이터 -->
+                <div class="step-indicator" id="calendarStepIndicator">
+                    <div class="step-dot active" id="calStepDot1">1</div>
+                    <div class="step-line" id="calStepLine1"></div>
+                    <div class="step-dot" id="calStepDot2">2</div>
+                    <div class="step-line" id="calStepLine2"></div>
+                    <div class="step-dot" id="calStepDot3">3</div>
+                </div>
+
+                <!-- Step 1: 타입 선택 -->
+                <div class="step-content active" id="calendarStep1">
+                    <div class="form-group">
+                        <label class="form-label" style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">어떤 유형의 일정인가요?</label>
+                        <div class="type-selection-cards">
+                            <div class="type-card" data-type="growth" onclick="selectCalendarType('growth')">
+                                <div class="type-card-header">
+                                    <div class="type-card-icon growth">📈</div>
+                                    <div class="type-card-title">Growth Initiative</div>
+                                </div>
+                                <div class="type-card-desc">회사의 구조적 성장에 기여하는 과제</div>
+                            </div>
+                            <div class="type-card" data-type="general" onclick="selectCalendarType('general')">
+                                <div class="type-card-header">
+                                    <div class="type-card-icon general">📄</div>
+                                    <div class="type-card-title">일반 업무</div>
+                                </div>
+                                <div class="type-card-desc">단발성 요청, 반복 업무</div>
+                            </div>
+                            <div class="type-card" data-type="personal" onclick="selectCalendarType('personal')">
+                                <div class="type-card-header">
+                                    <div class="type-card-icon personal">👤</div>
+                                    <div class="type-card-title">개인일정</div>
+                                </div>
+                                <div class="type-card-desc">휴가, 외출, 재택근무 등</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- 프로젝트 입력 영역 -->
-                <div id="projectInputArea">
+
+                <!-- Step 2: Growth 조건 체크 -->
+                <div class="step-content" id="calendarStep2">
+                    <div class="form-group">
+                        <label class="form-label" style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Growth Initiative 조건 확인</label>
+                        <p style="font-size: 13px; color: var(--dark-600); margin-bottom: 16px;">4가지 조건을 모두 충족해야 합니다.</p>
+                        <div class="condition-cards" id="calendarConditionCards">
+                            <div class="condition-card" data-condition="1" onclick="toggleCalendarCondition(this)">
+                                <div class="condition-header">
+                                    <div class="condition-checkbox">✓</div>
+                                    <div class="condition-text">회사 성장에 <strong>실질적 영향</strong>을 주는 문제</div>
+                                </div>
+                            </div>
+                            <div class="condition-card" data-condition="2" onclick="toggleCalendarCondition(this)">
+                                <div class="condition-header">
+                                    <div class="condition-checkbox">✓</div>
+                                    <div class="condition-text"><strong>구조·방식 변경</strong>이 필요한 문제</div>
+                                </div>
+                            </div>
+                            <div class="condition-card" data-condition="3" onclick="toggleCalendarCondition(this)">
+                                <div class="condition-header">
+                                    <div class="condition-checkbox">✓</div>
+                                    <div class="condition-text"><strong>결과물까지 책임</strong>지는 과제</div>
+                                </div>
+                            </div>
+                            <div class="condition-card" data-condition="4" onclick="toggleCalendarCondition(this)">
+                                <div class="condition-header">
+                                    <div class="condition-checkbox">✓</div>
+                                    <div class="condition-text">결과가 <strong>재사용/확장</strong> 가능</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="condition-result" id="calendarConditionResult" style="display: none;">
+                            <div class="condition-result-icon" id="calendarConditionResultIcon"></div>
+                            <div class="condition-result-text" id="calendarConditionResultText"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Growth Initiative 폼 -->
+                <div class="step-content" id="calendarStep3Growth">
+                    <div class="form-section">
+                        <div class="form-section-title">📌 기본 정보</div>
+                        <div class="form-group">
+                            <label class="form-label">Initiative 명 *</label>
+                            <input type="text" class="form-input" id="calGrowthNameInput" placeholder="Initiative 명">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">한 줄 설명</label>
+                            <input type="text" class="form-input" id="calGrowthDescInput" placeholder="설명 (선택)">
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-section-title">🔍 문제 카테고리 *</div>
+                        <div class="problem-category-cards" id="calProblemCategoryCards">
+                            <div class="problem-category-card" data-category="sales" onclick="toggleCalProblemCategory(this)">
+                                <div class="problem-category-header">
+                                    <div class="problem-category-check">✓</div>
+                                    <div class="problem-category-title">💰 매출/수주/설득</div>
+                                </div>
+                                <div class="problem-category-desc">기술 설명 어려움, 고객 설득 자료 부족</div>
+                            </div>
+                            <div class="problem-category-card" data-category="operation" onclick="toggleCalProblemCategory(this)">
+                                <div class="problem-category-header">
+                                    <div class="problem-category-check">✓</div>
+                                    <div class="problem-category-title">⚙️ 운영 효율/병목</div>
+                                </div>
+                                <div class="problem-category-desc">업무 적체, 반복 작업 과다</div>
+                            </div>
+                            <div class="problem-category-card" data-category="organization" onclick="toggleCalProblemCategory(this)">
+                                <div class="problem-category-header">
+                                    <div class="problem-category-check">✓</div>
+                                    <div class="problem-category-title">👥 조직/인사/평가</div>
+                                </div>
+                                <div class="problem-category-desc">기준 부재, 역할 불명확</div>
+                            </div>
+                            <div class="problem-category-card" data-category="tech" onclick="toggleCalProblemCategory(this)">
+                                <div class="problem-category-header">
+                                    <div class="problem-category-check">✓</div>
+                                    <div class="problem-category-title">🛠️ 기술/도구/시각화</div>
+                                </div>
+                                <div class="problem-category-desc">임팩트 부족, 시각화 미흡</div>
+                            </div>
+                            <div class="problem-category-card" data-category="investment" onclick="toggleCalProblemCategory(this)">
+                                <div class="problem-category-header">
+                                    <div class="problem-category-check">✓</div>
+                                    <div class="problem-category-title">📊 투자/경영 설명</div>
+                                </div>
+                                <div class="problem-category-desc">IR 자료 미흡, 구조적 답변 불가</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: 일반 업무 폼 -->
+                <div class="step-content" id="calendarStep3General">
                     <div class="form-group">
                         <label class="form-label">프로젝트명 *</label>
-                        <input type="text" class="form-input" id="calendarProjectName" placeholder="프로젝트명">
+                        <input type="text" class="form-input" id="calGeneralNameInput" placeholder="프로젝트명">
                     </div>
                     <div class="form-group">
                         <label class="form-label">설명</label>
-                        <textarea class="form-textarea" id="calendarProjectDesc" placeholder="설명 (선택)"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">📁 카테고리</label>
-                        <div class="category-options" id="calendarCategoryOptions">
-                            <div class="category-option selected" data-category="growth" onclick="selectCalendarCategory(this)">
-                                <span class="category-color" style="background: #3B82F6;"></span>
-                                <span>📈 그로스 이니셔티브</span>
-                            </div>
-                            <div class="category-option" data-category="general" onclick="selectCalendarCategory(this)">
-                                <span class="category-color" style="background: #03CF5D;"></span>
-                                <span>📄 일반업무</span>
-                            </div>
-                        </div>
+                        <textarea class="form-textarea" id="calGeneralDescInput" placeholder="설명 (선택)"></textarea>
                     </div>
                 </div>
-                
-                <!-- 개인일정 입력 영역 -->
-                <div id="personalInputArea" style="display: none;">
+
+                <!-- Step 3: 개인일정 폼 -->
+                <div class="step-content" id="calendarStep3Personal">
                     <div class="form-group">
+                        <label class="form-label">일정 유형 *</label>
+                        <div class="personal-type-options" id="calPersonalTypeOptions">
+                            <div class="personal-type-option selected" data-type="휴가" onclick="selectCalPersonalType(this)">🏖️ 휴가</div>
+                            <div class="personal-type-option" data-type="외출" onclick="selectCalPersonalType(this)">🚗 외출</div>
+                            <div class="personal-type-option" data-type="재택근무" onclick="selectCalPersonalType(this)">🏠 재택근무</div>
+                            <div class="personal-type-option" data-type="기타" onclick="selectCalPersonalType(this)">✏️ 기타</div>
+                        </div>
+                    </div>
+                    <div class="form-group" id="calCustomTitleGroup" style="display: none;">
                         <label class="form-label">일정 제목 *</label>
-                        <input type="text" class="form-input" id="personalScheduleTitle" placeholder="예: 휴가, 외출, 재택근무 등">
+                        <input type="text" class="form-input" id="calPersonalTitle" placeholder="일정 제목">
                     </div>
                     <div class="form-group">
                         <label class="form-label">메모</label>
-                        <textarea class="form-textarea" id="personalScheduleDesc" placeholder="메모 (선택)"></textarea>
+                        <textarea class="form-textarea" id="calPersonalDesc" placeholder="메모 (선택)"></textarea>
                     </div>
                     <div class="personal-schedule-preview">
                         <span>내 일정 색상:</span>
-                        <div class="personal-color-preview" id="personalColorPreview"></div>
+                        <div class="personal-color-preview" id="calPersonalColorPreview"></div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('calendarAdd')">취소</button>
-                <button class="btn btn-primary" onclick="saveCalendarSchedule()">생성하기</button>
+                <button class="btn btn-secondary" id="calendarBackBtn" onclick="prevCalendarStep()" style="display: none;">← 이전</button>
+                <button class="btn btn-secondary" id="calendarCancelBtn" onclick="closeModal('calendarAdd')">취소</button>
+                <button class="btn btn-primary" id="calendarNextBtn" onclick="nextCalendarStep()">다음 →</button>
+                <button class="btn btn-primary" id="calendarSaveBtn" onclick="saveCalendarProject()" style="display: none;">생성하기</button>
             </div>
         </div>
     </div>
@@ -3743,17 +4804,17 @@
     <div class="modal" id="newVisitModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">방문 기록 추가</h2>
+                <h2 class="modal-title">기록일지 추가</h2>
                 <button class="modal-close" onclick="closeModal('newVisit')">✕</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label class="form-label">방문일 *</label>
+                    <label class="form-label">기록일 *</label>
                     <input type="date" class="form-input" id="visitDate">
                 </div>
                 <div class="form-group">
                     <label class="form-label">제목</label>
-                    <input type="text" class="form-input" id="visitTitle" placeholder="방문 제목">
+                    <input type="text" class="form-input" id="visitTitle" placeholder="제목을 입력하세요">
                 </div>
                 <div class="form-group">
                     <label class="form-label">내용</label>
@@ -3764,7 +4825,7 @@
                             <button type="button" class="gpt-copy-btn" onclick="copyGptPrompt()">📋 복사</button>
                         </div>
                     </div>
-                    <textarea class="form-textarea" id="visitContent" rows="8" placeholder="방문 내용을 입력하세요"></textarea>
+                    <textarea class="form-textarea" id="visitContent" rows="8" placeholder="기록 내용을 입력하세요"></textarea>
                 </div>
                 <div class="form-group">
                     <label class="form-label">파일 첨부</label>
@@ -3807,13 +4868,13 @@
     <div class="modal" id="editVisitModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">방문 기록 수정</h2>
+                <h2 class="modal-title">기록일지 수정</h2>
                 <button class="modal-close" onclick="closeModal('editVisit')">✕</button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="editVisitId">
                 <div class="form-group">
-                    <label class="form-label">방문일 *</label>
+                    <label class="form-label">기록일 *</label>
                     <input type="date" class="form-input" id="editVisitDate">
                 </div>
                 <div class="form-group">
@@ -3872,7 +4933,7 @@
                     <div class="category-options" id="editProjectCategoryOptions">
                         <div class="category-option" data-category="growth" onclick="selectEditProjectCategory(this)">
                             <span class="category-color" style="background: #3B82F6;"></span>
-                            <span>📈 그로스 이니셔티브</span>
+                            <span>📈 Growth Initiative</span>
                         </div>
                         <div class="category-option" data-category="general" onclick="selectEditProjectCategory(this)">
                             <span class="category-color" style="background: #03CF5D;"></span>
@@ -3892,10 +4953,103 @@
                     <label class="form-label">👤 담당자</label>
                     <div class="assignee-options" id="editProjectAssignee"></div>
                 </div>
+                
+                <!-- Growth Initiative 전용 필드 -->
+                <div id="editGrowthFields" style="display: none;">
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--light-200);">
+                        <div class="form-section-title" style="margin-bottom: 16px;">🔍 문제 정의</div>
+                        <div class="form-group">
+                            <label class="form-label">문제 카테고리 (복수 선택)</label>
+                            <div class="problem-category-cards" id="editProblemCategoryCards">
+                                <div class="problem-category-card" data-category="sales" onclick="toggleEditProblemCategory(this)">
+                                    <div class="problem-category-header">
+                                        <div class="problem-category-check">✓</div>
+                                        <div class="problem-category-title">💰 매출/수주/설득</div>
+                                    </div>
+                                </div>
+                                <div class="problem-category-card" data-category="operation" onclick="toggleEditProblemCategory(this)">
+                                    <div class="problem-category-header">
+                                        <div class="problem-category-check">✓</div>
+                                        <div class="problem-category-title">⚙️ 운영 효율/병목</div>
+                                    </div>
+                                </div>
+                                <div class="problem-category-card" data-category="organization" onclick="toggleEditProblemCategory(this)">
+                                    <div class="problem-category-header">
+                                        <div class="problem-category-check">✓</div>
+                                        <div class="problem-category-title">👥 조직/인사/평가</div>
+                                    </div>
+                                </div>
+                                <div class="problem-category-card" data-category="tech" onclick="toggleEditProblemCategory(this)">
+                                    <div class="problem-category-header">
+                                        <div class="problem-category-check">✓</div>
+                                        <div class="problem-category-title">🛠️ 기술/도구/시각화</div>
+                                    </div>
+                                </div>
+                                <div class="problem-category-card" data-category="investment" onclick="toggleEditProblemCategory(this)">
+                                    <div class="problem-category-header">
+                                        <div class="problem-category-check">✓</div>
+                                        <div class="problem-category-title">📊 투자/경영 설명</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">문제 정의</label>
+                            <textarea class="form-textarea" id="editProblemDefinition" rows="2" placeholder="왜 이 문제가 발생했고, 지금 구조로는 왜 해결이 안 되는가?"></textarea>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--light-200);">
+                        <div class="form-section-title" style="margin-bottom: 16px;">🔧 해결 구조</div>
+                        <div class="form-group">
+                            <label class="form-label">해결 구조 유형</label>
+                            <div class="option-grid" id="editSolutionTypeOptions">
+                                <div class="option-item" data-value="사람" onclick="selectEditSolutionType(this)">👤 사람</div>
+                                <div class="option-item" data-value="기술" onclick="selectEditSolutionType(this)">💻 기술</div>
+                                <div class="option-item" data-value="서비스" onclick="selectEditSolutionType(this)">🚀 서비스</div>
+                                <div class="option-item" data-value="복합" onclick="selectEditSolutionType(this)">🔗 복합</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">수행 결과물 유형 (복수 선택)</label>
+                            <div class="option-grid" id="editResultTypeOptions">
+                                <div class="option-item" data-value="서비스" onclick="toggleEditResultType(this)">🌐 서비스</div>
+                                <div class="option-item" data-value="내부도구" onclick="toggleEditResultType(this)">🔧 내부 도구</div>
+                                <div class="option-item" data-value="문서" onclick="toggleEditResultType(this)">📄 문서/리포트</div>
+                                <div class="option-item" data-value="프로세스" onclick="toggleEditResultType(this)">📋 운영 프로세스</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--light-200);">
+                        <div class="form-section-title" style="margin-bottom: 16px;">📈 운영 & 성과</div>
+                        <div class="form-group">
+                            <label class="form-label">운영 시작 여부</label>
+                            <div class="operation-options" id="editOperationStatusOptions">
+                                <div class="operation-option" data-value="미시작" onclick="selectEditOperationStatus(this)">⏳ 미시작</div>
+                                <div class="operation-option" data-value="준비중" onclick="selectEditOperationStatus(this)">🔄 준비중</div>
+                                <div class="operation-option" data-value="시작됨" onclick="selectEditOperationStatus(this)">✅ 시작됨</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">성과 추적 지표</label>
+                            <div class="kpi-options">
+                                <div class="kpi-item" id="editKpiActivation" data-kpi="activation" onclick="toggleEditKpi(this)">
+                                    <div class="kpi-check">✓</div>
+                                    <span>Activation 지표 연결</span>
+                                </div>
+                                <div class="kpi-item" id="editKpiUsage" data-kpi="usage" onclick="toggleEditKpi(this)">
+                                    <div class="kpi-check">✓</div>
+                                    <span>Usage / Count 지표 연결</span>
+                                </div>
+                            </div>
+                            <input type="text" class="form-input" id="editKpiOther" placeholder="기타 KPI (선택)" style="margin-top: 10px;">
+                        </div>
+                    </div>
+                </div>
+                
                 <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--light-200);">
                     <div class="danger-zone">
                         <div class="danger-zone-title">⚠️ 위험 영역</div>
-                        <div class="danger-zone-desc">프로젝트를 삭제하면 모든 방문 기록과 파일이 함께 삭제됩니다.</div>
+                        <div class="danger-zone-desc">프로젝트를 삭제하면 모든 기록일지와 파일이 함께 삭제됩니다.</div>
                         <button class="btn btn-danger btn-sm" onclick="deleteProjectFromSettings()">🗑️ 이 프로젝트 삭제</button>
                     </div>
                 </div>
@@ -3988,9 +5142,28 @@
         let calendarSelectedDate = null;
         let personalSchedules = [];
         let calendarScheduleType = 'project'; // 'project' or 'personal'
-        let newProjectScheduleType = 'project'; // 새 프로젝트 모달용
-        let newProjectStatus = '진행중'; // 새 프로젝트 상태
-        let newProjectCategory = 'growth'; // 새 프로젝트 카테고리
+        
+        // ========== 새 프로젝트 모달 상태 ==========
+        let newProjectStep = 1;
+        let newProjectType = null; // 'growth', 'general', 'personal'
+        let newProjectConditions = [false, false, false, false];
+        let growthProblemCategories = [];
+        let growthSolutionType = null;
+        let growthResultTypes = [];
+        let growthOperationStatus = '미시작';
+        let growthKpiActivation = false;
+        let growthKpiUsage = false;
+        let growthStatus = '진행중';
+        let generalStatus = '진행중';
+        let personalType = '휴가';
+        
+        // ========== 캘린더 모달 상태 ==========
+        let calendarStep = 1;
+        let calendarType = null;
+        let calendarConditions = [false, false, false, false];
+        let calProblemCategories = [];
+        let calPersonalType = '휴가';
+        
         let editingPersonalScheduleId = null; // 수정 중인 개인일정 ID
         let visitFiles = [];
         let allFiles = [];
@@ -3999,18 +5172,436 @@
         let currentVisits = []; // 현재 프로젝트의 방문 기록
         let expandedVisitIds = new Set(); // 열려있는 방문 기록 ID들
         
-        // 새 프로젝트 상태 선택
-        function selectNewProjectStatus(el) {
-            document.querySelectorAll('#newProjectStatusOptions .status-option').forEach(e => e.classList.remove('selected'));
-            el.classList.add('selected');
-            newProjectStatus = el.dataset.status;
+        // ========== 새 프로젝트 모달 함수들 ==========
+        
+        // 프로젝트 타입 선택 (Step 1)
+        function selectProjectType(type) {
+            newProjectType = type;
+            document.querySelectorAll('#newProjectStep1 .type-card').forEach(c => c.classList.remove('selected'));
+            document.querySelector(`#newProjectStep1 .type-card[data-type="${type}"]`).classList.add('selected');
         }
         
-        // 새 프로젝트 카테고리 선택
-        function selectNewProjectCategory(el) {
-            document.querySelectorAll('#newProjectCategoryOptions .category-option').forEach(e => e.classList.remove('selected'));
+        // 조건 체크 토글 (Step 2)
+        function toggleCondition(el) {
+            el.classList.toggle('checked');
+            const idx = parseInt(el.dataset.condition) - 1;
+            newProjectConditions[idx] = el.classList.contains('checked');
+            updateConditionResult();
+        }
+        
+        // 조건 결과 업데이트
+        function updateConditionResult() {
+            const allChecked = newProjectConditions.every(c => c);
+            const resultDiv = document.getElementById('conditionResult');
+            const iconDiv = document.getElementById('conditionResultIcon');
+            const textDiv = document.getElementById('conditionResultText');
+            
+            if (newProjectConditions.some(c => c)) {
+                resultDiv.style.display = 'block';
+                if (allChecked) {
+                    resultDiv.className = 'condition-result success';
+                    iconDiv.textContent = '🎯';
+                    textDiv.textContent = 'Growth Initiative로 등록 가능합니다!';
+                    textDiv.style.color = '#3B82F6';
+                } else {
+                    resultDiv.className = 'condition-result fail';
+                    iconDiv.textContent = '💡';
+                    textDiv.textContent = '일부 조건 미충족 → 일반 업무로 전환됩니다';
+                    textDiv.style.color = 'var(--primary)';
+                }
+            } else {
+                resultDiv.style.display = 'none';
+            }
+        }
+        
+        // 문제 카테고리 토글
+        function toggleProblemCategory(el) {
+            el.classList.toggle('selected');
+            const category = el.dataset.category;
+            if (el.classList.contains('selected')) {
+                if (!growthProblemCategories.includes(category)) {
+                    growthProblemCategories.push(category);
+                }
+            } else {
+                growthProblemCategories = growthProblemCategories.filter(c => c !== category);
+            }
+        }
+        
+        // 솔루션 타입 선택
+        function selectSolutionType(el) {
+            document.querySelectorAll('#solutionTypeOptions .option-item').forEach(e => e.classList.remove('selected'));
             el.classList.add('selected');
-            newProjectCategory = el.dataset.category;
+            growthSolutionType = el.dataset.value;
+        }
+        
+        // 결과물 타입 토글
+        function toggleResultType(el) {
+            el.classList.toggle('selected');
+            const value = el.dataset.value;
+            if (el.classList.contains('selected')) {
+                if (!growthResultTypes.includes(value)) {
+                    growthResultTypes.push(value);
+                }
+            } else {
+                growthResultTypes = growthResultTypes.filter(v => v !== value);
+            }
+        }
+        
+        // 운영 상태 선택
+        function selectOperationStatus(el) {
+            document.querySelectorAll('#operationStatusOptions .operation-option').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            growthOperationStatus = el.dataset.value;
+        }
+        
+        // KPI 토글
+        function toggleKpi(el) {
+            el.classList.toggle('selected');
+            const kpi = el.dataset.kpi;
+            if (kpi === 'activation') {
+                growthKpiActivation = el.classList.contains('selected');
+            } else if (kpi === 'usage') {
+                growthKpiUsage = el.classList.contains('selected');
+            }
+        }
+        
+        // Growth 상태 선택
+        function selectGrowthStatus(el) {
+            document.querySelectorAll('#growthStatusOptions .status-option').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            growthStatus = el.dataset.status;
+        }
+        
+        // 일반 상태 선택
+        function selectGeneralStatus(el) {
+            document.querySelectorAll('#generalStatusOptions .status-option').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            generalStatus = el.dataset.status;
+        }
+        
+        // 개인일정 타입 선택
+        function selectPersonalType(el) {
+            document.querySelectorAll('#personalTypeOptions .personal-type-option').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            personalType = el.dataset.type;
+            
+            // 기타 선택시 제목 입력 표시
+            const customGroup = document.getElementById('customTitleGroup');
+            if (personalType === '기타') {
+                customGroup.style.display = 'block';
+            } else {
+                customGroup.style.display = 'none';
+            }
+        }
+        
+        // 다음 스텝
+        function nextProjectStep() {
+            if (newProjectStep === 1) {
+                if (!newProjectType) {
+                    showToast('유형을 선택해주세요', 'error');
+                    return;
+                }
+                
+                if (newProjectType === 'growth') {
+                    newProjectStep = 2;
+                    updateProjectStepUI();
+                } else {
+                    // 일반/개인은 바로 Step 3으로
+                    newProjectStep = 3;
+                    updateProjectStepUI();
+                }
+            } else if (newProjectStep === 2) {
+                const allChecked = newProjectConditions.every(c => c);
+                if (!allChecked) {
+                    // 조건 미충족 → 일반 업무로 전환
+                    newProjectType = 'general';
+                    showToast('조건 미충족으로 일반 업무로 전환됩니다', 'info');
+                }
+                newProjectStep = 3;
+                updateProjectStepUI();
+            }
+        }
+        
+        // 이전 스텝
+        function prevProjectStep() {
+            if (newProjectStep === 2) {
+                newProjectStep = 1;
+            } else if (newProjectStep === 3) {
+                if (newProjectType === 'growth' && newProjectConditions.every(c => c)) {
+                    newProjectStep = 2;
+                } else {
+                    newProjectStep = 1;
+                    newProjectType = null;
+                }
+            }
+            updateProjectStepUI();
+        }
+        
+        // 스텝 UI 업데이트
+        function updateProjectStepUI() {
+            // 스텝 인디케이터 업데이트
+            for (let i = 1; i <= 3; i++) {
+                const dot = document.getElementById(`stepDot${i}`);
+                const line = document.getElementById(`stepLine${i}`);
+                
+                if (i < newProjectStep) {
+                    dot.classList.add('completed');
+                    dot.classList.remove('active');
+                    if (line) line.classList.add('active');
+                } else if (i === newProjectStep) {
+                    dot.classList.add('active');
+                    dot.classList.remove('completed');
+                } else {
+                    dot.classList.remove('active', 'completed');
+                    if (line) line.classList.remove('active');
+                }
+            }
+            
+            // Step 2 건너뛰는 경우 인디케이터 조정
+            if (newProjectType !== 'growth' || (newProjectStep === 3 && !newProjectConditions.every(c => c))) {
+                document.getElementById('stepDot2').classList.add('completed');
+                document.getElementById('stepLine1').classList.add('active');
+            }
+            
+            // 컨텐츠 표시
+            document.querySelectorAll('#newProjectModal .step-content').forEach(el => el.classList.remove('active'));
+            
+            if (newProjectStep === 1) {
+                document.getElementById('newProjectStep1').classList.add('active');
+            } else if (newProjectStep === 2) {
+                document.getElementById('newProjectStep2').classList.add('active');
+            } else if (newProjectStep === 3) {
+                if (newProjectType === 'growth') {
+                    document.getElementById('newProjectStep3Growth').classList.add('active');
+                } else if (newProjectType === 'general') {
+                    document.getElementById('newProjectStep3General').classList.add('active');
+                } else if (newProjectType === 'personal') {
+                    document.getElementById('newProjectStep3Personal').classList.add('active');
+                    // 개인일정 색상 미리보기
+                    if (currentUser) {
+                        document.getElementById('newPersonalColorPreview').style.background = currentUser.avatar_color;
+                    }
+                }
+            }
+            
+            // 버튼 표시
+            const backBtn = document.getElementById('newProjectBackBtn');
+            const cancelBtn = document.getElementById('newProjectCancelBtn');
+            const nextBtn = document.getElementById('newProjectNextBtn');
+            const saveBtn = document.getElementById('newProjectSaveBtn');
+            
+            if (newProjectStep === 1) {
+                backBtn.style.display = 'none';
+                cancelBtn.style.display = 'block';
+                nextBtn.style.display = 'block';
+                saveBtn.style.display = 'none';
+            } else if (newProjectStep === 2) {
+                backBtn.style.display = 'block';
+                cancelBtn.style.display = 'none';
+                nextBtn.style.display = 'block';
+                saveBtn.style.display = 'none';
+            } else if (newProjectStep === 3) {
+                backBtn.style.display = 'block';
+                cancelBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+                saveBtn.style.display = 'block';
+            }
+            
+            // 모달 제목 업데이트
+            const titleMap = {
+                'growth': 'Growth Initiative 생성',
+                'general': '일반 업무 생성',
+                'personal': '개인일정 등록'
+            };
+            if (newProjectStep === 3 && newProjectType) {
+                document.getElementById('newProjectModalTitle').textContent = titleMap[newProjectType];
+            } else if (newProjectStep === 2) {
+                document.getElementById('newProjectModalTitle').textContent = '조건 확인';
+            } else {
+                document.getElementById('newProjectModalTitle').textContent = '새 프로젝트';
+            }
+        }
+        
+        // 새 프로젝트 저장
+        async function saveNewProject() {
+            if (newProjectType === 'personal') {
+                await savePersonalSchedule();
+                return;
+            }
+            
+            if (newProjectType === 'growth') {
+                const name = document.getElementById('growthNameInput').value.trim();
+                if (!name) {
+                    showToast('Initiative 명을 입력해주세요', 'error');
+                    return;
+                }
+                if (growthProblemCategories.length === 0) {
+                    showToast('문제 카테고리를 1개 이상 선택해주세요', 'error');
+                    return;
+                }
+                
+                const projectData = {
+                    name: name,
+                    description: document.getElementById('growthDescInput').value.trim(),
+                    category: 'growth',
+                    color: '#3B82F6',
+                    status: growthStatus,
+                    next_visit_date: document.getElementById('growthDateInput').value || getLocalDateString(),
+                    problem_categories: growthProblemCategories,
+                    problem_definition: document.getElementById('problemDefinitionInput').value.trim(),
+                    solution_type: growthSolutionType,
+                    result_types: growthResultTypes,
+                    operation_status: growthOperationStatus,
+                    kpi_activation: growthKpiActivation,
+                    kpi_usage: growthKpiUsage,
+                    kpi_other: document.getElementById('kpiOtherInput').value.trim(),
+                    created_by: currentUser.id,
+                    assigned_to: currentUser.id
+                };
+                
+                const { data, error } = await db.from('projects').insert(projectData).select().single();
+                
+                if (error) {
+                    showToast('생성 실패: ' + error.message, 'error');
+                    return;
+                }
+                
+                showToast('Growth Initiative가 생성되었습니다! 🎯', 'success');
+                await notifyOtherUsers('project_created', '새 Growth Initiative', `${currentUser.name}님이 "${name}"을 생성했습니다`, data.id);
+                
+            } else if (newProjectType === 'general') {
+                const name = document.getElementById('generalNameInput').value.trim();
+                if (!name) {
+                    showToast('프로젝트명을 입력해주세요', 'error');
+                    return;
+                }
+                
+                const projectData = {
+                    name: name,
+                    description: document.getElementById('generalDescInput').value.trim(),
+                    category: 'general',
+                    color: '#03CF5D',
+                    status: generalStatus,
+                    next_visit_date: document.getElementById('generalDateInput').value || getLocalDateString(),
+                    created_by: currentUser.id,
+                    assigned_to: currentUser.id
+                };
+                
+                const { data, error } = await db.from('projects').insert(projectData).select().single();
+                
+                if (error) {
+                    showToast('생성 실패: ' + error.message, 'error');
+                    return;
+                }
+                
+                showToast('일반 업무가 생성되었습니다!', 'success');
+                await notifyOtherUsers('project_created', '새 프로젝트', `${currentUser.name}님이 "${name}"을 생성했습니다`, data.id);
+            }
+            
+            closeModal('newProject');
+            await loadProjects();
+            renderProjectList();
+        }
+        
+        // 개인일정 저장
+        async function savePersonalSchedule() {
+            const startDate = document.getElementById('newPersonalStartDate').value;
+            const endDate = document.getElementById('newPersonalEndDate').value;
+            
+            if (!startDate || !endDate) {
+                showToast('기간을 선택해주세요', 'error');
+                return;
+            }
+            
+            let title = personalType;
+            if (personalType === '기타') {
+                title = document.getElementById('newPersonalTitle').value.trim();
+                if (!title) {
+                    showToast('일정 제목을 입력해주세요', 'error');
+                    return;
+                }
+            }
+            
+            const description = document.getElementById('newPersonalDesc').value.trim();
+            
+            // 날짜 범위 생성
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const schedules = [];
+            
+            for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                schedules.push({
+                    user_id: currentUser.id,
+                    title: title,
+                    schedule_date: d.toISOString().split('T')[0],
+                    description: description
+                });
+            }
+            
+            const { error } = await db.from('personal_schedules').insert(schedules);
+            
+            if (error) {
+                showToast('저장 실패: ' + error.message, 'error');
+                return;
+            }
+            
+            showToast('개인일정이 등록되었습니다!', 'success');
+            closeModal('newProject');
+            await loadPersonalSchedules();
+            renderCalendar();
+        }
+        
+        // 모달 열 때 초기화
+        function resetNewProjectModal() {
+            newProjectStep = 1;
+            newProjectType = null;
+            newProjectConditions = [false, false, false, false];
+            growthProblemCategories = [];
+            growthSolutionType = null;
+            growthResultTypes = [];
+            growthOperationStatus = '미시작';
+            growthKpiActivation = false;
+            growthKpiUsage = false;
+            growthStatus = '진행중';
+            generalStatus = '진행중';
+            personalType = '휴가';
+            
+            // UI 초기화
+            document.querySelectorAll('#newProjectModal .type-card').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('#newProjectModal .condition-card').forEach(c => c.classList.remove('checked'));
+            document.querySelectorAll('#newProjectModal .problem-category-card').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('#newProjectModal .option-item').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('#newProjectModal .operation-option').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('#newProjectModal .kpi-item').forEach(c => c.classList.remove('selected'));
+            document.getElementById('conditionResult').style.display = 'none';
+            
+            // 입력 필드 초기화
+            document.getElementById('growthNameInput').value = '';
+            document.getElementById('growthDescInput').value = '';
+            document.getElementById('problemDefinitionInput').value = '';
+            document.getElementById('kpiOtherInput').value = '';
+            document.getElementById('growthDateInput').value = '';
+            document.getElementById('generalNameInput').value = '';
+            document.getElementById('generalDescInput').value = '';
+            document.getElementById('generalDateInput').value = '';
+            document.getElementById('newPersonalStartDate').value = '';
+            document.getElementById('newPersonalEndDate').value = '';
+            document.getElementById('newPersonalDesc').value = '';
+            document.getElementById('newPersonalTitle').value = '';
+            
+            // 상태 옵션 초기화
+            document.querySelectorAll('#growthStatusOptions .status-option').forEach((el, i) => {
+                el.classList.toggle('selected', i === 0);
+            });
+            document.querySelectorAll('#generalStatusOptions .status-option').forEach((el, i) => {
+                el.classList.toggle('selected', i === 0);
+            });
+            document.querySelectorAll('#personalTypeOptions .personal-type-option').forEach((el, i) => {
+                el.classList.toggle('selected', i === 0);
+            });
+            document.getElementById('customTitleGroup').style.display = 'none';
+            
+            updateProjectStepUI();
         }
 
         // 카테고리 정의 (색상 매핑)
@@ -4029,7 +5620,7 @@
             '#63B3ED': { name: '협업미팅', emoji: '🔵' },
             '#03CF5D': { name: '내부회의', emoji: '🟢' },
             '#F6AD55': { name: '개인프로젝트', emoji: '🟡' },
-            '#3B82F6': { name: '그로스', emoji: '📈' }
+            '#3B82F6': { name: 'Growth', emoji: '📈' }
         };
 
         function getMeetingType(color) {
@@ -4040,8 +5631,8 @@
         let projectSearchQuery = '';
         
         // 카테고리 토글 상태
-        let growthExpanded = true;
-        let generalExpanded = true;
+        let growthExpanded = false;
+        let generalExpanded = false;
         
         // 상태별 토글 상태 (카테고리별)
         let groupExpanded = {
@@ -4101,7 +5692,7 @@
                         if (author && project) {
                             showNotification(
                                 `📝 ${author.name}님이 새 기록을 추가했습니다`, 
-                                `${project.name}: ${payload.new.title || '방문 기록'}`,
+                                `${project.name}: ${payload.new.title || '기록'}`,
                                 { type: 'visit', projectId: payload.new.project_id, visitId: payload.new.id }
                             );
                         }
@@ -4375,7 +5966,7 @@
                 <span style="font-size: 11px; opacity: 0.7;">클릭하여 이동 →</span>
             `;
             container.appendChild(toast);
-            setTimeout(() => toast.remove(), 10000); // 10초
+            setTimeout(() => toast.remove(), 5000); // 5초
 
             // 브라우저 알림
             if (Notification.permission === 'granted') {
@@ -4421,7 +6012,7 @@
 
                 recentActivities = [];
 
-                // 방문 기록 추가
+                // 기록일지 추가
                 if (visits && !visitsError) {
                     visits.forEach(v => {
                         recentActivities.push({
@@ -4430,7 +6021,7 @@
                             project: v.project,
                             projectId: v.project?.id,
                             visitId: v.id,
-                            title: v.title || '방문 기록',
+                            title: v.title || '기록',
                             time: v.created_at
                         });
                     });
@@ -4445,7 +6036,7 @@
                             project: c.visit?.project,
                             projectId: c.visit?.project?.id,
                             visitId: c.visit?.id,
-                            visitTitle: c.visit?.title || '방문 기록',
+                            visitTitle: c.visit?.title || '기록',
                             content: c.content,
                             time: c.created_at
                         });
@@ -4505,7 +6096,7 @@
                                 </div>
                                 <div class="activity-meta">
                                     <span class="activity-time">${timeAgo}</span>
-                                    <span class="activity-badge visit">방문</span>
+                                    <span class="activity-badge visit">기록</span>
                                 </div>
                             </div>
                         </div>
@@ -4516,7 +6107,7 @@
                             <div class="activity-avatar" style="background: ${avatarColor}">${avatarInitial}</div>
                             <div class="activity-content">
                                 <div class="activity-project-tag" style="background: ${projectColor}15; color: ${projectColor}; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; margin-bottom: 6px;">
-                                    📁 ${projectName} > ${activity.visitTitle || '방문 기록'}
+                                    📁 ${projectName} > ${activity.visitTitle || '기록'}
                                 </div>
                                 <div class="activity-text">
                                     <strong>${userName}</strong>님이 댓글 작성
@@ -4824,7 +6415,7 @@
                 }
             };
             
-            // 그로스 이니셔티브 렌더링
+            // Growth Initiative 렌더링
             renderList('growthOngoingList', growthOngoing);
             renderList('growthCompletedList', growthCompleted);
             renderList('growthHoldList', growthHold);
@@ -4909,6 +6500,14 @@
             container.querySelectorAll('.category-option').forEach(e => e.classList.remove('selected'));
             el.classList.add('selected');
             editProjectCategory = el.dataset.category;
+            
+            // Growth 필드 표시/숨김
+            const growthFields = document.getElementById('editGrowthFields');
+            if (editProjectCategory === 'growth') {
+                growthFields.style.display = 'block';
+            } else {
+                growthFields.style.display = 'none';
+            }
         }
 
         // 프로젝트 목록 모달 열기
@@ -4954,21 +6553,24 @@
                 `;
             } else {
                 const categoryColors = { growth: '#3B82F6', general: '#03CF5D' };
+                const categoryNames = { growth: 'Growth', general: '일반업무' };
                 content.innerHTML = filtered.map(p => {
                     const color = categoryColors[p.category || 'growth'] || '#3B82F6';
+                    const categoryName = categoryNames[p.category || 'growth'] || 'Growth';
+                    const categoryIcon = p.category === 'general' ? '📄' : '📈';
                     return `
                     <div style="display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 12px; cursor: pointer; transition: all 0.2s; border: 1px solid var(--light-200); margin-bottom: 12px;"
-                         onmouseover="this.style.background='var(--light-50)'; this.style.borderColor='var(--primary)'"
+                         onmouseover="this.style.background='var(--light-50)'; this.style.borderColor='${color}'"
                          onmouseout="this.style.background=''; this.style.borderColor='var(--light-200)'"
                          onclick="closeModal('projectList'); selectProject('${p.id}')">
                         <div style="width: 48px; height: 48px; background: ${color}; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;">
-                            ${p.category === 'general' ? '📄' : '📈'}
+                            ${categoryIcon}
                         </div>
                         <div style="flex: 1;">
                             <div style="font-weight: 700; font-size: 16px; margin-bottom: 4px;">${p.name}</div>
                             <div style="font-size: 13px; color: var(--dark-600);">${p.description || '설명 없음'}</div>
                         </div>
-                        <span class="project-status-tag status-${p.status === '시작전' ? '진행중' : (p.status || '진행중')}">${getStatusLabel(p.status)}</span>
+                        <span style="padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; background: ${color}15; color: ${color};">${categoryIcon} ${categoryName}</span>
                     </div>
                 `}).join('');
             }
@@ -5025,7 +6627,80 @@
                 assigneeInfo.innerHTML = '';
             }
             
+            // Growth Initiative 정보 표시
+            const growthInfoSection = document.getElementById('growthInfoSection');
+            if (currentProject.category === 'growth') {
+                growthInfoSection.style.display = 'block';
+                renderGrowthInfo();
+            } else {
+                growthInfoSection.style.display = 'none';
+            }
+            
             renderNextVisit();
+        }
+        
+        // Growth Initiative 정보 렌더링
+        function renderGrowthInfo() {
+            // 문제 카테고리 태그
+            const categoryMap = {
+                'sales': '💰 매출/수주/설득',
+                'operation': '⚙️ 운영 효율/병목',
+                'organization': '👥 조직/인사/평가',
+                'tech': '🛠️ 기술/도구/시각화',
+                'investment': '📊 투자/경영 설명'
+            };
+            
+            const problemTags = document.getElementById('problemCategoryTags');
+            const categories = currentProject.problem_categories || [];
+            problemTags.innerHTML = categories.map(cat => 
+                `<span class="problem-tag">${categoryMap[cat] || cat}</span>`
+            ).join('');
+            
+            // 문제 정의 텍스트
+            document.getElementById('problemDefinitionText').textContent = currentProject.problem_definition || '';
+            
+            // 해결 구조 유형
+            const solutionTypeMap = {
+                '사람': '👤 사람',
+                '기술': '💻 기술',
+                '서비스': '🚀 서비스',
+                '복합': '🔗 복합'
+            };
+            document.getElementById('solutionTypeValue').textContent = 
+                currentProject.solution_type ? solutionTypeMap[currentProject.solution_type] || currentProject.solution_type : '-';
+            
+            // 결과물 유형 태그
+            const resultTypeTags = document.getElementById('resultTypeTags');
+            const resultTypes = currentProject.result_types || [];
+            if (resultTypes.length > 0) {
+                resultTypeTags.innerHTML = resultTypes.map(type => 
+                    `<span class="result-tag">${type}</span>`
+                ).join('');
+            } else {
+                resultTypeTags.innerHTML = '<span style="color: var(--dark-600);">-</span>';
+            }
+            
+            // 운영 상태
+            const operationMap = {
+                '미시작': '⏳ 미시작',
+                '준비중': '🔄 준비중',
+                '시작됨': '✅ 시작됨'
+            };
+            document.getElementById('operationStatusValue').textContent = 
+                currentProject.operation_status ? operationMap[currentProject.operation_status] || currentProject.operation_status : '-';
+            
+            // KPI 상태
+            const kpiItems = [];
+            if (currentProject.kpi_activation) kpiItems.push('✓ Activation');
+            if (currentProject.kpi_usage) kpiItems.push('✓ Usage');
+            if (currentProject.kpi_other) kpiItems.push(currentProject.kpi_other);
+            document.getElementById('kpiStatusValue').textContent = kpiItems.length > 0 ? kpiItems.join(', ') : '-';
+        }
+        
+        // Growth 정보 수정 모달 열기
+        function openGrowthEditModal(section) {
+            // 프로젝트 설정 모달 열기 (나중에 섹션별 수정 구현 가능)
+            openModal('projectSettings');
         }
 
         async function updateProjectStatus() {
@@ -5109,15 +6784,65 @@
                 container.innerHTML = '<div style="color: var(--dark-600); font-size: 14px; padding: 20px 0; text-align: center;">할 일을 추가해보세요</div>';
             } else {
                 container.innerHTML = items.map((item, idx) => `
-                    <div class="checklist-item ${item.completed ? 'completed' : ''}">
+                    <div class="checklist-item ${item.completed ? 'completed' : ''}" id="checklist-item-${idx}">
                         <div class="checkbox ${item.completed ? 'checked' : ''}" onclick="toggleChecklist(${idx})"></div>
-                        <span class="checklist-text">${item.text}</span>
-                        <button class="checklist-delete" onclick="deleteChecklistItem(${idx})">✕</button>
+                        <span class="checklist-text">${escapeHtml(item.text)}</span>
+                        <div class="checklist-actions">
+                            <button class="checklist-edit" onclick="editChecklistItem(${idx})" title="수정">✏️</button>
+                            <button class="checklist-delete" onclick="deleteChecklistItem(${idx})" title="삭제">✕</button>
+                        </div>
                     </div>
                 `).join('');
             }
             
             updateDashboardStats();
+        }
+
+        // HTML 이스케이프 함수
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 체크리스트 수정 모드
+        function editChecklistItem(idx) {
+            const items = checklist[currentProject.id];
+            if (!items || !items[idx]) return;
+            
+            const itemElement = document.getElementById(`checklist-item-${idx}`);
+            const currentText = items[idx].text;
+            
+            itemElement.innerHTML = `
+                <input type="text" class="checklist-edit-input" id="checklist-edit-input-${idx}" value="${escapeHtml(currentText)}" onkeypress="if(event.key==='Enter')saveChecklistEdit(${idx})" onkeydown="if(event.key==='Escape')renderChecklist()">
+                <div class="checklist-edit-actions">
+                    <button class="checklist-edit-btn save" onclick="saveChecklistEdit(${idx})">저장</button>
+                    <button class="checklist-edit-btn cancel" onclick="renderChecklist()">취소</button>
+                </div>
+            `;
+            
+            const input = document.getElementById(`checklist-edit-input-${idx}`);
+            input.focus();
+            input.select();
+        }
+
+        // 체크리스트 수정 저장
+        function saveChecklistEdit(idx) {
+            const input = document.getElementById(`checklist-edit-input-${idx}`);
+            const newText = input.value.trim();
+            
+            if (!newText) {
+                showToast('내용을 입력하세요', 'error');
+                return;
+            }
+            
+            const items = checklist[currentProject.id];
+            if (items && items[idx]) {
+                items[idx].text = newText;
+                saveChecklistToStorage();
+                renderChecklist();
+                showToast('수정되었습니다', 'success');
+            }
         }
 
         function toggleChecklist(idx) {
@@ -5320,7 +7045,7 @@
                 container.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">📝</div>
-                        <h3>방문 기록이 없습니다</h3>
+                        <h3>기록일지가 없습니다</h3>
                         <button class="btn btn-primary" onclick="openModal('newVisit')">+ 기록 추가</button>
                     </div>
                 `;
@@ -5399,7 +7124,7 @@
                                     <span class="visit-date-month">${date.toLocaleDateString('ko-KR', { month: 'short' })}</span>
                                 </div>
                                 <div class="visit-info">
-                                    <h3>${visit.title || '방문 기록'}</h3>
+                                    <h3>${visit.title || '기록'}</h3>
                                     <div class="visit-meta">
                                         <span>${visit.author?.name || '알 수 없음'}</span>
                                         <span>•</span>
@@ -5444,7 +7169,7 @@
 
         function openEditVisit(visitId) {
             const visit = currentVisits.find(v => v.id === visitId);
-            if (!visit) { showToast('방문 기록을 찾을 수 없습니다', 'error'); return; }
+            if (!visit) { showToast('기록을 찾을 수 없습니다', 'error'); return; }
             
             document.getElementById('editVisitId').value = visit.id;
             document.getElementById('editVisitDate').value = visit.visit_date;
@@ -5558,7 +7283,7 @@
         }
 
         async function deleteVisit(id) {
-            if (!confirm('이 방문 기록을 삭제하시겠습니까?')) return;
+            if (!confirm('이 기록을 삭제하시겠습니까?')) return;
             const { error } = await db.from('project_visits').delete().eq('id', id);
             if (!error) {
                 await loadVisits();
@@ -5794,24 +7519,6 @@
             const [year, month, day] = dateStr.split('-').map(Number);
             const dateDisplay = `${year}년 ${month}월 ${day}일`;
             document.getElementById('calendarAddDate').textContent = dateDisplay;
-            document.getElementById('calendarProjectName').value = '';
-            document.getElementById('calendarProjectDesc').value = '';
-            document.getElementById('personalScheduleTitle').value = '';
-            document.getElementById('personalScheduleDesc').value = '';
-            // 카테고리 초기화 (그로스)
-            calendarSelectedCategory = 'growth';
-            document.querySelectorAll('#calendarCategoryOptions .category-option').forEach(el => {
-                el.classList.remove('selected');
-                if (el.dataset.category === 'growth') el.classList.add('selected');
-            });
-            // 일정 타입 초기화
-            calendarScheduleType = 'project';
-            document.querySelectorAll('#calendarAddModal .schedule-type-option').forEach(el => {
-                el.classList.remove('selected');
-                if (el.dataset.type === 'project') el.classList.add('selected');
-            });
-            document.getElementById('projectInputArea').style.display = 'block';
-            document.getElementById('personalInputArea').style.display = 'none';
             openModal('calendarAdd');
         }
 
@@ -5989,7 +7696,7 @@
             if (error) { showToast('저장 실패', 'error'); return; }
             
             // 다른 사용자들에게 알림 보내기
-            const categoryName = calendarSelectedCategory === 'growth' ? '그로스 이니셔티브' : '일반업무';
+            const categoryName = calendarSelectedCategory === 'growth' ? 'Growth Initiative' : '일반업무';
             await notifyOtherUsers(
                 'project_created',
                 `${currentUser.name}님이 새 프로젝트를 생성했습니다`,
@@ -6063,7 +7770,7 @@
             document.getElementById('filesBadge').textContent = `${files.length}개`;
             
             if (!files || files.length === 0) {
-                grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">📁</div><h3>파일이 없습니다</h3><p style="color:var(--dark-600)">프로젝트의 방문 기록에서 파일을 첨부하세요</p></div>';
+                grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">📁</div><h3>파일이 없습니다</h3><p style="color:var(--dark-600)">프로젝트의 기록일지에서 파일을 첨부하세요</p></div>';
                 return;
             }
             grid.innerHTML = files.map(f => `
@@ -6220,33 +7927,10 @@
         function openModal(type) {
             document.getElementById(`${type}Modal`).classList.add('active');
             if (type === 'newProject') {
-                // 일정 타입 초기화
-                newProjectScheduleType = 'project';
-                document.querySelectorAll('#newProjectModal .schedule-type-option').forEach(el => {
-                    el.classList.remove('selected');
-                    if (el.dataset.type === 'project') el.classList.add('selected');
-                });
-                document.getElementById('newProjectInputArea').style.display = 'block';
-                document.getElementById('newPersonalInputArea').style.display = 'none';
-                // 입력값 초기화
-                document.getElementById('projectNameInput').value = '';
-                document.getElementById('projectDescInput').value = '';
-                document.getElementById('newPersonalTitle').value = '';
-                document.getElementById('newPersonalDesc').value = '';
-                // 날짜 초기화 (오늘 날짜로)
-                document.getElementById('newProjectDate').value = getLocalDateString();
-                // 카테고리 초기화 (그로스로)
-                newProjectCategory = 'growth';
-                document.querySelectorAll('#newProjectCategoryOptions .category-option').forEach(el => {
-                    el.classList.remove('selected');
-                    if (el.dataset.category === 'growth') el.classList.add('selected');
-                });
-                // 상태 초기화 (진행중으로)
-                newProjectStatus = '진행중';
-                document.querySelectorAll('#newProjectStatusOptions .status-option').forEach(el => {
-                    el.classList.remove('selected');
-                    if (el.dataset.status === '진행중') el.classList.add('selected');
-                });
+                resetNewProjectModal();
+            }
+            if (type === 'calendarAdd') {
+                resetCalendarModal();
             }
             if (type === 'newVisit') {
                 document.getElementById('visitDate').value = getLocalDateString();
@@ -6276,7 +7960,113 @@
                 
                 // 담당자 선택 렌더링
                 renderAssigneeOptions();
+                
+                // Growth Initiative 필드 초기화
+                const growthFields = document.getElementById('editGrowthFields');
+                if (currentProject.category === 'growth') {
+                    growthFields.style.display = 'block';
+                    initEditGrowthFields();
+                } else {
+                    growthFields.style.display = 'none';
+                }
             }
+        }
+        
+        // Growth Initiative 수정 필드 초기화
+        function initEditGrowthFields() {
+            // 문제 카테고리
+            editProblemCategories = currentProject.problem_categories || [];
+            document.querySelectorAll('#editProblemCategoryCards .problem-category-card').forEach(el => {
+                el.classList.remove('selected');
+                if (editProblemCategories.includes(el.dataset.category)) {
+                    el.classList.add('selected');
+                }
+            });
+            
+            // 문제 정의
+            document.getElementById('editProblemDefinition').value = currentProject.problem_definition || '';
+            
+            // 솔루션 타입
+            editSolutionType = currentProject.solution_type || null;
+            document.querySelectorAll('#editSolutionTypeOptions .option-item').forEach(el => {
+                el.classList.remove('selected');
+                if (el.dataset.value === editSolutionType) {
+                    el.classList.add('selected');
+                }
+            });
+            
+            // 결과물 타입
+            editResultTypes = currentProject.result_types || [];
+            document.querySelectorAll('#editResultTypeOptions .option-item').forEach(el => {
+                el.classList.remove('selected');
+                if (editResultTypes.includes(el.dataset.value)) {
+                    el.classList.add('selected');
+                }
+            });
+            
+            // 운영 상태
+            editOperationStatus = currentProject.operation_status || '미시작';
+            document.querySelectorAll('#editOperationStatusOptions .operation-option').forEach(el => {
+                el.classList.remove('selected');
+                if (el.dataset.value === editOperationStatus) {
+                    el.classList.add('selected');
+                }
+            });
+            
+            // KPI
+            editKpiActivation = currentProject.kpi_activation || false;
+            editKpiUsage = currentProject.kpi_usage || false;
+            document.getElementById('editKpiActivation').classList.toggle('selected', editKpiActivation);
+            document.getElementById('editKpiUsage').classList.toggle('selected', editKpiUsage);
+            document.getElementById('editKpiOther').value = currentProject.kpi_other || '';
+        }
+        
+        // 수정용 변수들
+        let editProblemCategories = [];
+        let editSolutionType = null;
+        let editResultTypes = [];
+        let editOperationStatus = '미시작';
+        let editKpiActivation = false;
+        let editKpiUsage = false;
+        
+        // 수정 모달용 함수들
+        function toggleEditProblemCategory(el) {
+            el.classList.toggle('selected');
+            const category = el.dataset.category;
+            if (el.classList.contains('selected')) {
+                if (!editProblemCategories.includes(category)) editProblemCategories.push(category);
+            } else {
+                editProblemCategories = editProblemCategories.filter(c => c !== category);
+            }
+        }
+        
+        function selectEditSolutionType(el) {
+            document.querySelectorAll('#editSolutionTypeOptions .option-item').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            editSolutionType = el.dataset.value;
+        }
+        
+        function toggleEditResultType(el) {
+            el.classList.toggle('selected');
+            const value = el.dataset.value;
+            if (el.classList.contains('selected')) {
+                if (!editResultTypes.includes(value)) editResultTypes.push(value);
+            } else {
+                editResultTypes = editResultTypes.filter(v => v !== value);
+            }
+        }
+        
+        function selectEditOperationStatus(el) {
+            document.querySelectorAll('#editOperationStatusOptions .operation-option').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            editOperationStatus = el.dataset.value;
+        }
+        
+        function toggleEditKpi(el) {
+            el.classList.toggle('selected');
+            const kpi = el.dataset.kpi;
+            if (kpi === 'activation') editKpiActivation = el.classList.contains('selected');
+            if (kpi === 'usage') editKpiUsage = el.classList.contains('selected');
         }
         
         // 담당자 선택 렌더링
@@ -6307,6 +8097,302 @@
             document.getElementById(`${type}Modal`).classList.remove('active');
         }
 
+        // ========== 캘린더 모달 함수들 ==========
+        
+        // 캘린더 타입 선택
+        function selectCalendarType(type) {
+            calendarType = type;
+            document.querySelectorAll('#calendarStep1 .type-card').forEach(c => c.classList.remove('selected'));
+            document.querySelector(`#calendarStep1 .type-card[data-type="${type}"]`).classList.add('selected');
+        }
+        
+        // 캘린더 조건 토글
+        function toggleCalendarCondition(el) {
+            el.classList.toggle('checked');
+            const idx = parseInt(el.dataset.condition) - 1;
+            calendarConditions[idx] = el.classList.contains('checked');
+            updateCalendarConditionResult();
+        }
+        
+        // 캘린더 조건 결과 업데이트
+        function updateCalendarConditionResult() {
+            const allChecked = calendarConditions.every(c => c);
+            const resultDiv = document.getElementById('calendarConditionResult');
+            const iconDiv = document.getElementById('calendarConditionResultIcon');
+            const textDiv = document.getElementById('calendarConditionResultText');
+            
+            if (calendarConditions.some(c => c)) {
+                resultDiv.style.display = 'block';
+                if (allChecked) {
+                    resultDiv.className = 'condition-result success';
+                    iconDiv.textContent = '🎯';
+                    textDiv.textContent = 'Growth Initiative로 등록!';
+                    textDiv.style.color = '#3B82F6';
+                } else {
+                    resultDiv.className = 'condition-result fail';
+                    iconDiv.textContent = '💡';
+                    textDiv.textContent = '일반 업무로 전환됩니다';
+                    textDiv.style.color = 'var(--primary)';
+                }
+            } else {
+                resultDiv.style.display = 'none';
+            }
+        }
+        
+        // 캘린더 문제 카테고리 토글
+        function toggleCalProblemCategory(el) {
+            el.classList.toggle('selected');
+            const category = el.dataset.category;
+            if (el.classList.contains('selected')) {
+                if (!calProblemCategories.includes(category)) {
+                    calProblemCategories.push(category);
+                }
+            } else {
+                calProblemCategories = calProblemCategories.filter(c => c !== category);
+            }
+        }
+        
+        // 캘린더 개인일정 타입 선택
+        function selectCalPersonalType(el) {
+            document.querySelectorAll('#calPersonalTypeOptions .personal-type-option').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            calPersonalType = el.dataset.type;
+            
+            const customGroup = document.getElementById('calCustomTitleGroup');
+            if (calPersonalType === '기타') {
+                customGroup.style.display = 'block';
+            } else {
+                customGroup.style.display = 'none';
+            }
+        }
+        
+        // 캘린더 다음 스텝
+        function nextCalendarStep() {
+            if (calendarStep === 1) {
+                if (!calendarType) {
+                    showToast('유형을 선택해주세요', 'error');
+                    return;
+                }
+                
+                if (calendarType === 'growth') {
+                    calendarStep = 2;
+                } else {
+                    calendarStep = 3;
+                }
+                updateCalendarStepUI();
+            } else if (calendarStep === 2) {
+                const allChecked = calendarConditions.every(c => c);
+                if (!allChecked) {
+                    calendarType = 'general';
+                    showToast('조건 미충족 → 일반 업무', 'info');
+                }
+                calendarStep = 3;
+                updateCalendarStepUI();
+            }
+        }
+        
+        // 캘린더 이전 스텝
+        function prevCalendarStep() {
+            if (calendarStep === 2) {
+                calendarStep = 1;
+            } else if (calendarStep === 3) {
+                if (calendarType === 'growth' && calendarConditions.every(c => c)) {
+                    calendarStep = 2;
+                } else {
+                    calendarStep = 1;
+                    calendarType = null;
+                }
+            }
+            updateCalendarStepUI();
+        }
+        
+        // 캘린더 스텝 UI 업데이트
+        function updateCalendarStepUI() {
+            // 스텝 인디케이터
+            for (let i = 1; i <= 3; i++) {
+                const dot = document.getElementById(`calStepDot${i}`);
+                const line = document.getElementById(`calStepLine${i}`);
+                
+                if (i < calendarStep) {
+                    dot.classList.add('completed');
+                    dot.classList.remove('active');
+                    if (line) line.classList.add('active');
+                } else if (i === calendarStep) {
+                    dot.classList.add('active');
+                    dot.classList.remove('completed');
+                } else {
+                    dot.classList.remove('active', 'completed');
+                    if (line) line.classList.remove('active');
+                }
+            }
+            
+            if (calendarType !== 'growth' || (calendarStep === 3 && !calendarConditions.every(c => c))) {
+                document.getElementById('calStepDot2').classList.add('completed');
+                document.getElementById('calStepLine1').classList.add('active');
+            }
+            
+            // 컨텐츠 표시
+            document.querySelectorAll('#calendarAddModal .step-content').forEach(el => el.classList.remove('active'));
+            
+            if (calendarStep === 1) {
+                document.getElementById('calendarStep1').classList.add('active');
+            } else if (calendarStep === 2) {
+                document.getElementById('calendarStep2').classList.add('active');
+            } else if (calendarStep === 3) {
+                if (calendarType === 'growth') {
+                    document.getElementById('calendarStep3Growth').classList.add('active');
+                } else if (calendarType === 'general') {
+                    document.getElementById('calendarStep3General').classList.add('active');
+                } else if (calendarType === 'personal') {
+                    document.getElementById('calendarStep3Personal').classList.add('active');
+                    if (currentUser) {
+                        document.getElementById('calPersonalColorPreview').style.background = currentUser.avatar_color;
+                    }
+                }
+            }
+            
+            // 버튼
+            const backBtn = document.getElementById('calendarBackBtn');
+            const cancelBtn = document.getElementById('calendarCancelBtn');
+            const nextBtn = document.getElementById('calendarNextBtn');
+            const saveBtn = document.getElementById('calendarSaveBtn');
+            
+            if (calendarStep === 1) {
+                backBtn.style.display = 'none';
+                cancelBtn.style.display = 'block';
+                nextBtn.style.display = 'block';
+                saveBtn.style.display = 'none';
+            } else if (calendarStep === 2) {
+                backBtn.style.display = 'block';
+                cancelBtn.style.display = 'none';
+                nextBtn.style.display = 'block';
+                saveBtn.style.display = 'none';
+            } else {
+                backBtn.style.display = 'block';
+                cancelBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+                saveBtn.style.display = 'block';
+            }
+        }
+        
+        // 캘린더 모달 초기화
+        function resetCalendarModal() {
+            calendarStep = 1;
+            calendarType = null;
+            calendarConditions = [false, false, false, false];
+            calProblemCategories = [];
+            calPersonalType = '휴가';
+            
+            document.querySelectorAll('#calendarAddModal .type-card').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('#calendarAddModal .condition-card').forEach(c => c.classList.remove('checked'));
+            document.querySelectorAll('#calendarAddModal .problem-category-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById('calendarConditionResult').style.display = 'none';
+            
+            document.getElementById('calGrowthNameInput').value = '';
+            document.getElementById('calGrowthDescInput').value = '';
+            document.getElementById('calGeneralNameInput').value = '';
+            document.getElementById('calGeneralDescInput').value = '';
+            document.getElementById('calPersonalTitle').value = '';
+            document.getElementById('calPersonalDesc').value = '';
+            
+            document.querySelectorAll('#calPersonalTypeOptions .personal-type-option').forEach((el, i) => {
+                el.classList.toggle('selected', i === 0);
+            });
+            document.getElementById('calCustomTitleGroup').style.display = 'none';
+            
+            updateCalendarStepUI();
+        }
+        
+        // 캘린더 프로젝트 저장
+        async function saveCalendarProject() {
+            if (calendarType === 'personal') {
+                // 개인일정 저장
+                let title = calPersonalType;
+                if (calPersonalType === '기타') {
+                    title = document.getElementById('calPersonalTitle').value.trim();
+                    if (!title) {
+                        showToast('일정 제목을 입력해주세요', 'error');
+                        return;
+                    }
+                }
+                
+                const { error } = await db.from('personal_schedules').insert({
+                    user_id: currentUser.id,
+                    title: title,
+                    schedule_date: calendarSelectedDate,
+                    description: document.getElementById('calPersonalDesc').value.trim()
+                });
+                
+                if (error) {
+                    showToast('저장 실패', 'error');
+                    return;
+                }
+                
+                showToast('개인일정 등록 완료!', 'success');
+            } else if (calendarType === 'growth') {
+                const name = document.getElementById('calGrowthNameInput').value.trim();
+                if (!name) {
+                    showToast('Initiative 명을 입력해주세요', 'error');
+                    return;
+                }
+                if (calProblemCategories.length === 0) {
+                    showToast('문제 카테고리를 선택해주세요', 'error');
+                    return;
+                }
+                
+                const { data, error } = await db.from('projects').insert({
+                    name: name,
+                    description: document.getElementById('calGrowthDescInput').value.trim(),
+                    category: 'growth',
+                    color: '#3B82F6',
+                    status: '진행중',
+                    next_visit_date: calendarSelectedDate || getLocalDateString(),
+                    problem_categories: calProblemCategories,
+                    created_by: currentUser.id,
+                    assigned_to: currentUser.id
+                }).select().single();
+                
+                if (error) {
+                    showToast('생성 실패', 'error');
+                    return;
+                }
+                
+                showToast('Growth Initiative 생성! 🎯', 'success');
+                await notifyOtherUsers('project_created', '새 Growth Initiative', `${currentUser.name}님이 "${name}"을 생성했습니다`, data.id);
+            } else {
+                const name = document.getElementById('calGeneralNameInput').value.trim();
+                if (!name) {
+                    showToast('프로젝트명을 입력해주세요', 'error');
+                    return;
+                }
+                
+                const { data, error } = await db.from('projects').insert({
+                    name: name,
+                    description: document.getElementById('calGeneralDescInput').value.trim(),
+                    category: 'general',
+                    color: '#03CF5D',
+                    status: '진행중',
+                    next_visit_date: calendarSelectedDate || getLocalDateString(),
+                    created_by: currentUser.id,
+                    assigned_to: currentUser.id
+                }).select().single();
+                
+                if (error) {
+                    showToast('생성 실패', 'error');
+                    return;
+                }
+                
+                showToast('일반 업무 생성!', 'success');
+                await notifyOtherUsers('project_created', '새 프로젝트', `${currentUser.name}님이 "${name}"을 생성했습니다`, data.id);
+            }
+            
+            closeModal('calendarAdd');
+            await loadProjects();
+            await loadPersonalSchedules();
+            renderProjectList();
+            renderCalendar();
+        }
+
         // 프로젝트 설정 저장
         async function saveProjectSettings() {
             if (!currentProject) return;
@@ -6316,24 +8402,34 @@
             
             const categoryColor = getCategoryColor(editProjectCategory);
             
-            const { error } = await db.from('projects').update({
+            // 기본 업데이트 데이터
+            const updateData = {
                 name,
                 description: document.getElementById('editProjectDesc').value.trim(),
                 category: editProjectCategory,
                 color: categoryColor,
                 status: document.getElementById('editProjectStatus').value,
                 assigned_to: editProjectAssignee
-            }).eq('id', currentProject.id);
+            };
+            
+            // Growth Initiative인 경우 추가 필드
+            if (editProjectCategory === 'growth') {
+                updateData.problem_categories = editProblemCategories;
+                updateData.problem_definition = document.getElementById('editProblemDefinition').value.trim();
+                updateData.solution_type = editSolutionType;
+                updateData.result_types = editResultTypes;
+                updateData.operation_status = editOperationStatus;
+                updateData.kpi_activation = editKpiActivation;
+                updateData.kpi_usage = editKpiUsage;
+                updateData.kpi_other = document.getElementById('editKpiOther').value.trim();
+            }
+            
+            const { error } = await db.from('projects').update(updateData).eq('id', currentProject.id);
             
             if (error) { showToast('저장 실패', 'error'); return; }
             
             // 현재 프로젝트 업데이트
-            currentProject.name = name;
-            currentProject.description = document.getElementById('editProjectDesc').value.trim();
-            currentProject.category = editProjectCategory;
-            currentProject.color = categoryColor;
-            currentProject.status = document.getElementById('editProjectStatus').value;
-            currentProject.assigned_to = editProjectAssignee;
+            Object.assign(currentProject, updateData);
             
             renderProjectDetail();
             await loadProjects();
@@ -6346,7 +8442,7 @@
         // 프로젝트 설정에서 삭제
         async function deleteProjectFromSettings() {
             if (!currentProject) return;
-            if (!confirm(`"${currentProject.name}" 프로젝트를 삭제하시겠습니까?\n\n⚠️ 모든 방문 기록과 파일이 함께 삭제됩니다.`)) return;
+            if (!confirm(`"${currentProject.name}" 프로젝트를 삭제하시겠습니까?\n\n⚠️ 모든 기록일지와 파일이 함께 삭제됩니다.`)) return;
             
             const { error } = await db.from('projects').delete().eq('id', currentProject.id);
             if (error) { showToast('삭제 실패', 'error'); return; }
@@ -6487,7 +8583,7 @@
             if (error) { showToast('저장 실패', 'error'); return; }
             
             // 다른 사용자들에게 알림 보내기
-            const categoryName = newProjectCategory === 'growth' ? '그로스 이니셔티브' : '일반업무';
+            const categoryName = newProjectCategory === 'growth' ? 'Growth Initiative' : '일반업무';
             await notifyOtherUsers(
                 'project_created',
                 `${currentUser.name}님이 새 프로젝트를 생성했습니다`,
@@ -6565,10 +8661,10 @@
             renderSelectedFiles();
         }
 
-        // 방문 기록 저장
+        // 기록일지 저장
         async function saveVisit() {
             const visitDate = document.getElementById('visitDate').value;
-            if (!visitDate) { showToast('방문일을 선택하세요', 'error'); return; }
+            if (!visitDate) { showToast('기록일을 선택하세요', 'error'); return; }
             
             const title = document.getElementById('visitTitle').value.trim();
             const { data: visit, error } = await db.from('project_visits').insert({
@@ -6601,7 +8697,7 @@
             await notifyOtherUsers(
                 'visit',
                 `${currentUser.name}님이 새 기록을 추가했습니다`,
-                `${currentProject.name}: ${title || '방문 기록'}`,
+                `${currentProject.name}: ${title || '기록'}`,
                 currentProject.id,
                 visit.id
             );

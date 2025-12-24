@@ -915,6 +915,405 @@
             gap: 24px;
         }
 
+        /* 진행중인 할 일 섹션 */
+        .todo-section {
+            margin-top: 24px;
+        }
+
+        /* Accordion 그룹 */
+        .todo-group {
+            margin-bottom: 16px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: var(--white);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .todo-group.growth {
+            border: 2px solid #3B82F6;
+        }
+
+        .todo-group.general {
+            border: 1px solid var(--light-200);
+        }
+
+        .todo-group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .todo-group.growth .todo-group-header {
+            background: linear-gradient(135deg, #EBF4FF 0%, #DBEAFE 100%);
+        }
+
+        .todo-group.general .todo-group-header {
+            background: var(--light-50);
+        }
+
+        .todo-group-header:hover {
+            filter: brightness(0.98);
+        }
+
+        .todo-group-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .todo-group.growth .todo-group-title {
+            color: #1E40AF;
+        }
+
+        .todo-group.general .todo-group-title {
+            color: var(--dark-700);
+        }
+
+        .todo-group-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+        }
+
+        .todo-group.growth .todo-group-icon {
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+        }
+
+        .todo-group.general .todo-group-icon {
+            background: linear-gradient(135deg, #03CF5D 0%, #059669 100%);
+        }
+
+        .todo-group-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .todo-group-count {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .todo-group.growth .todo-group-count {
+            background: #3B82F6;
+            color: white;
+        }
+
+        .todo-group.general .todo-group-count {
+            background: var(--light-200);
+            color: var(--dark-700);
+        }
+
+        .todo-group-toggle {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--dark-600);
+            transition: transform 0.3s;
+        }
+
+        .todo-group.collapsed .todo-group-toggle {
+            transform: rotate(-90deg);
+        }
+
+        .todo-group-content {
+            padding: 16px;
+            display: grid;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .todo-group.growth .todo-group-content {
+            grid-template-columns: 1fr;
+        }
+
+        .todo-group.general .todo-group-content {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+
+        .todo-group.collapsed .todo-group-content {
+            display: none;
+        }
+
+        /* Growth 카드 - 더 크고 강조됨 */
+        .todo-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--light-200);
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+
+        .todo-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .todo-card.growth-card {
+            padding: 20px;
+            background: linear-gradient(135deg, #FAFBFF 0%, #F0F4FF 100%);
+            border: 1px solid #BFDBFE;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 16px;
+            align-items: start;
+        }
+
+        .todo-card.growth-card:hover {
+            border-color: #3B82F6;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
+        }
+
+        .todo-card.general-card {
+            background: var(--white);
+        }
+
+        .todo-card.general-card:hover {
+            border-color: #03CF5D;
+        }
+
+        .todo-card-main {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .todo-card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .todo-card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .todo-card-icon.growth {
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+        }
+
+        .todo-card-icon.general {
+            background: linear-gradient(135deg, #03CF5D 0%, #059669 100%);
+        }
+
+        .todo-card-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .todo-card-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark-900);
+            margin-bottom: 4px;
+        }
+
+        .growth-card .todo-card-name {
+            font-size: 18px;
+        }
+
+        .todo-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--dark-600);
+        }
+
+        .todo-card-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .todo-dday {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .todo-dday.urgent {
+            background: linear-gradient(135deg, #FED7D7 0%, #FEB2B2 100%);
+            color: #C53030;
+        }
+
+        .todo-dday.soon {
+            background: linear-gradient(135deg, #FEEBC8 0%, #FBD38D 100%);
+            color: #C05621;
+        }
+
+        .todo-dday.normal {
+            background: var(--light-100);
+            color: var(--dark-700);
+        }
+
+        .todo-dday.today {
+            background: linear-gradient(135deg, #FC8181 0%, #F56565 100%);
+            color: white;
+        }
+
+        .todo-checklist {
+            background: var(--light-50);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+
+        .todo-checklist-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--dark-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .todo-checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 13px;
+            color: var(--dark-700);
+            border-bottom: 1px solid var(--light-200);
+        }
+
+        .todo-checklist-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .todo-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--light-300);
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .todo-checklist-text {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .todo-checklist-more {
+            font-size: 12px;
+            color: var(--dark-500);
+            padding: 6px 0 0;
+            text-align: center;
+        }
+
+        .todo-progress {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .todo-progress-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--light-200);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .todo-progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .todo-progress-fill.growth {
+            background: linear-gradient(90deg, #3B82F6 0%, #60A5FA 100%);
+        }
+
+        .todo-progress-fill.general {
+            background: linear-gradient(90deg, #03CF5D 0%, #34D399 100%);
+        }
+
+        .todo-progress-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--dark-600);
+            white-space: nowrap;
+        }
+
+        .todo-card-done {
+            opacity: 0.5;
+            background: var(--light-50);
+        }
+
+        .todo-card-done:hover {
+            transform: none;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .todo-done-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #C6F6D5 0%, #9AE6B4 100%);
+            color: #276749;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .todo-empty {
+            text-align: center;
+            padding: 48px 24px;
+            background: var(--white);
+            border-radius: 16px;
+            border: 2px dashed var(--light-300);
+        }
+
+        .todo-empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .todo-empty-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark-700);
+            margin-bottom: 4px;
+        }
+
+        .todo-empty-subtext {
+            font-size: 13px;
+            color: var(--dark-500);
+        }
+
         /* 미니 캘린더 (수정됨 - 회색/흰색 톤) */
         .mini-calendar {
             background: var(--white);
@@ -3420,6 +3819,112 @@
                 padding: 16px;
             }
             
+            /* 진행중인 할 일 섹션 - 모바일 */
+            .todo-section {
+                margin-top: 20px;
+            }
+            
+            .todo-group {
+                margin-bottom: 12px;
+            }
+            
+            .todo-group-header {
+                padding: 14px 16px;
+            }
+            
+            .todo-group-title {
+                font-size: 14px;
+                gap: 10px;
+            }
+            
+            .todo-group-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+            
+            .todo-group-count {
+                padding: 3px 10px;
+                font-size: 12px;
+            }
+            
+            .todo-group-content {
+                padding: 12px;
+                gap: 10px;
+            }
+            
+            .todo-group.general .todo-group-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .todo-card {
+                padding: 14px;
+            }
+            
+            .todo-card.growth-card {
+                padding: 16px;
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .todo-card.growth-card .todo-dday {
+                position: absolute;
+                top: 16px;
+                right: 16px;
+            }
+            
+            .todo-card.growth-card {
+                position: relative;
+            }
+            
+            .todo-card-header {
+                gap: 12px;
+            }
+            
+            .todo-card-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+            
+            .growth-card .todo-card-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+            
+            .todo-card-name {
+                font-size: 14px;
+            }
+            
+            .growth-card .todo-card-name {
+                font-size: 16px;
+            }
+            
+            .todo-card-meta {
+                gap: 8px;
+                font-size: 11px;
+            }
+            
+            .todo-dday {
+                padding: 4px 10px;
+                font-size: 11px;
+            }
+            
+            .todo-checklist {
+                padding: 12px;
+            }
+            
+            .todo-checklist-item {
+                font-size: 12px;
+                padding: 6px 0;
+            }
+            
+            .todo-done-badge {
+                padding: 4px 10px;
+                font-size: 11px;
+            }
+            
             /* 캘린더 */
             .calendar-container {
                 overflow-x: auto;
@@ -4138,6 +4643,11 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- 진행중인 할 일 섹션 -->
+                <div class="todo-section" id="todoSection">
+                    <!-- JavaScript로 렌더링 -->
+                </div>
             </section>
 
             <!-- 프로젝트 상세 -->
@@ -4706,51 +5216,107 @@
                         <div class="form-section-title">📌 기본 정보</div>
                         <div class="form-group">
                             <label class="form-label">Initiative 명 *</label>
-                            <input type="text" class="form-input" id="calGrowthNameInput" placeholder="Initiative 명">
+                            <input type="text" class="form-input" id="calGrowthNameInput" placeholder="예: 플랜바이 기술영업 도구 구축">
                         </div>
                         <div class="form-group">
                             <label class="form-label">한 줄 설명</label>
-                            <input type="text" class="form-input" id="calGrowthDescInput" placeholder="설명 (선택)">
+                            <input type="text" class="form-input" id="calGrowthDescInput" placeholder="간략한 설명 (선택)">
                         </div>
                     </div>
+
                     <div class="form-section">
-                        <div class="form-section-title">🔍 문제 카테고리 *</div>
-                        <div class="problem-category-cards" id="calProblemCategoryCards">
-                            <div class="problem-category-card" data-category="sales" onclick="toggleCalProblemCategory(this)">
-                                <div class="problem-category-header">
-                                    <div class="problem-category-check">✓</div>
-                                    <div class="problem-category-title">💰 매출/수주/설득</div>
+                        <div class="form-section-title">🔍 문제 정의</div>
+                        <div class="form-group">
+                            <label class="form-label">문제 카테고리 * <span style="font-weight: 400; color: var(--dark-600);">(1개 이상 선택)</span></label>
+                            <div class="problem-category-cards" id="calProblemCategoryCards">
+                                <div class="problem-category-card" data-category="sales" onclick="toggleCalProblemCategory(this)">
+                                    <div class="problem-category-header">
+                                        <div class="problem-category-check">✓</div>
+                                        <div class="problem-category-title">💰 매출/수주/설득 문제</div>
+                                    </div>
+                                    <div class="problem-category-desc">기술 설명이 어려워 계약이 어려움, 고객 설득 자료 부족</div>
                                 </div>
-                                <div class="problem-category-desc">기술 설명 어려움, 고객 설득 자료 부족</div>
-                            </div>
-                            <div class="problem-category-card" data-category="operation" onclick="toggleCalProblemCategory(this)">
-                                <div class="problem-category-header">
-                                    <div class="problem-category-check">✓</div>
-                                    <div class="problem-category-title">⚙️ 운영 효율/병목</div>
+                                <div class="problem-category-card" data-category="operation" onclick="toggleCalProblemCategory(this)">
+                                    <div class="problem-category-header">
+                                        <div class="problem-category-check">✓</div>
+                                        <div class="problem-category-title">⚙️ 운영 효율/병목 문제</div>
+                                    </div>
+                                    <div class="problem-category-desc">요청 처리 기준이 없어 업무가 쌓임, 반복 작업에 시간 과다 소요</div>
                                 </div>
-                                <div class="problem-category-desc">업무 적체, 반복 작업 과다</div>
-                            </div>
-                            <div class="problem-category-card" data-category="organization" onclick="toggleCalProblemCategory(this)">
-                                <div class="problem-category-header">
-                                    <div class="problem-category-check">✓</div>
-                                    <div class="problem-category-title">👥 조직/인사/평가</div>
+                                <div class="problem-category-card" data-category="organization" onclick="toggleCalProblemCategory(this)">
+                                    <div class="problem-category-header">
+                                        <div class="problem-category-check">✓</div>
+                                        <div class="problem-category-title">👥 조직/인사/평가 문제</div>
+                                    </div>
+                                    <div class="problem-category-desc">채용/평가 기준 부재로 판단이 흐림, 역할 분담 불명확</div>
                                 </div>
-                                <div class="problem-category-desc">기준 부재, 역할 불명확</div>
-                            </div>
-                            <div class="problem-category-card" data-category="tech" onclick="toggleCalProblemCategory(this)">
-                                <div class="problem-category-header">
-                                    <div class="problem-category-check">✓</div>
-                                    <div class="problem-category-title">🛠️ 기술/도구/시각화</div>
+                                <div class="problem-category-card" data-category="tech" onclick="toggleCalProblemCategory(this)">
+                                    <div class="problem-category-header">
+                                        <div class="problem-category-check">✓</div>
+                                        <div class="problem-category-title">🛠️ 기술/도구/시각화 문제</div>
+                                    </div>
+                                    <div class="problem-category-desc">설명은 되지만 임팩트 없음, 데이터 시각화 부재</div>
                                 </div>
-                                <div class="problem-category-desc">임팩트 부족, 시각화 미흡</div>
-                            </div>
-                            <div class="problem-category-card" data-category="investment" onclick="toggleCalProblemCategory(this)">
-                                <div class="problem-category-header">
-                                    <div class="problem-category-check">✓</div>
-                                    <div class="problem-category-title">📊 투자/경영 설명</div>
+                                <div class="problem-category-card" data-category="investment" onclick="toggleCalProblemCategory(this)">
+                                    <div class="problem-category-header">
+                                        <div class="problem-category-check">✓</div>
+                                        <div class="problem-category-title">📊 투자/경영 설명 문제</div>
+                                    </div>
+                                    <div class="problem-category-desc">투자 질문에 구조적으로 답 못함, IR 자료 미흡</div>
                                 </div>
-                                <div class="problem-category-desc">IR 자료 미흡, 구조적 답변 불가</div>
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">문제 정의</label>
+                            <textarea class="form-textarea" id="calProblemDefinitionInput" rows="3" placeholder="왜 이 문제가 발생했고, 지금 구조로는 왜 해결이 안 되는가?"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">🔧 해결 구조</div>
+                        <div class="form-group">
+                            <label class="form-label">해결 구조 유형</label>
+                            <div class="option-grid" id="calSolutionTypeOptions">
+                                <div class="option-item" data-value="사람" onclick="selectCalSolutionType(this)">👤 사람</div>
+                                <div class="option-item" data-value="기술" onclick="selectCalSolutionType(this)">💻 기술</div>
+                                <div class="option-item" data-value="서비스" onclick="selectCalSolutionType(this)">🚀 서비스</div>
+                                <div class="option-item" data-value="복합" onclick="selectCalSolutionType(this)">🔗 복합</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">수행 결과물 유형 <span style="font-weight: 400; color: var(--dark-600);">(복수 선택)</span></label>
+                            <div class="option-grid" id="calResultTypeOptions">
+                                <div class="option-item" data-value="서비스" onclick="toggleCalResultType(this)">🌐 서비스</div>
+                                <div class="option-item" data-value="내부도구" onclick="toggleCalResultType(this)">🔧 내부 도구</div>
+                                <div class="option-item" data-value="문서" onclick="toggleCalResultType(this)">📄 문서/리포트</div>
+                                <div class="option-item" data-value="프로세스" onclick="toggleCalResultType(this)">📋 운영 프로세스</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">📈 운영 & 성과</div>
+                        <div class="form-group">
+                            <label class="form-label">운영 시작 여부</label>
+                            <div class="operation-options" id="calOperationStatusOptions">
+                                <div class="operation-option" data-value="미시작" onclick="selectCalOperationStatus(this)">⏳ 미시작</div>
+                                <div class="operation-option" data-value="준비중" onclick="selectCalOperationStatus(this)">🔄 준비중</div>
+                                <div class="operation-option" data-value="시작됨" onclick="selectCalOperationStatus(this)">✅ 시작됨</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">성과 추적 지표</label>
+                            <div class="kpi-options">
+                                <div class="kpi-item" data-kpi="activation" onclick="toggleCalKpi(this)">
+                                    <div class="kpi-check">✓</div>
+                                    <span>Activation 지표 연결</span>
+                                </div>
+                                <div class="kpi-item" data-kpi="usage" onclick="toggleCalKpi(this)">
+                                    <div class="kpi-check">✓</div>
+                                    <span>Usage / Count 지표 연결</span>
+                                </div>
+                            </div>
+                            <input type="text" class="form-input" id="calKpiOtherInput" placeholder="기타 KPI (선택)" style="margin-top: 10px;">
                         </div>
                     </div>
                 </div>
@@ -5163,6 +5729,10 @@
         let calendarConditions = [false, false, false, false];
         let calProblemCategories = [];
         let calPersonalType = '휴가';
+        let calSolutionType = null;
+        let calResultTypes = [];
+        let calOperationStatus = null;
+        let calKpis = [];
         
         let editingPersonalScheduleId = null; // 수정 중인 개인일정 ID
         let visitFiles = [];
@@ -7820,6 +8390,327 @@
             
             // 전체 파일
             document.getElementById('totalFiles').textContent = allFiles.length;
+            
+            // 진행중인 할 일 카드 렌더링
+            renderTodoCards();
+        }
+
+        // 진행중인 할 일 카드 렌더링
+        function renderTodoCards() {
+            const container = document.getElementById('todoSection');
+            if (!container) return;
+            
+            // localStorage에서 체크리스트 불러오기
+            const saved = localStorage.getItem('workspace_checklist');
+            const allChecklist = saved ? JSON.parse(saved) : {};
+            
+            // 진행중인 프로젝트만 필터링
+            const activeProjects = projects.filter(p => 
+                p.status === '진행중' || p.status === '시작전' || !p.status
+            );
+            
+            if (activeProjects.length === 0) {
+                container.innerHTML = `
+                    <div class="todo-empty">
+                        <div class="todo-empty-icon">🎉</div>
+                        <div class="todo-empty-text">진행중인 프로젝트가 없습니다</div>
+                        <div class="todo-empty-subtext">새 프로젝트를 시작해보세요!</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 프로젝트별 체크리스트 정보 계산
+            const todoData = activeProjects.map(p => {
+                const items = allChecklist[p.id] || [];
+                const total = items.length;
+                const completed = items.filter(c => c.completed).length;
+                const incomplete = items.filter(c => !c.completed);
+                const dday = calculateDday(p.next_visit_date);
+                
+                return {
+                    project: p,
+                    items,
+                    total,
+                    completed,
+                    incomplete,
+                    dday,
+                    hasIncomplete: incomplete.length > 0
+                };
+            });
+            
+            // Growth와 일반업무 분리
+            const growthData = todoData.filter(d => d.project.category === 'growth' || !d.project.category);
+            const generalData = todoData.filter(d => d.project.category === 'general');
+            
+            // D-day 기준 정렬
+            const sortByDday = (a, b) => {
+                if (a.dday.days === null && b.dday.days === null) return 0;
+                if (a.dday.days === null) return 1;
+                if (b.dday.days === null) return -1;
+                return a.dday.days - b.dday.days;
+            };
+            
+            growthData.sort(sortByDday);
+            generalData.sort(sortByDday);
+            
+            // Accordion 상태 저장 (localStorage)
+            const accordionState = JSON.parse(localStorage.getItem('todo_accordion_state') || '{"growth": false, "general": true}');
+            
+            let html = '';
+            
+            // Growth Initiative 그룹
+            if (growthData.length > 0) {
+                html += `
+                    <div class="todo-group growth ${accordionState.growth ? 'collapsed' : ''}" id="todoGroupGrowth">
+                        <div class="todo-group-header" onclick="toggleTodoGroup('growth')">
+                            <div class="todo-group-title">
+                                <div class="todo-group-icon">📈</div>
+                                <span>Growth Initiative</span>
+                            </div>
+                            <div class="todo-group-badge">
+                                <div class="todo-group-count">${growthData.length}개</div>
+                                <div class="todo-group-toggle">▼</div>
+                            </div>
+                        </div>
+                        <div class="todo-group-content">
+                            ${growthData.map(data => renderGrowthCard(data)).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 일반업무 그룹
+            if (generalData.length > 0) {
+                html += `
+                    <div class="todo-group general ${accordionState.general ? 'collapsed' : ''}" id="todoGroupGeneral">
+                        <div class="todo-group-header" onclick="toggleTodoGroup('general')">
+                            <div class="todo-group-title">
+                                <div class="todo-group-icon">📄</div>
+                                <span>일반업무</span>
+                            </div>
+                            <div class="todo-group-badge">
+                                <div class="todo-group-count">${generalData.length}개</div>
+                                <div class="todo-group-toggle">▼</div>
+                            </div>
+                        </div>
+                        <div class="todo-group-content">
+                            ${generalData.map(data => renderGeneralCard(data)).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        // Growth 카드 렌더링 (크고 상세하게)
+        function renderGrowthCard(data) {
+            const p = data.project;
+            const percent = data.total > 0 ? Math.round(data.completed / data.total * 100) : 0;
+            
+            // 모든 항목 완료된 경우
+            if (data.total > 0 && data.completed === data.total) {
+                return `
+                    <div class="todo-card growth-card todo-card-done" onclick="selectProject('${p.id}')">
+                        <div class="todo-card-main">
+                            <div class="todo-card-header">
+                                <div class="todo-card-icon growth">📈</div>
+                                <div class="todo-card-info">
+                                    <div class="todo-card-name">${p.name}</div>
+                                    <div class="todo-card-meta">
+                                        ${data.dday.text ? `<span>📅 ${data.dday.text}</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="todo-done-badge">✅ 모두 완료!</div>
+                    </div>
+                `;
+            }
+            
+            // 미완료 항목이 있는 경우
+            const displayItems = data.incomplete.slice(0, 4);
+            const moreCount = data.incomplete.length - 4;
+            
+            return `
+                <div class="todo-card growth-card" onclick="selectProject('${p.id}')">
+                    <div class="todo-card-main">
+                        <div class="todo-card-header">
+                            <div class="todo-card-icon growth">📈</div>
+                            <div class="todo-card-info">
+                                <div class="todo-card-name">${p.name}</div>
+                                <div class="todo-card-meta">
+                                    ${data.dday.text ? `<span>📅 ${data.dday.text}</span>` : '<span style="color: var(--dark-500);">일정 미설정</span>'}
+                                    ${data.total > 0 ? `<span>✅ ${data.completed}/${data.total} 완료</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        ${data.total > 0 ? `
+                            <div class="todo-checklist">
+                                <div class="todo-checklist-title">미완료 항목</div>
+                                ${displayItems.map(item => `
+                                    <div class="todo-checklist-item">
+                                        <div class="todo-checkbox"></div>
+                                        <span class="todo-checklist-text">${escapeHtml(item.text)}</span>
+                                    </div>
+                                `).join('')}
+                                ${moreCount > 0 ? `<div class="todo-checklist-more">+${moreCount}개 더 보기</div>` : ''}
+                            </div>
+                            <div class="todo-progress">
+                                <div class="todo-progress-bar">
+                                    <div class="todo-progress-fill growth" style="width: ${percent}%"></div>
+                                </div>
+                                <span class="todo-progress-text">${percent}%</span>
+                            </div>
+                        ` : `
+                            <div class="todo-checklist">
+                                <div class="todo-checklist-title">할 일</div>
+                                <div style="color: var(--dark-500); font-size: 13px; text-align: center; padding: 8px 0;">
+                                    할 일을 추가해보세요
+                                </div>
+                            </div>
+                        `}
+                    </div>
+                    ${data.dday.badge ? `<div class="todo-dday ${data.dday.class}">${data.dday.badge}</div>` : ''}
+                </div>
+            `;
+        }
+        
+        // 일반업무 카드 렌더링 (간결하게)
+        function renderGeneralCard(data) {
+            const p = data.project;
+            const percent = data.total > 0 ? Math.round(data.completed / data.total * 100) : 0;
+            
+            // 모든 항목 완료된 경우
+            if (data.total > 0 && data.completed === data.total) {
+                return `
+                    <div class="todo-card general-card todo-card-done" onclick="selectProject('${p.id}')">
+                        <div class="todo-card-header">
+                            <div class="todo-card-icon general">📄</div>
+                            <div class="todo-card-info">
+                                <div class="todo-card-name">${p.name}</div>
+                                <div class="todo-card-meta">
+                                    ${data.dday.text ? `<span>📅 ${data.dday.text}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="todo-done-badge">✅ 완료</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 미완료 항목이 있는 경우
+            const displayItems = data.incomplete.slice(0, 2);
+            const moreCount = data.incomplete.length - 2;
+            
+            return `
+                <div class="todo-card general-card" onclick="selectProject('${p.id}')">
+                    <div class="todo-card-header">
+                        <div class="todo-card-icon general">📄</div>
+                        <div class="todo-card-info">
+                            <div class="todo-card-name">${p.name}</div>
+                            <div class="todo-card-meta">
+                                ${data.dday.text ? `<span>📅 ${data.dday.text}</span>` : '<span style="color: var(--dark-500);">일정 미설정</span>'}
+                                ${data.total > 0 ? `<span>✅ ${data.completed}/${data.total}</span>` : ''}
+                            </div>
+                        </div>
+                        ${data.dday.badge ? `<div class="todo-dday ${data.dday.class}">${data.dday.badge}</div>` : ''}
+                    </div>
+                    ${data.total > 0 ? `
+                        <div class="todo-checklist">
+                            <div class="todo-checklist-title">할 일</div>
+                            ${displayItems.map(item => `
+                                <div class="todo-checklist-item">
+                                    <div class="todo-checkbox"></div>
+                                    <span class="todo-checklist-text">${escapeHtml(item.text)}</span>
+                                </div>
+                            `).join('')}
+                            ${moreCount > 0 ? `<div class="todo-checklist-more">+${moreCount}개</div>` : ''}
+                        </div>
+                        <div class="todo-progress">
+                            <div class="todo-progress-bar">
+                                <div class="todo-progress-fill general" style="width: ${percent}%"></div>
+                            </div>
+                            <span class="todo-progress-text">${percent}%</span>
+                        </div>
+                    ` : `
+                        <div class="todo-checklist">
+                            <div class="todo-checklist-title">할 일</div>
+                            <div style="color: var(--dark-500); font-size: 12px; text-align: center; padding: 4px 0;">
+                                할 일을 추가해보세요
+                            </div>
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+        
+        // Accordion 토글
+        function toggleTodoGroup(type) {
+            const group = document.getElementById(type === 'growth' ? 'todoGroupGrowth' : 'todoGroupGeneral');
+            if (!group) return;
+            
+            group.classList.toggle('collapsed');
+            
+            // 상태 저장
+            const accordionState = JSON.parse(localStorage.getItem('todo_accordion_state') || '{"growth": false, "general": true}');
+            accordionState[type] = group.classList.contains('collapsed');
+            localStorage.setItem('todo_accordion_state', JSON.stringify(accordionState));
+        }
+        
+        // D-day 계산 함수
+        function calculateDday(dateStr) {
+            if (!dateStr) return { days: null, text: '', badge: '', class: '' };
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const [year, month, day] = dateStr.split('-').map(Number);
+            const targetDate = new Date(year, month - 1, day);
+            targetDate.setHours(0, 0, 0, 0);
+            
+            const diffTime = targetDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            const monthDay = `${month}/${day}`;
+            
+            if (diffDays < 0) {
+                return { 
+                    days: diffDays, 
+                    text: `${monthDay} (지남)`, 
+                    badge: `D+${Math.abs(diffDays)}`, 
+                    class: 'urgent' 
+                };
+            } else if (diffDays === 0) {
+                return { 
+                    days: 0, 
+                    text: `오늘`, 
+                    badge: 'D-Day', 
+                    class: 'today' 
+                };
+            } else if (diffDays <= 3) {
+                return { 
+                    days: diffDays, 
+                    text: `${monthDay}`, 
+                    badge: `D-${diffDays}`, 
+                    class: 'urgent' 
+                };
+            } else if (diffDays <= 7) {
+                return { 
+                    days: diffDays, 
+                    text: `${monthDay}`, 
+                    badge: `D-${diffDays}`, 
+                    class: 'soon' 
+                };
+            } else {
+                return { 
+                    days: diffDays, 
+                    text: `${monthDay}`, 
+                    badge: `D-${diffDays}`, 
+                    class: 'normal' 
+                };
+            }
         }
 
         // ========== 섹션 전환 ==========
@@ -8152,6 +9043,46 @@
             }
         }
         
+        // 캘린더 해결 구조 유형 선택
+        function selectCalSolutionType(el) {
+            document.querySelectorAll('#calSolutionTypeOptions .option-item').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            calSolutionType = el.dataset.value;
+        }
+        
+        // 캘린더 수행 결과물 유형 토글
+        function toggleCalResultType(el) {
+            el.classList.toggle('selected');
+            const value = el.dataset.value;
+            if (el.classList.contains('selected')) {
+                if (!calResultTypes.includes(value)) {
+                    calResultTypes.push(value);
+                }
+            } else {
+                calResultTypes = calResultTypes.filter(v => v !== value);
+            }
+        }
+        
+        // 캘린더 운영 상태 선택
+        function selectCalOperationStatus(el) {
+            document.querySelectorAll('#calOperationStatusOptions .operation-option').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            calOperationStatus = el.dataset.value;
+        }
+        
+        // 캘린더 KPI 토글
+        function toggleCalKpi(el) {
+            el.classList.toggle('selected');
+            const kpi = el.dataset.kpi;
+            if (el.classList.contains('selected')) {
+                if (!calKpis.includes(kpi)) {
+                    calKpis.push(kpi);
+                }
+            } else {
+                calKpis = calKpis.filter(k => k !== kpi);
+            }
+        }
+        
         // 캘린더 개인일정 타입 선택
         function selectCalPersonalType(el) {
             document.querySelectorAll('#calPersonalTypeOptions .personal-type-option').forEach(e => e.classList.remove('selected'));
@@ -8282,14 +9213,24 @@
             calendarConditions = [false, false, false, false];
             calProblemCategories = [];
             calPersonalType = '휴가';
+            calSolutionType = null;
+            calResultTypes = [];
+            calOperationStatus = null;
+            calKpis = [];
             
             document.querySelectorAll('#calendarAddModal .type-card').forEach(c => c.classList.remove('selected'));
             document.querySelectorAll('#calendarAddModal .condition-card').forEach(c => c.classList.remove('checked'));
             document.querySelectorAll('#calendarAddModal .problem-category-card').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('#calSolutionTypeOptions .option-item').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('#calResultTypeOptions .option-item').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('#calOperationStatusOptions .operation-option').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('#calendarStep3Growth .kpi-item').forEach(c => c.classList.remove('selected'));
             document.getElementById('calendarConditionResult').style.display = 'none';
             
             document.getElementById('calGrowthNameInput').value = '';
             document.getElementById('calGrowthDescInput').value = '';
+            document.getElementById('calProblemDefinitionInput').value = '';
+            document.getElementById('calKpiOtherInput').value = '';
             document.getElementById('calGeneralNameInput').value = '';
             document.getElementById('calGeneralDescInput').value = '';
             document.getElementById('calPersonalTitle').value = '';
@@ -8348,6 +9289,12 @@
                     status: '진행중',
                     next_visit_date: calendarSelectedDate || getLocalDateString(),
                     problem_categories: calProblemCategories,
+                    problem_definition: document.getElementById('calProblemDefinitionInput').value.trim(),
+                    solution_type: calSolutionType,
+                    result_types: calResultTypes,
+                    operation_status: calOperationStatus,
+                    kpis: calKpis,
+                    kpi_other: document.getElementById('calKpiOtherInput').value.trim(),
                     created_by: currentUser.id,
                     assigned_to: currentUser.id
                 }).select().single();

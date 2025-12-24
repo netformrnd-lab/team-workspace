@@ -3941,8 +3941,7 @@
             
             /* 캘린더 */
             .calendar-container {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
+                overflow-x: hidden;
             }
             
             .calendar-header {
@@ -3967,7 +3966,10 @@
             
             .calendar-grid {
                 font-size: 12px;
-                min-width: 100%;
+                width: 100%;
+                min-width: unset;
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
             }
             
             .calendar-day-header {
@@ -3976,13 +3978,15 @@
             }
             
             .calendar-day {
-                min-height: 80px;
-                padding: 4px 2px;
+                min-height: 70px;
+                padding: 2px;
+                min-width: 0;
+                overflow: hidden;
             }
             
             .day-number {
                 font-size: 11px;
-                margin-bottom: 4px;
+                margin-bottom: 2px;
             }
             
             .day-number span {
@@ -3999,7 +4003,7 @@
             }
             
             .day-event {
-                font-size: 9px;
+                font-size: 8px;
                 padding: 2px 3px;
                 white-space: nowrap;
                 overflow: hidden;
@@ -4012,9 +4016,9 @@
             }
             
             .day-add-btn {
-                width: 20px;
-                height: 20px;
-                font-size: 14px;
+                width: 18px;
+                height: 18px;
+                font-size: 12px;
                 opacity: 1;
             }
             

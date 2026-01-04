@@ -8122,33 +8122,59 @@
             for (const fileId of editVisitFilesToDelete) {
                 const fileToDelete = editVisitExistingFiles.find(f => f.id === fileId);
                 if (fileToDelete) {
-                    // Storage에서 삭제
-                    await db.storage.from('files').remove([fileToDelete.path]);
+                    // Storage에서 삭제 시도 (실패해도 계속)
+                    try {
+                        await db.storage.from('files').remove([fileToDelete.path]);
+                    } catch (e) {
+                        console.warn('Storage 파일 삭제 실패:', e);
+                    }
                     // DB에서 삭제
                     await db.from('visit_files').delete().eq('id', fileId);
                 }
             }
             
             // 새 파일 업로드
+            let uploadFailed = 0;
             for (const file of editVisitNewFiles) {
                 const fileName = `${Date.now()}_${file.name}`;
-                const { error: uploadError } = await db.storage.from('files').upload(fileName, file);
-                if (!uploadError) {
-                    await db.from('visit_files').insert({
-                        visit_id: id,
-                        name: file.name,
-                        path: fileName,
-                        size: file.size,
-                        mime_type: file.type,
-                        uploaded_by: currentUser.id
-                    });
+                
+                // Storage 업로드 시도
+                let storagePath = fileName;
+                try {
+                    const { error: uploadError } = await db.storage.from('files').upload(fileName, file);
+                    if (uploadError) {
+                        console.warn('Storage 업로드 실패:', uploadError);
+                        // Storage 실패해도 DB에는 저장 (파일 다운로드 안 됨)
+                    }
+                } catch (e) {
+                    console.warn('Storage 업로드 에러:', e);
+                }
+                
+                // DB에 파일 정보 저장 (Storage 성공 여부와 무관하게)
+                const { error: dbError } = await db.from('visit_files').insert({
+                    visit_id: id,
+                    name: file.name,
+                    path: storagePath,
+                    size: file.size,
+                    mime_type: file.type,
+                    uploaded_by: currentUser.id
+                });
+                
+                if (dbError) {
+                    console.error('파일 DB 저장 실패:', dbError);
+                    uploadFailed++;
                 }
             }
             
             closeModal('editVisit');
             await loadVisits();
             await loadAllFiles();
-            showToast('수정되었습니다', 'success');
+            
+            if (uploadFailed > 0) {
+                showToast(`수정됨 (${uploadFailed}개 파일 저장 실패)`, 'warning');
+            } else {
+                showToast('수정되었습니다', 'success');
+            }
         }
 
         async function deleteVisit(id) {
@@ -8425,8 +8451,8 @@
             return user.avatar_color || '#9CA3AF';
         }
 
-        // 개인일정 저장
-        async function savePersonalSchedule() {
+        // 캘린더에서 개인일정 저장 (캘린더 모달용)
+        async function saveCalendarPersonalSchedule() {
             const title = document.getElementById('personalScheduleTitle').value.trim();
             if (!title) { showToast('일정 제목을 입력하세요', 'error'); return; }
             
@@ -8451,7 +8477,7 @@
         // 캘린더 일정 저장 (통합)
         async function saveCalendarSchedule() {
             if (calendarScheduleType === 'personal') {
-                await savePersonalSchedule();
+                await saveCalendarPersonalSchedule();
             } else {
                 await saveCalendarProject();
             }
@@ -9912,18 +9938,33 @@
             if (error) { showToast('저장 실패', 'error'); return; }
             
             // 파일 업로드
+            let uploadFailed = 0;
             for (const file of visitFiles) {
                 const fileName = `${Date.now()}_${file.name}`;
-                const { error: uploadError } = await db.storage.from('files').upload(fileName, file);
-                if (!uploadError) {
-                    await db.from('visit_files').insert({
-                        visit_id: visit.id,
-                        name: file.name,
-                        path: fileName,
-                        size: file.size,
-                        mime_type: file.type,
-                        uploaded_by: currentUser.id
-                    });
+                
+                // Storage 업로드 시도
+                try {
+                    const { error: uploadError } = await db.storage.from('files').upload(fileName, file);
+                    if (uploadError) {
+                        console.warn('Storage 업로드 실패:', uploadError);
+                    }
+                } catch (e) {
+                    console.warn('Storage 업로드 에러:', e);
+                }
+                
+                // DB에 파일 정보 저장 (Storage 성공 여부와 무관하게)
+                const { error: dbError } = await db.from('visit_files').insert({
+                    visit_id: visit.id,
+                    name: file.name,
+                    path: fileName,
+                    size: file.size,
+                    mime_type: file.type,
+                    uploaded_by: currentUser.id
+                });
+                
+                if (dbError) {
+                    console.error('파일 DB 저장 실패:', dbError);
+                    uploadFailed++;
                 }
             }
             
@@ -9941,7 +9982,13 @@
             document.getElementById('visitContent').value = '';
             document.getElementById('selectedVisitFiles').innerHTML = '';
             closeModal('newVisit');
-            showToast('저장되었습니다', 'success');
+            
+            if (uploadFailed > 0) {
+                showToast(`저장됨 (${uploadFailed}개 파일 저장 실패)`, 'warning');
+            } else {
+                showToast('저장되었습니다', 'success');
+            }
+            
             await loadVisits();
             await loadAllFiles();
             await loadRecentActivities();

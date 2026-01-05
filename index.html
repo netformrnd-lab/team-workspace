@@ -7928,7 +7928,7 @@
                         <div class="files-title">📎 첨부파일 (${visit.visit_files.length})</div>
                         <div class="files-list">
                             ${visit.visit_files.map(f => `
-                                <div class="file-chip" onclick="openFile('${f.path}')">
+                                <div class="file-chip" onclick="openFile('${f.path}', '${f.name.replace(/'/g, "\\'")}')">
                                     <span>${getFileIcon(f.name)}</span>
                                     <span>${f.name}</span>
                                 </div>
@@ -8669,7 +8669,7 @@
                 return;
             }
             grid.innerHTML = files.map(f => `
-                <div class="file-card" onclick="openFile('${f.path}')">
+                <div class="file-card" onclick="openFile('${f.path}', '${f.name.replace(/'/g, "\\'")}')">
                     <div class="file-card-icon">${getFileIcon(f.name)}</div>
                     <div class="file-card-name">${f.name}</div>
                     <div class="file-card-meta">${formatSize(f.size)}</div>
@@ -8683,9 +8683,29 @@
             renderFiles(filtered);
         }
 
-        async function openFile(path) {
-            const { data } = db.storage.from('files').getPublicUrl(path);
-            if (data?.publicUrl) window.open(data.publicUrl, '_blank');
+        async function openFile(path, fileName) {
+            try {
+                const { data } = db.storage.from('files').getPublicUrl(path);
+                if (data?.publicUrl) {
+                    // 다운로드용 링크 생성
+                    const response = await fetch(data.publicUrl);
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName || path.split('_').slice(1).join('_') || path; // 원본 파일명 추출
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    
+                    showToast('다운로드가 시작되었습니다', 'success');
+                }
+            } catch (err) {
+                console.error('파일 다운로드 실패:', err);
+                showToast('다운로드 실패', 'error');
+            }
         }
 
         function getFileIcon(name) {
@@ -9726,6 +9746,7 @@
             document.querySelectorAll('#personalTypeOptions .personal-type-option').forEach(e => e.classList.remove('selected'));
             el.classList.add('selected');
             selectedPersonalType = el.dataset.type;
+            personalType = el.dataset.type; // personalType도 함께 설정
             
             // 기타 선택 시 제목 입력 필드 표시
             if (selectedPersonalType === '기타') {
@@ -9757,6 +9778,7 @@
                 document.getElementById('newPersonalEndDate').value = today;
                 // 일정 유형 초기화
                 selectedPersonalType = '휴가';
+                personalType = '휴가'; // personalType도 초기화
                 document.querySelectorAll('#personalTypeOptions .personal-type-option').forEach(el => {
                     el.classList.remove('selected');
                     if (el.dataset.type === '휴가') el.classList.add('selected');

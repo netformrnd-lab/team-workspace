@@ -1560,9 +1560,43 @@
         
         .priority-memo-text {
             font-size: 14px;
-            line-height: 1.7;
+            line-height: 1.5;
             color: var(--dark-800);
-            white-space: pre-wrap;
+        }
+        
+        /* 업무 우선순위 마크다운 스타일 - 컴팩트 */
+        .priority-memo-text.markdown-body {
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        .priority-memo-text.markdown-body h1,
+        .priority-memo-text.markdown-body h2,
+        .priority-memo-text.markdown-body h3 {
+            margin: 8px 0 4px 0;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        
+        .priority-memo-text.markdown-body p {
+            margin: 2px 0;
+        }
+        
+        .priority-memo-text.markdown-body ul,
+        .priority-memo-text.markdown-body ol {
+            margin: 4px 0;
+            padding-left: 20px;
+        }
+        
+        .priority-memo-text.markdown-body li {
+            margin: 2px 0;
+        }
+        
+        .priority-memo-text.markdown-body blockquote {
+            margin: 6px 0;
+            padding: 6px 12px;
+            border-left: 3px solid var(--primary);
+            background: rgba(3, 207, 93, 0.1);
         }
         
         .priority-dropdown-footer {
@@ -5045,9 +5079,12 @@
                             <div class="priority-dropdown" id="priorityDropdown">
                                 <div class="priority-dropdown-header">
                                     <span>📋 오늘의 업무 우선순위</span>
-                                    <button class="btn-text" onclick="openPriorityEditor()">✏️ 작성</button>
+                                    <div style="display:flex; gap:8px;">
+                                        <button class="btn-text" onclick="openPriorityFullView()" id="priorityFullViewBtn" style="display:none;">🔍 전체보기</button>
+                                        <button class="btn-text" onclick="openPriorityEditor()">✏️ 작성</button>
+                                    </div>
                                 </div>
-                                <div class="priority-dropdown-content" id="priorityContent">
+                                <div class="priority-dropdown-content" id="priorityContent" onclick="openPriorityFullView()" style="cursor:pointer;">
                                     <!-- JavaScript로 렌더링 -->
                                 </div>
                                 <div class="priority-dropdown-footer" id="priorityActions" style="display:none;">
@@ -5925,21 +5962,51 @@
         </div>
     </div>
 
+    <!-- 업무 우선순위 전체보기 모달 -->
+    <div class="modal" id="priorityFullViewModal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2 class="modal-title">📋 오늘의 업무 우선순위</h2>
+                <button class="modal-close" onclick="closeModal('priorityFullView')">✕</button>
+            </div>
+            <div class="modal-body" id="priorityFullViewContent" style="max-height: 70vh; overflow-y: auto;">
+                <!-- JavaScript로 렌더링 -->
+            </div>
+            <div class="modal-footer" id="priorityFullViewActions">
+                <button class="btn btn-secondary" onclick="closeModal('priorityFullView')">닫기</button>
+                <button class="btn btn-ghost" onclick="closeModal('priorityFullView'); openPriorityEditor();">✏️ 수정</button>
+                <button class="btn btn-primary" id="priorityFullViewConfirmBtn" onclick="markPriorityReadFromFullView()" style="display:none;">확인 완료</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 업무 우선순위 편집 모달 -->
     <div class="modal" id="priorityEditorModal">
         <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
-                <h2 class="modal-title">📋 오늘의 업무 우선순위 작성</h2>
+                <h2 class="modal-title">📋 업무 우선순위 작성</h2>
                 <button class="modal-close" onclick="closeModal('priorityEditor')">✕</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label class="form-label">📅 날짜</label>
-                    <input type="date" class="form-input" id="priorityEditorDate">
+                    <label class="form-label">📅 기간 *</label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="date" class="form-input" id="priorityEditorStartDate" style="flex:1;">
+                        <span style="color: var(--dark-500);">~</span>
+                        <input type="date" class="form-input" id="priorityEditorEndDate" style="flex:1;">
+                    </div>
+                    <div class="form-hint" style="margin-top: 6px; font-size: 12px; color: var(--dark-500);">하루만 선택하려면 같은 날짜를 선택하세요</div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">📝 업무 우선순위</label>
-                    <textarea class="form-textarea" id="priorityEditorContent" rows="8" placeholder="오늘의 업무 우선순위를 작성하세요...&#10;&#10;예시:&#10;1. KPI 폴더 수정사항 먼저 처리&#10;2. 솔루션 앱 고도화&#10;3. IR deck 숙지"></textarea>
+                    <div class="gpt-tip-box">
+                        <span class="gpt-tip-text">💡 GPT에게 아래 문구를 붙여넣으면 서식이 유지됩니다:</span>
+                        <div class="gpt-tip-copy">
+                            <code>마크다운 코드블록으로 출력해줘</code>
+                            <button type="button" class="gpt-copy-btn" onclick="copyGptPrompt()">📋 복사</button>
+                        </div>
+                    </div>
+                    <textarea class="form-textarea" id="priorityEditorContent" rows="10" placeholder="업무 우선순위를 작성하세요...&#10;&#10;예시:&#10;## 오늘의 할 일&#10;1. KPI 폴더 수정사항 먼저 처리&#10;2. 솔루션 앱 고도화&#10;3. IR deck 숙지"></textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -7071,11 +7138,12 @@
             try {
                 const today = getLocalDateString();
                 
-                // 오늘의 우선순위 로드
+                // 오늘이 기간에 포함된 우선순위 로드 (date는 시작일, end_date는 종료일)
                 const { data, error } = await db
                     .from('daily_priorities')
                     .select('*, author:users(id, name, avatar_initial, avatar_color)')
-                    .eq('date', today)
+                    .lte('date', today)  // 시작일 <= 오늘
+                    .gte('end_date', today)  // 종료일 >= 오늘
                     .order('updated_at', { ascending: false })
                     .limit(1)
                     .single();
@@ -7087,17 +7155,22 @@
                 
                 dailyPriority = data;
                 
-                // 읽음 여부 확인
+                // 읽음 여부 확인 (작성자 본인은 알림 안 뜸)
                 let isUnread = false;
                 if (dailyPriority) {
-                    const { data: readData } = await db
-                        .from('priority_reads')
-                        .select('id')
-                        .eq('priority_id', dailyPriority.id)
-                        .eq('user_id', currentUser.id)
-                        .single();
-                    
-                    isUnread = !readData;
+                    // 작성자 본인이면 알림 표시 안 함
+                    if (dailyPriority.created_by === currentUser.id) {
+                        isUnread = false;
+                    } else {
+                        const { data: readData } = await db
+                            .from('priority_reads')
+                            .select('id')
+                            .eq('priority_id', dailyPriority.id)
+                            .eq('user_id', currentUser.id)
+                            .single();
+                        
+                        isUnread = !readData;
+                    }
                 }
                 
                 renderPriority(isUnread);
@@ -7132,16 +7205,30 @@
                     </div>
                 `;
                 actions.style.display = 'none';
+                document.getElementById('priorityFullViewBtn').style.display = 'none';
                 return;
             }
             
             actions.style.display = isUnread ? 'block' : 'none';
+            document.getElementById('priorityFullViewBtn').style.display = 'inline-block';
             
-            const date = new Date(dailyPriority.date);
-            const dateStr = `${date.getFullYear()}.${String(date.getMonth()+1).padStart(2,'0')}.${String(date.getDate()).padStart(2,'0')}`;
+            // 기간 표시 (시작일 ~ 종료일)
+            const startDate = new Date(dailyPriority.date);
+            const endDate = dailyPriority.end_date ? new Date(dailyPriority.end_date) : startDate;
+            
+            const formatDate = (d) => `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+            const startStr = formatDate(startDate);
+            const endStr = formatDate(endDate);
+            
+            const dateStr = startStr === endStr ? startStr : `${startStr} ~ ${endStr}`;
+            
+            // 마크다운 렌더링 (미리보기: 3줄만)
+            const lines = dailyPriority.content.split('\n').filter(l => l.trim());
+            const previewText = lines.slice(0, 4).join('\n') + (lines.length > 4 ? '\n...' : '');
+            const renderedContent = renderMarkdown(previewText);
             
             content.innerHTML = `
-                <div class="priority-memo">
+                <div class="priority-memo" style="cursor:pointer;" title="클릭하여 전체 보기">
                     <div class="priority-memo-header">
                         <span class="priority-memo-date">📅 ${dateStr}</span>
                         <div class="priority-memo-author">
@@ -7151,7 +7238,8 @@
                             <span>${dailyPriority.author?.name || '알 수 없음'}</span>
                         </div>
                     </div>
-                    <div class="priority-memo-text">${escapeHtml(dailyPriority.content)}</div>
+                    <div class="priority-memo-text markdown-body">${renderedContent}</div>
+                    ${lines.length > 4 ? '<div style="text-align:center; margin-top:8px; font-size:12px; color:var(--primary);">👆 클릭하여 전체 보기</div>' : ''}
                 </div>
             `;
         }
@@ -7183,6 +7271,73 @@
             }
         }
         
+        // 업무 우선순위 전체보기
+        function openPriorityFullView() {
+            if (!dailyPriority) return;
+            
+            // 드롭다운 닫기
+            document.getElementById('priorityDropdown').classList.remove('show');
+            
+            // 기간 표시
+            const startDate = new Date(dailyPriority.date);
+            const endDate = dailyPriority.end_date ? new Date(dailyPriority.end_date) : startDate;
+            const formatDate = (d) => `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+            const dateStr = formatDate(startDate) === formatDate(endDate) 
+                ? formatDate(startDate) 
+                : `${formatDate(startDate)} ~ ${formatDate(endDate)}`;
+            
+            // 마크다운 렌더링 (전체)
+            const renderedContent = renderMarkdown(dailyPriority.content);
+            
+            const content = document.getElementById('priorityFullViewContent');
+            content.innerHTML = `
+                <div class="priority-memo" style="margin: 0;">
+                    <div class="priority-memo-header">
+                        <span class="priority-memo-date">📅 ${dateStr}</span>
+                        <div class="priority-memo-author">
+                            <div class="priority-memo-author-avatar" style="background: ${dailyPriority.author?.avatar_color || '#ccc'}">
+                                ${dailyPriority.author?.avatar_initial || '?'}
+                            </div>
+                            <span>${dailyPriority.author?.name || '알 수 없음'}</span>
+                        </div>
+                    </div>
+                    <div class="priority-memo-text markdown-body">${renderedContent}</div>
+                </div>
+            `;
+            
+            // 확인 완료 버튼 표시 여부 (작성자 본인이 아니고 미읽음일 때만)
+            const confirmBtn = document.getElementById('priorityFullViewConfirmBtn');
+            const isAuthor = dailyPriority.created_by === currentUser.id;
+            const badge = document.getElementById('priorityBadge');
+            const isUnread = badge && badge.style.display !== 'none';
+            
+            confirmBtn.style.display = (!isAuthor && isUnread) ? 'inline-flex' : 'none';
+            
+            openModal('priorityFullView');
+        }
+        
+        async function markPriorityReadFromFullView() {
+            if (!dailyPriority || !currentUser) return;
+            
+            try {
+                await db.from('priority_reads').upsert({
+                    priority_id: dailyPriority.id,
+                    user_id: currentUser.id
+                }, { onConflict: 'priority_id,user_id' });
+                
+                // UI 업데이트
+                document.getElementById('priorityBadge').style.display = 'none';
+                document.querySelector('.priority-bell')?.classList.remove('has-unread');
+                document.getElementById('priorityActions').style.display = 'none';
+                document.getElementById('priorityFullViewConfirmBtn').style.display = 'none';
+                
+                closeModal('priorityFullView');
+                showToast('확인 완료!', 'success');
+            } catch (err) {
+                console.error('읽음 처리 실패:', err);
+            }
+        }
+        
         async function markPriorityRead() {
             if (!dailyPriority || !currentUser) return;
             
@@ -7211,14 +7366,35 @@
             document.getElementById('priorityDropdown')?.classList.remove('show');
             
             const today = getLocalDateString();
-            document.getElementById('priorityEditorDate').value = today;
-            document.getElementById('priorityEditorContent').value = dailyPriority?.content || '';
+            
+            // 기존 데이터가 있으면 불러오기
+            if (dailyPriority) {
+                document.getElementById('priorityEditorStartDate').value = dailyPriority.date;
+                document.getElementById('priorityEditorEndDate').value = dailyPriority.end_date || dailyPriority.date;
+                document.getElementById('priorityEditorContent').value = dailyPriority.content || '';
+            } else {
+                document.getElementById('priorityEditorStartDate').value = today;
+                document.getElementById('priorityEditorEndDate').value = today;
+                document.getElementById('priorityEditorContent').value = '';
+            }
+            
             openModal('priorityEditor');
         }
         
         async function savePriority() {
-            const date = document.getElementById('priorityEditorDate').value;
+            const startDate = document.getElementById('priorityEditorStartDate').value;
+            const endDate = document.getElementById('priorityEditorEndDate').value;
             const content = document.getElementById('priorityEditorContent').value.trim();
+            
+            if (!startDate || !endDate) {
+                showToast('기간을 선택해주세요', 'error');
+                return;
+            }
+            
+            if (startDate > endDate) {
+                showToast('종료일이 시작일보다 빠를 수 없습니다', 'error');
+                return;
+            }
             
             if (!content) {
                 showToast('내용을 입력해주세요', 'error');
@@ -7226,11 +7402,12 @@
             }
             
             try {
-                // 해당 날짜의 기존 우선순위 확인
+                // 해당 기간과 겹치는 기존 우선순위 확인
                 const { data: existing } = await db
                     .from('daily_priorities')
                     .select('id')
-                    .eq('date', date)
+                    .eq('date', startDate)
+                    .eq('end_date', endDate)
                     .single();
                 
                 if (existing) {
@@ -7241,10 +7418,23 @@
                     
                     // 모든 읽음 기록 삭제 (수정되면 다시 알림)
                     await db.from('priority_reads').delete().eq('priority_id', existing.id);
+                } else if (dailyPriority) {
+                    // 기존 것 수정 (기간 변경 포함)
+                    await db.from('daily_priorities')
+                        .update({ 
+                            date: startDate,
+                            end_date: endDate,
+                            content, 
+                            updated_at: new Date().toISOString() 
+                        })
+                        .eq('id', dailyPriority.id);
+                    
+                    await db.from('priority_reads').delete().eq('priority_id', dailyPriority.id);
                 } else {
                     // 새로 생성
                     await db.from('daily_priorities').insert({
-                        date,
+                        date: startDate,
+                        end_date: endDate,
                         content,
                         created_by: currentUser.id
                     });

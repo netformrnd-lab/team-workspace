@@ -1517,20 +1517,27 @@
             margin-bottom: 12px;
         }
         
+        .priority-memo-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--dark-800);
+        }
+        
+        /* 업무 우선순위 메모 - Toss 스타일 */
         .priority-memo {
-            background: linear-gradient(135deg, #FFF9E6 0%, #FFF3CD 100%);
-            border-radius: var(--radius-sm);
-            padding: 16px;
-            border-left: 4px solid #FFD93D;
+            background: var(--white);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid var(--light-200);
         }
         
         .priority-memo-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
-            padding-bottom: 10px;
-            border-bottom: 1px dashed rgba(0,0,0,0.1);
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--light-200);
         }
         
         .priority-memo-date {
@@ -1548,55 +1555,70 @@
         }
         
         .priority-memo-author-avatar {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
+            font-size: 11px;
             color: white;
         }
         
-        .priority-memo-text {
-            font-size: 14px;
-            line-height: 1.5;
-            color: var(--dark-800);
-        }
-        
-        /* 업무 우선순위 마크다운 스타일 - 컴팩트 */
+        /* 업무 우선순위 마크다운 스타일 - Toss 심플 */
         .priority-memo-text.markdown-body {
-            font-size: 13px;
-            line-height: 1.4;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--dark-800);
         }
         
         .priority-memo-text.markdown-body h1,
         .priority-memo-text.markdown-body h2,
         .priority-memo-text.markdown-body h3 {
-            margin: 8px 0 4px 0;
-            font-size: 14px;
+            margin: 16px 0 8px 0;
+            font-size: 15px;
             font-weight: 700;
+            color: var(--dark-900);
+        }
+        
+        .priority-memo-text.markdown-body h1:first-child,
+        .priority-memo-text.markdown-body h2:first-child,
+        .priority-memo-text.markdown-body h3:first-child,
+        .priority-memo-text.markdown-body p:first-child {
+            margin-top: 0;
         }
         
         .priority-memo-text.markdown-body p {
-            margin: 2px 0;
+            margin: 6px 0;
         }
         
         .priority-memo-text.markdown-body ul,
         .priority-memo-text.markdown-body ol {
-            margin: 4px 0;
+            margin: 8px 0;
             padding-left: 20px;
         }
         
         .priority-memo-text.markdown-body li {
-            margin: 2px 0;
+            margin: 4px 0;
+            color: var(--dark-700);
+        }
+        
+        .priority-memo-text.markdown-body li::marker {
+            color: var(--primary);
         }
         
         .priority-memo-text.markdown-body blockquote {
-            margin: 6px 0;
-            padding: 6px 12px;
+            margin: 10px 0;
+            padding: 12px 16px;
             border-left: 3px solid var(--primary);
-            background: rgba(3, 207, 93, 0.1);
+            background: var(--primary-soft);
+            border-radius: 0 8px 8px 0;
+            color: var(--dark-700);
+        }
+        
+        .priority-memo-text.markdown-body strong {
+            color: var(--dark-900);
+            font-weight: 600;
         }
         
         .priority-dropdown-footer {
@@ -1703,59 +1725,8 @@
             font-size: 32px;
             margin-bottom: 8px;
         }
-        
-        .priority-memo {
-            background: linear-gradient(135deg, #FFF9E6 0%, #FFF3CD 100%);
-            border-radius: var(--radius-sm);
-            padding: 16px;
-            border-left: 4px solid #FFD93D;
-        }
-        
-        .priority-memo-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            padding-bottom: 10px;
-            border-bottom: 1px dashed rgba(0,0,0,0.1);
-        }
-        
-        .priority-memo-date {
-            font-size: 13px;
-            color: var(--dark-600);
-            font-weight: 600;
-        }
-        
-        .priority-memo-author {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            color: var(--dark-500);
-        }
-        
-        .priority-memo-author-avatar {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            color: white;
-        }
-        
-        .priority-memo-text {
-            font-size: 14px;
-            line-height: 1.7;
-            color: var(--dark-800);
-            white-space: pre-wrap;
-        }
-        
-        .priority-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
+
+        .recent-activity {
             padding: 12px 20px;
             background: var(--light-50);
             border-top: 1px solid var(--light-200);

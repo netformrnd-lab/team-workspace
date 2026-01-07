@@ -1411,6 +1411,322 @@
             color: var(--light-300);
         }
 
+        /* ========== 업무 우선순위 드롭다운 ========== */
+        .priority-bell-wrapper {
+            position: relative;
+        }
+        
+        .priority-bell {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 1px solid var(--light-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            position: relative;
+            transition: all 0.2s;
+        }
+        
+        .priority-bell:hover {
+            background: var(--light-100);
+            border-color: var(--primary);
+        }
+        
+        .priority-bell.has-unread {
+            animation: priority-pulse 2s infinite;
+        }
+        
+        @keyframes priority-pulse {
+            0%, 100% { box-shadow: none; }
+            50% { box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.3); }
+        }
+        
+        .priority-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 18px;
+            height: 18px;
+            background: #FF6B6B;
+            color: white;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: badge-bounce 0.5s ease infinite alternate;
+        }
+        
+        @keyframes badge-bounce {
+            from { transform: scale(1); }
+            to { transform: scale(1.15); }
+        }
+        
+        .priority-dropdown {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 360px;
+            background: var(--white);
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            z-index: 1000;
+            overflow: hidden;
+        }
+        
+        .priority-dropdown.show {
+            display: block;
+            animation: slideDown 0.2s ease;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .priority-dropdown-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--light-200);
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        .priority-dropdown-content {
+            padding: 16px 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .priority-empty {
+            text-align: center;
+            color: var(--dark-500);
+            padding: 30px 20px;
+        }
+        
+        .priority-empty-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+        
+        .priority-memo {
+            background: linear-gradient(135deg, #FFF9E6 0%, #FFF3CD 100%);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid #FFD93D;
+        }
+        
+        .priority-memo-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed rgba(0,0,0,0.1);
+        }
+        
+        .priority-memo-date {
+            font-size: 13px;
+            color: var(--dark-600);
+            font-weight: 600;
+        }
+        
+        .priority-memo-author {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--dark-500);
+        }
+        
+        .priority-memo-author-avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+        }
+        
+        .priority-memo-text {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--dark-800);
+            white-space: pre-wrap;
+        }
+        
+        .priority-dropdown-footer {
+            padding: 12px 20px;
+            background: var(--light-50);
+            border-top: 1px solid var(--light-200);
+        }
+
+        .recent-activity {
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .priority-section.has-unread {
+            border-color: #FF6B6B;
+            animation: priority-pulse 2s infinite;
+        }
+        
+        @keyframes priority-pulse {
+            0%, 100% { box-shadow: var(--shadow-sm); }
+            50% { box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.2); }
+        }
+        
+        .priority-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .priority-toggle:hover {
+            background: var(--light-50);
+        }
+        
+        .priority-toggle-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .priority-icon {
+            font-size: 18px;
+        }
+        
+        .priority-toggle-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--dark-900);
+        }
+        
+        .priority-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background: #FF6B6B;
+            color: white;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+            animation: badge-bounce 0.5s ease infinite alternate;
+        }
+        
+        @keyframes badge-bounce {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+        
+        .priority-toggle-arrow {
+            color: var(--dark-500);
+            font-size: 12px;
+            transition: transform 0.3s;
+        }
+        
+        .priority-toggle-arrow.open {
+            transform: rotate(180deg);
+        }
+        
+        .priority-panel {
+            border-top: 1px solid var(--light-200);
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 500px; }
+        }
+        
+        .priority-content {
+            padding: 20px;
+            min-height: 80px;
+        }
+        
+        .priority-empty {
+            text-align: center;
+            color: var(--dark-500);
+            padding: 20px;
+        }
+        
+        .priority-empty-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .priority-memo {
+            background: linear-gradient(135deg, #FFF9E6 0%, #FFF3CD 100%);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid #FFD93D;
+        }
+        
+        .priority-memo-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed rgba(0,0,0,0.1);
+        }
+        
+        .priority-memo-date {
+            font-size: 13px;
+            color: var(--dark-600);
+            font-weight: 600;
+        }
+        
+        .priority-memo-author {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--dark-500);
+        }
+        
+        .priority-memo-author-avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+        }
+        
+        .priority-memo-text {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--dark-800);
+            white-space: pre-wrap;
+        }
+        
+        .priority-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 12px 20px;
+            background: var(--light-50);
+            border-top: 1px solid var(--light-200);
+        }
+
         .recent-activity {
             background: var(--white);
             border-radius: var(--radius-md);
@@ -3828,6 +4144,16 @@
                 padding: 16px;
             }
             
+            /* 업무 우선순위 드롭다운 - 모바일 */
+            .priority-dropdown {
+                width: calc(100vw - 32px);
+                right: -60px;
+            }
+            
+            .priority-dropdown-content {
+                max-height: 250px;
+            }
+            
             /* 진행중인 할 일 섹션 - 모바일 */
             .todo-section {
                 margin-top: 20px;
@@ -4709,6 +5035,27 @@
                         <span class="page-badge">실시간</span>
                     </div>
                     <div class="header-actions">
+                        <!-- 업무 우선순위 버튼 -->
+                        <div class="priority-bell-wrapper">
+                            <div class="priority-bell" onclick="togglePriorityDropdown()">
+                                📋
+                                <span class="priority-badge" id="priorityBadge" style="display: none;">!</span>
+                            </div>
+                            <!-- 업무 우선순위 드롭다운 패널 -->
+                            <div class="priority-dropdown" id="priorityDropdown">
+                                <div class="priority-dropdown-header">
+                                    <span>📋 오늘의 업무 우선순위</span>
+                                    <button class="btn-text" onclick="openPriorityEditor()">✏️ 작성</button>
+                                </div>
+                                <div class="priority-dropdown-content" id="priorityContent">
+                                    <!-- JavaScript로 렌더링 -->
+                                </div>
+                                <div class="priority-dropdown-footer" id="priorityActions" style="display:none;">
+                                    <button class="btn btn-primary btn-sm" onclick="markPriorityRead()" style="width:100%;">확인 완료</button>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="notification-bell-wrapper">
                             <div class="notification-bell" onclick="toggleNotificationPanel()">
                                 🔔
@@ -4741,6 +5088,7 @@
                         </div>
                         <div class="mini-calendar-grid" id="miniCalendarGrid"></div>
                     </div>
+                    
                     <div class="recent-activity">
                         <div class="card-header">
                             <h3 class="card-title">최근 활동</h3>
@@ -5577,6 +5925,30 @@
         </div>
     </div>
 
+    <!-- 업무 우선순위 편집 모달 -->
+    <div class="modal" id="priorityEditorModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 class="modal-title">📋 오늘의 업무 우선순위 작성</h2>
+                <button class="modal-close" onclick="closeModal('priorityEditor')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">📅 날짜</label>
+                    <input type="date" class="form-input" id="priorityEditorDate">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">📝 업무 우선순위</label>
+                    <textarea class="form-textarea" id="priorityEditorContent" rows="8" placeholder="오늘의 업무 우선순위를 작성하세요...&#10;&#10;예시:&#10;1. KPI 폴더 수정사항 먼저 처리&#10;2. 솔루션 앱 고도화&#10;3. IR deck 숙지"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('priorityEditor')">취소</button>
+                <button class="btn btn-primary" onclick="savePriority()">저장</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 프로젝트 목록 모달 -->
     <div class="modal" id="projectListModal">
         <div class="modal-content" style="max-width: 600px;">
@@ -5853,6 +6225,8 @@
         let recentActivities = []; // 최근 활동
         let currentVisits = []; // 현재 프로젝트의 방문 기록
         let expandedVisitIds = new Set(); // 열려있는 방문 기록 ID들
+        let dailyPriority = null; // 오늘의 업무 우선순위
+        let priorityPanelOpen = false; // 패널 열림 상태
         
         // ========== 새 프로젝트 모달 함수들 ==========
         
@@ -6463,6 +6837,12 @@
                     // 대시보드 할 일 카드 업데이트
                     loadAllChecklists();
                 }).subscribe();
+            
+            // 업무 우선순위 실시간 구독
+            db.channel('daily_priorities_changes')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'daily_priorities' }, () => {
+                    loadDailyPriority();
+                }).subscribe();
         }
 
         // 알림 표시 함수
@@ -6578,6 +6958,7 @@
             await loadProjects();
             await loadAllFiles();
             await loadRecentActivities();
+            await loadDailyPriority();
             await loadNotifications();
             await loadPersonalSchedules();
             await loadAllChecklists();
@@ -6681,6 +7062,201 @@
             document.getElementById('loginScreen').classList.remove('hidden');
             currentUser = null;
             currentProject = null;
+        }
+
+        // ========== 오늘의 업무 우선순위 ==========
+        async function loadDailyPriority() {
+            if (!currentUser) return;
+            
+            try {
+                const today = getLocalDateString();
+                
+                // 오늘의 우선순위 로드
+                const { data, error } = await db
+                    .from('daily_priorities')
+                    .select('*, author:users(id, name, avatar_initial, avatar_color)')
+                    .eq('date', today)
+                    .order('updated_at', { ascending: false })
+                    .limit(1)
+                    .single();
+                
+                if (error && error.code !== 'PGRST116') {
+                    console.error('우선순위 로드 실패:', error);
+                    return;
+                }
+                
+                dailyPriority = data;
+                
+                // 읽음 여부 확인
+                let isUnread = false;
+                if (dailyPriority) {
+                    const { data: readData } = await db
+                        .from('priority_reads')
+                        .select('id')
+                        .eq('priority_id', dailyPriority.id)
+                        .eq('user_id', currentUser.id)
+                        .single();
+                    
+                    isUnread = !readData;
+                }
+                
+                renderPriority(isUnread);
+            } catch (err) {
+                console.error('우선순위 로드 에러:', err);
+            }
+        }
+        
+        function renderPriority(isUnread = false) {
+            const bell = document.querySelector('.priority-bell');
+            const content = document.getElementById('priorityContent');
+            const badge = document.getElementById('priorityBadge');
+            const actions = document.getElementById('priorityActions');
+            
+            if (!content) return;
+            
+            // 알림 배지 표시
+            if (isUnread && dailyPriority) {
+                badge.style.display = 'flex';
+                if (bell) bell.classList.add('has-unread');
+            } else {
+                badge.style.display = 'none';
+                if (bell) bell.classList.remove('has-unread');
+            }
+            
+            if (!dailyPriority) {
+                content.innerHTML = `
+                    <div class="priority-empty">
+                        <div class="priority-empty-icon">📝</div>
+                        <div>오늘의 업무 우선순위가 없습니다</div>
+                        <div style="font-size: 12px; margin-top: 8px; color: var(--dark-400);">작성 버튼을 눌러 추가하세요</div>
+                    </div>
+                `;
+                actions.style.display = 'none';
+                return;
+            }
+            
+            actions.style.display = isUnread ? 'block' : 'none';
+            
+            const date = new Date(dailyPriority.date);
+            const dateStr = `${date.getFullYear()}.${String(date.getMonth()+1).padStart(2,'0')}.${String(date.getDate()).padStart(2,'0')}`;
+            
+            content.innerHTML = `
+                <div class="priority-memo">
+                    <div class="priority-memo-header">
+                        <span class="priority-memo-date">📅 ${dateStr}</span>
+                        <div class="priority-memo-author">
+                            <div class="priority-memo-author-avatar" style="background: ${dailyPriority.author?.avatar_color || '#ccc'}">
+                                ${dailyPriority.author?.avatar_initial || '?'}
+                            </div>
+                            <span>${dailyPriority.author?.name || '알 수 없음'}</span>
+                        </div>
+                    </div>
+                    <div class="priority-memo-text">${escapeHtml(dailyPriority.content)}</div>
+                </div>
+            `;
+        }
+        
+        function togglePriorityDropdown() {
+            const dropdown = document.getElementById('priorityDropdown');
+            const notificationPanel = document.getElementById('notificationPanel');
+            
+            // 알림 패널이 열려있으면 닫기
+            if (notificationPanel) notificationPanel.classList.remove('show');
+            
+            dropdown.classList.toggle('show');
+            
+            // 드롭다운 외부 클릭 시 닫기
+            if (dropdown.classList.contains('show')) {
+                setTimeout(() => {
+                    document.addEventListener('click', closePriorityOnOutsideClick);
+                }, 10);
+            }
+        }
+        
+        function closePriorityOnOutsideClick(e) {
+            const dropdown = document.getElementById('priorityDropdown');
+            const wrapper = document.querySelector('.priority-bell-wrapper');
+            
+            if (wrapper && !wrapper.contains(e.target)) {
+                dropdown.classList.remove('show');
+                document.removeEventListener('click', closePriorityOnOutsideClick);
+            }
+        }
+        
+        async function markPriorityRead() {
+            if (!dailyPriority || !currentUser) return;
+            
+            try {
+                await db.from('priority_reads').upsert({
+                    priority_id: dailyPriority.id,
+                    user_id: currentUser.id
+                }, { onConflict: 'priority_id,user_id' });
+                
+                // UI 업데이트
+                document.getElementById('priorityBadge').style.display = 'none';
+                document.querySelector('.priority-bell')?.classList.remove('has-unread');
+                document.getElementById('priorityActions').style.display = 'none';
+                
+                // 드롭다운 닫기
+                document.getElementById('priorityDropdown').classList.remove('show');
+                
+                showToast('확인 완료!', 'success');
+            } catch (err) {
+                console.error('읽음 처리 실패:', err);
+            }
+        }
+        
+        function openPriorityEditor() {
+            // 드롭다운 닫기
+            document.getElementById('priorityDropdown')?.classList.remove('show');
+            
+            const today = getLocalDateString();
+            document.getElementById('priorityEditorDate').value = today;
+            document.getElementById('priorityEditorContent').value = dailyPriority?.content || '';
+            openModal('priorityEditor');
+        }
+        
+        async function savePriority() {
+            const date = document.getElementById('priorityEditorDate').value;
+            const content = document.getElementById('priorityEditorContent').value.trim();
+            
+            if (!content) {
+                showToast('내용을 입력해주세요', 'error');
+                return;
+            }
+            
+            try {
+                // 해당 날짜의 기존 우선순위 확인
+                const { data: existing } = await db
+                    .from('daily_priorities')
+                    .select('id')
+                    .eq('date', date)
+                    .single();
+                
+                if (existing) {
+                    // 수정
+                    await db.from('daily_priorities')
+                        .update({ content, updated_at: new Date().toISOString() })
+                        .eq('id', existing.id);
+                    
+                    // 모든 읽음 기록 삭제 (수정되면 다시 알림)
+                    await db.from('priority_reads').delete().eq('priority_id', existing.id);
+                } else {
+                    // 새로 생성
+                    await db.from('daily_priorities').insert({
+                        date,
+                        content,
+                        created_by: currentUser.id
+                    });
+                }
+                
+                closeModal('priorityEditor');
+                await loadDailyPriority();
+                showToast('저장되었습니다!', 'success');
+            } catch (err) {
+                console.error('저장 실패:', err);
+                showToast('저장 실패', 'error');
+            }
         }
 
         // ========== 최근 활동 로드 (다른 사람 활동만) ==========
@@ -8136,21 +8712,22 @@
             // 새 파일 업로드
             let uploadFailed = 0;
             for (const file of editVisitNewFiles) {
-                const fileName = `${Date.now()}_${file.name}`;
+                // 안전한 파일명 생성 (영문/숫자만 - 한글 파일명 문제 해결)
+                const ext = file.name.split('.').pop() || 'file';
+                const safeFileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
                 
                 // Storage 업로드 시도
-                let storagePath = fileName;
+                let storagePath = safeFileName;
                 try {
-                    const { error: uploadError } = await db.storage.from('files').upload(fileName, file);
+                    const { error: uploadError } = await db.storage.from('files').upload(safeFileName, file);
                     if (uploadError) {
                         console.warn('Storage 업로드 실패:', uploadError);
-                        // Storage 실패해도 DB에는 저장 (파일 다운로드 안 됨)
                     }
                 } catch (e) {
                     console.warn('Storage 업로드 에러:', e);
                 }
                 
-                // DB에 파일 정보 저장 (Storage 성공 여부와 무관하게)
+                // DB에 파일 정보 저장 (원본 파일명은 name에 저장)
                 const { error: dbError } = await db.from('visit_files').insert({
                     visit_id: id,
                     name: file.name,
@@ -9962,11 +10539,13 @@
             // 파일 업로드
             let uploadFailed = 0;
             for (const file of visitFiles) {
-                const fileName = `${Date.now()}_${file.name}`;
+                // 안전한 파일명 생성 (영문/숫자만 - 한글 파일명 문제 해결)
+                const ext = file.name.split('.').pop() || 'file';
+                const safeFileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
                 
                 // Storage 업로드 시도
                 try {
-                    const { error: uploadError } = await db.storage.from('files').upload(fileName, file);
+                    const { error: uploadError } = await db.storage.from('files').upload(safeFileName, file);
                     if (uploadError) {
                         console.warn('Storage 업로드 실패:', uploadError);
                     }
@@ -9974,11 +10553,11 @@
                     console.warn('Storage 업로드 에러:', e);
                 }
                 
-                // DB에 파일 정보 저장 (Storage 성공 여부와 무관하게)
+                // DB에 파일 정보 저장 (원본 파일명은 name에 저장)
                 const { error: dbError } = await db.from('visit_files').insert({
                     visit_id: visit.id,
                     name: file.name,
-                    path: fileName,
+                    path: safeFileName,
                     size: file.size,
                     mime_type: file.type,
                     uploaded_by: currentUser.id

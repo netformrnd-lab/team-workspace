@@ -188,6 +188,13 @@
             position: fixed;
             height: 100vh;
             overflow-y: auto;
+            /* 스크롤바 숨기기 */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+        
+        .sidebar::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
         }
 
         .sidebar-header {
@@ -455,8 +462,15 @@
 
         .project-list-container {
             max-height: 500px;
-            overflow: hidden;
+            overflow-y: auto;
             transition: max-height 0.3s ease, opacity 0.3s ease;
+            /* 스크롤바 숨기기 */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        .project-list-container::-webkit-scrollbar {
+            display: none;
         }
 
         .project-list-container.collapsed {
@@ -747,7 +761,14 @@
             flex: 1;
             margin-left: 260px;
             padding: 32px 40px;
-            max-width: 1400px;
+            min-width: 0; /* overflow 방지 */
+            overflow-x: auto;
+        }
+        
+        /* 캘린더 뷰에서는 전체 너비 사용 */
+        .main-content.calendar-view {
+            max-width: none;
+            padding-right: 20px;
         }
 
         .content-header {
@@ -1409,6 +1430,139 @@
 
         .mini-calendar-day.other-month {
             color: var(--light-300);
+        }
+        
+        .mini-calendar-day.selected {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .mini-calendar-day.selected::after {
+            background: white;
+        }
+        
+        /* 선택된 날짜 일정 표시 */
+        .selected-date-events {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--light-200);
+        }
+        
+        .selected-date-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-800);
+        }
+        
+        .btn-close-small {
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: var(--light-100);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--dark-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-close-small:hover {
+            background: var(--light-200);
+        }
+        
+        .selected-date-list {
+            max-height: 300px;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        
+        .selected-date-list::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .selected-date-event-item {
+            padding: 10px 12px;
+            background: var(--light-50);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .selected-date-event-item:hover {
+            background: var(--light-100);
+        }
+        
+        .selected-date-event-item.personal {
+            border-left-color: var(--info);
+        }
+        
+        .selected-date-event-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--dark-800);
+            margin-bottom: 2px;
+        }
+        
+        .selected-date-event-meta {
+            font-size: 11px;
+            color: var(--dark-600);
+        }
+        
+        .selected-date-empty {
+            text-align: center;
+            padding: 20px;
+            color: var(--dark-500);
+            font-size: 13px;
+        }
+        
+        .selected-date-add-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            background: var(--primary-soft);
+            border: 1px dashed var(--primary);
+            border-radius: var(--radius-sm);
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            transition: all 0.2s;
+        }
+        
+        .selected-date-add-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-style: solid;
+        }
+        
+        .selected-date-more {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px;
+            background: var(--light-100);
+            border-radius: var(--radius-sm);
+            margin-top: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            transition: all 0.2s;
+        }
+        
+        .selected-date-more:hover {
+            background: var(--primary-soft);
         }
 
         /* ========== 업무 우선순위 드롭다운 ========== */
@@ -2776,7 +2930,8 @@
             background: var(--white);
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-sm);
-            overflow: hidden;
+            overflow: visible;
+            width: 100%;
         }
 
         .calendar-header {
@@ -2820,7 +2975,12 @@
 
         .calendar-grid {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            grid-template-columns: repeat(7, minmax(120px, 1fr));
+            min-width: 840px; /* 7 * 120px */
+        }
+        
+        .calendar-container {
+            overflow-x: auto;
         }
 
         .calendar-day-header {
@@ -4149,6 +4309,20 @@
                 padding: 16px;
             }
             
+            /* 선택된 날짜 일정 - 모바일 */
+            .selected-date-events {
+                margin-top: 12px;
+                padding-top: 12px;
+            }
+            
+            .selected-date-event-item {
+                padding: 12px;
+            }
+            
+            .selected-date-event-name {
+                font-size: 14px;
+            }
+            
             /* 업무 우선순위 드롭다운 - 모바일 */
             .priority-dropdown {
                 width: calc(100vw - 32px);
@@ -4318,14 +4492,14 @@
             }
             
             .calendar-day {
-                min-height: 70px;
-                padding: 2px;
+                min-height: 80px;
+                padding: 3px;
                 min-width: 0;
                 overflow: hidden;
             }
             
             .day-number {
-                font-size: 11px;
+                font-size: 12px;
                 margin-bottom: 2px;
             }
             
@@ -4343,16 +4517,136 @@
             }
             
             .day-event {
-                font-size: 8px;
-                padding: 2px 3px;
+                font-size: 9px;
+                padding: 3px 4px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 border-radius: 3px;
+                max-width: 100%;
+            }
+            
+            .day-event.more-events {
+                display: block !important;
+                background: var(--light-200) !important;
+                color: var(--dark-600) !important;
+                text-align: center;
+                font-weight: 600;
             }
             
             .day-event.personal-event {
                 border-left-width: 2px !important;
+            }
+            
+            /* 모바일 일정 팝업 */
+            .mobile-day-events-popup {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 9999;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+            }
+            
+            .mobile-day-events-backdrop {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+            }
+            
+            .mobile-day-events-content {
+                position: relative;
+                background: white;
+                border-radius: 16px 16px 0 0;
+                max-height: 70vh;
+                overflow-y: auto;
+                animation: slideUp 0.3s ease;
+            }
+            
+            @keyframes slideUp {
+                from { transform: translateY(100%); }
+                to { transform: translateY(0); }
+            }
+            
+            .mobile-day-events-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 16px 20px;
+                border-bottom: 1px solid var(--light-200);
+                font-weight: 700;
+                font-size: 16px;
+                background: white;
+                border-radius: 16px 16px 0 0;
+                position: sticky;
+                top: 0;
+            }
+            
+            .mobile-day-events-header button {
+                width: 32px;
+                height: 32px;
+                border: none;
+                background: var(--light-100);
+                border-radius: 50%;
+                font-size: 14px;
+                cursor: pointer;
+            }
+            
+            .mobile-day-events-list {
+                padding: 12px 16px 24px;
+                background: white;
+            }
+            
+            .mobile-day-event-item {
+                padding: 14px 16px;
+                background: var(--light-50);
+                border-radius: 10px;
+                margin-bottom: 10px;
+                border-left: 4px solid var(--primary);
+                cursor: pointer;
+            }
+            
+            .mobile-day-event-item:active {
+                background: var(--light-100);
+            }
+            
+            .mobile-day-event-name {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--dark-800);
+            }
+            
+            .mobile-day-add-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 14px;
+                background: var(--primary-soft);
+                border: 1px dashed var(--primary);
+                border-radius: 10px;
+                margin-bottom: 10px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--primary);
+            }
+            
+            .mobile-day-add-btn:active {
+                background: var(--primary);
+                color: white;
+            }
+            
+            .mobile-day-empty {
+                text-align: center;
+                padding: 20px;
+                color: var(--dark-500);
+                font-size: 14px;
             }
             
             .day-add-btn {
@@ -5095,6 +5389,17 @@
                             </div>
                         </div>
                         <div class="mini-calendar-grid" id="miniCalendarGrid"></div>
+                        
+                        <!-- 선택된 날짜 일정 표시 영역 -->
+                        <div class="selected-date-events" id="selectedDateEvents" style="display:none;">
+                            <div class="selected-date-header">
+                                <span id="selectedDateTitle">📅 선택된 날짜</span>
+                                <button class="btn-close-small" onclick="closeSelectedDateEvents()">✕</button>
+                            </div>
+                            <div class="selected-date-list" id="selectedDateList">
+                                <!-- JavaScript로 렌더링 -->
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="recent-activity">
@@ -5352,10 +5657,10 @@
                             </div>
                             <div class="type-card" data-type="personal" onclick="selectProjectType('personal')">
                                 <div class="type-card-header">
-                                    <div class="type-card-icon personal">👤</div>
-                                    <div class="type-card-title">개인일정</div>
+                                    <div class="type-card-icon personal">📅</div>
+                                    <div class="type-card-title">일정</div>
                                 </div>
-                                <div class="type-card-desc">휴가, 외출, 재택근무 등 개인 스케줄</div>
+                                <div class="type-card-desc">미팅, 외근, 휴가 등 개인/팀 스케줄</div>
                             </div>
                         </div>
                     </div>
@@ -5551,18 +5856,20 @@
                     </div>
                 </div>
 
-                <!-- Step 3: 개인일정 폼 -->
+                <!-- Step 3: 일정 폼 -->
                 <div class="step-content" id="newProjectStep3Personal">
                     <div class="form-group">
                         <label class="form-label">일정 유형 *</label>
                         <div class="personal-type-options" id="personalTypeOptions">
-                            <div class="personal-type-option selected" data-type="휴가" onclick="selectPersonalType(this)">🏖️ 휴가</div>
-                            <div class="personal-type-option" data-type="외출" onclick="selectPersonalType(this)">🚗 외출</div>
-                            <div class="personal-type-option" data-type="재택근무" onclick="selectPersonalType(this)">🏠 재택근무</div>
+                            <div class="personal-type-option selected" data-type="미팅" onclick="selectPersonalType(this)">🤝 미팅</div>
+                            <div class="personal-type-option" data-type="인사" onclick="selectPersonalType(this)">👋 인사</div>
+                            <div class="personal-type-option" data-type="행사" onclick="selectPersonalType(this)">🎉 행사</div>
+                            <div class="personal-type-option" data-type="개인" onclick="selectPersonalType(this)">👤 개인</div>
+                            <div class="personal-type-option" data-type="외근" onclick="selectPersonalType(this)">🚗 외근</div>
                             <div class="personal-type-option" data-type="기타" onclick="selectPersonalType(this)">✏️ 기타</div>
                         </div>
                     </div>
-                    <div class="form-group" id="customTitleGroup" style="display: none;">
+                    <div class="form-group" id="customTitleGroup">
                         <label class="form-label">일정 제목 *</label>
                         <input type="text" class="form-input" id="newPersonalTitle" placeholder="일정 제목을 입력하세요">
                     </div>
@@ -5574,6 +5881,13 @@
                             <input type="date" class="form-input" id="newPersonalEndDate">
                         </div>
                         <small style="color: var(--dark-600); font-size: 12px; margin-top: 4px; display: block;">하루만 선택하려면 같은 날짜를 선택하세요</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">⏰ 시간 (선택)</label>
+                        <div class="time-input-wrapper">
+                            <input type="time" class="form-input" id="newPersonalTime" style="width: 150px;">
+                            <small style="color: var(--dark-500); margin-left: 8px;">입력 시 캘린더에 시간이 표시됩니다</small>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">메모</label>
@@ -5631,10 +5945,10 @@
                             </div>
                             <div class="type-card" data-type="personal" onclick="selectCalendarType('personal')">
                                 <div class="type-card-header">
-                                    <div class="type-card-icon personal">👤</div>
-                                    <div class="type-card-title">개인일정</div>
+                                    <div class="type-card-icon personal">📅</div>
+                                    <div class="type-card-title">일정</div>
                                 </div>
-                                <div class="type-card-desc">휴가, 외출, 재택근무 등</div>
+                                <div class="type-card-desc">미팅, 외근, 휴가 등</div>
                             </div>
                         </div>
                     </div>
@@ -5801,20 +6115,29 @@
                     </div>
                 </div>
 
-                <!-- Step 3: 개인일정 폼 -->
+                <!-- Step 3: 일정 폼 -->
                 <div class="step-content" id="calendarStep3Personal">
                     <div class="form-group">
                         <label class="form-label">일정 유형 *</label>
                         <div class="personal-type-options" id="calPersonalTypeOptions">
-                            <div class="personal-type-option selected" data-type="휴가" onclick="selectCalPersonalType(this)">🏖️ 휴가</div>
-                            <div class="personal-type-option" data-type="외출" onclick="selectCalPersonalType(this)">🚗 외출</div>
-                            <div class="personal-type-option" data-type="재택근무" onclick="selectCalPersonalType(this)">🏠 재택근무</div>
+                            <div class="personal-type-option selected" data-type="미팅" onclick="selectCalPersonalType(this)">🤝 미팅</div>
+                            <div class="personal-type-option" data-type="인사" onclick="selectCalPersonalType(this)">👋 인사</div>
+                            <div class="personal-type-option" data-type="행사" onclick="selectCalPersonalType(this)">🎉 행사</div>
+                            <div class="personal-type-option" data-type="개인" onclick="selectCalPersonalType(this)">👤 개인</div>
+                            <div class="personal-type-option" data-type="외근" onclick="selectCalPersonalType(this)">🚗 외근</div>
                             <div class="personal-type-option" data-type="기타" onclick="selectCalPersonalType(this)">✏️ 기타</div>
                         </div>
                     </div>
-                    <div class="form-group" id="calCustomTitleGroup" style="display: none;">
+                    <div class="form-group" id="calCustomTitleGroup">
                         <label class="form-label">일정 제목 *</label>
                         <input type="text" class="form-input" id="calPersonalTitle" placeholder="일정 제목">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">⏰ 시간 (선택)</label>
+                        <div class="time-input-wrapper">
+                            <input type="time" class="form-input" id="calPersonalTime" style="width: 150px;">
+                            <small style="color: var(--dark-500); margin-left: 8px;">입력 시 캘린더에 표시</small>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">메모</label>
@@ -6149,11 +6472,11 @@
         </div>
     </div>
 
-    <!-- 개인일정 수정 모달 -->
+    <!-- 일정 수정 모달 -->
     <div class="modal" id="editPersonalScheduleModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">👤 개인일정</h2>
+                <h2 class="modal-title">📅 일정</h2>
                 <button class="modal-close" onclick="closeModal('editPersonalSchedule')">✕</button>
             </div>
             <div class="modal-body">
@@ -6176,7 +6499,7 @@
                 <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--light-200);">
                     <div class="danger-zone">
                         <div class="danger-zone-title">⚠️ 삭제</div>
-                        <div class="danger-zone-desc">이 개인일정을 삭제합니다.</div>
+                        <div class="danger-zone-desc">이 일정을 삭제합니다.</div>
                         <button class="btn btn-danger btn-sm" onclick="deletePersonalSchedule()">🗑️ 삭제하기</button>
                     </div>
                 </div>
@@ -6243,14 +6566,14 @@
         let growthKpiUsage = false;
         let growthStatus = '진행중';
         let generalStatus = '진행중';
-        let personalType = '휴가';
+        let personalType = '미팅';
         
         // ========== 캘린더 모달 상태 ==========
         let calendarStep = 1;
         let calendarType = null;
         let calendarConditions = [false, false, false, false];
         let calProblemCategories = [];
-        let calPersonalType = '휴가';
+        let calPersonalType = '미팅';
         let calSolutionType = null;
         let calResultTypes = [];
         let calOperationStatus = null;
@@ -6373,18 +6696,22 @@
             generalStatus = el.dataset.status;
         }
         
-        // 개인일정 타입 선택
+        // 일정 타입 선택
         function selectPersonalType(el) {
             document.querySelectorAll('#personalTypeOptions .personal-type-option').forEach(e => e.classList.remove('selected'));
             el.classList.add('selected');
             personalType = el.dataset.type;
             
-            // 기타 선택시 제목 입력 표시
-            const customGroup = document.getElementById('customTitleGroup');
-            if (personalType === '기타') {
-                customGroup.style.display = 'block';
-            } else {
-                customGroup.style.display = 'none';
+            // 일정 유형 이모지 가져오기
+            const typeEmojis = {
+                '미팅': '🤝', '인사': '👋', '행사': '🎉',
+                '개인': '👤', '외근': '🚗', '기타': '✏️'
+            };
+            
+            // 제목 placeholder 업데이트
+            const titleInput = document.getElementById('newPersonalTitle');
+            if (titleInput) {
+                titleInput.placeholder = `${typeEmojis[personalType] || ''} ${personalType} 일정 제목`;
             }
         }
         
@@ -6607,16 +6934,15 @@
                 return;
             }
             
-            let title = personalType;
-            if (personalType === '기타') {
-                title = document.getElementById('newPersonalTitle').value.trim();
-                if (!title) {
-                    showToast('일정 제목을 입력해주세요', 'error');
-                    return;
-                }
+            // 제목은 필수
+            let title = document.getElementById('newPersonalTitle').value.trim();
+            if (!title) {
+                showToast('일정 제목을 입력해주세요', 'error');
+                return;
             }
             
             const description = document.getElementById('newPersonalDesc').value.trim();
+            const scheduleTime = document.getElementById('newPersonalTime')?.value || null;
             
             // 날짜 범위 생성
             const start = new Date(startDate);
@@ -6627,7 +6953,9 @@
                 schedules.push({
                     user_id: currentUser.id,
                     title: title,
+                    schedule_type: personalType,
                     schedule_date: d.toISOString().split('T')[0],
+                    schedule_time: scheduleTime,
                     description: description
                 });
             }
@@ -6639,7 +6967,7 @@
                 return;
             }
             
-            showToast('개인일정이 등록되었습니다!', 'success');
+            showToast('일정이 등록되었습니다!', 'success');
             closeModal('newProject');
             await loadPersonalSchedules();
             renderCalendar();
@@ -6658,7 +6986,7 @@
             growthKpiUsage = false;
             growthStatus = '진행중';
             generalStatus = '진행중';
-            personalType = '휴가';
+            personalType = '미팅';
             
             // UI 초기화
             document.querySelectorAll('#newProjectModal .type-card').forEach(c => c.classList.remove('selected'));
@@ -7023,41 +7351,80 @@
             
             console.log('D-day 체크:', todayStr, tomorrowStr, projects.map(p => p.next_visit_date));
             
-            // D-day 일정 (오늘)
+            // 프로젝트 D-day 일정 (오늘)
             const todaySchedules = projects.filter(p => p.next_visit_date === todayStr);
             
-            // D-1 일정 (내일)
+            // 프로젝트 D-1 일정 (내일)
             const tomorrowSchedules = projects.filter(p => p.next_visit_date === tomorrowStr);
             
-            console.log('오늘 일정:', todaySchedules.length, '내일 일정:', tomorrowSchedules.length);
+            // 개인일정 D-day (오늘) - 본인 일정만
+            const todayPersonalSchedules = personalSchedules.filter(s => 
+                s.schedule_date === todayStr && s.user_id === currentUser?.id
+            );
             
-            // D-day 알림
+            // 개인일정 D-1 (내일) - 본인 일정만
+            const tomorrowPersonalSchedules = personalSchedules.filter(s => 
+                s.schedule_date === tomorrowStr && s.user_id === currentUser?.id
+            );
+            
+            console.log('오늘 일정:', todaySchedules.length, '내일 일정:', tomorrowSchedules.length);
+            console.log('오늘 개인일정:', todayPersonalSchedules.length, '내일 개인일정:', tomorrowPersonalSchedules.length);
+            
+            // 프로젝트 D-day 알림
             todaySchedules.forEach(p => {
                 const meetingType = getMeetingType(p.color);
                 showScheduleAlert(
                     `🔔 오늘 일정 (D-day)`,
                     `[${meetingType.name}] ${p.name}`,
                     p.id,
-                    'today'
+                    'today',
+                    'project'
+                );
+            });
+            
+            // 개인일정 D-day 알림
+            todayPersonalSchedules.forEach(s => {
+                const timeStr = s.schedule_time ? s.schedule_time.slice(0, 5) + ' ' : '';
+                showScheduleAlert(
+                    `🔔 오늘 일정 (D-day)`,
+                    `📅 ${timeStr}${s.title}`,
+                    s.id,
+                    'today',
+                    'personal'
                 );
             });
             
             // D-1 알림 (D-day가 없을 때만, 또는 있어도 보여줌)
+            const delay = (todaySchedules.length + todayPersonalSchedules.length) > 0 ? 3000 : 0;
             setTimeout(() => {
+                // 프로젝트 D-1 알림
                 tomorrowSchedules.forEach(p => {
                     const meetingType = getMeetingType(p.color);
                     showScheduleAlert(
                         `📅 내일 일정 (D-1)`,
                         `[${meetingType.name}] ${p.name}`,
                         p.id,
-                        'tomorrow'
+                        'tomorrow',
+                        'project'
                     );
                 });
-            }, todaySchedules.length > 0 ? 3000 : 0);
+                
+                // 개인일정 D-1 알림
+                tomorrowPersonalSchedules.forEach(s => {
+                    const timeStr = s.schedule_time ? s.schedule_time.slice(0, 5) + ' ' : '';
+                    showScheduleAlert(
+                        `📅 내일 일정 (D-1)`,
+                        `📅 ${timeStr}${s.title}`,
+                        s.id,
+                        'tomorrow',
+                        'personal'
+                    );
+                });
+            }, delay);
         }
         
         // 일정 알림 표시
-        function showScheduleAlert(title, message, projectId, type) {
+        function showScheduleAlert(title, message, itemId, type, itemType = 'project') {
             // 알림 권한 요청
             requestNotificationPermission();
             
@@ -7067,7 +7434,11 @@
             toast.className = `toast schedule-alert ${type}`;
             toast.style.cursor = 'pointer';
             toast.onclick = () => {
-                selectProject(projectId);
+                if (itemType === 'personal') {
+                    openEditPersonalSchedule(itemId);
+                } else {
+                    selectProject(itemId);
+                }
                 toast.remove();
             };
             
@@ -7830,7 +8201,7 @@
                 return `
                     <div class="nav-item ${activeClass}" onclick="selectProject('${p.id}')">
                         <div class="project-color" style="background: ${categoryColor}"></div>
-                        <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.name}</span>
+                        <span style="flex:1; word-break: break-word; line-height: 1.3;">${p.name}</span>
                         ${assigneeAvatar}
                     </div>
                 `;
@@ -9082,15 +9453,18 @@
                     events.push({ type: 'project', name: `📅 ${p.name}`, color: categoryColor, projectId: p.id });
                 }
             });
-            // 개인일정
+            // 개인일정 (시간 표시)
             personalSchedules.forEach(s => {
                 if (s.schedule_date === dateStr) {
                     const userColor = getUserPersonalColor(s.user_id);
                     const userName = s.user?.name || '나';
                     const isMySchedule = s.user_id === currentUser?.id;
+                    // 시간이 있으면 앞에 표시
+                    const timeStr = s.schedule_time ? s.schedule_time.slice(0, 5) + ' ' : '';
+                    const displayName = isMySchedule ? `${timeStr}${s.title}` : `${userName}: ${timeStr}${s.title}`;
                     events.push({ 
                         type: 'personal', 
-                        name: `👤 ${isMySchedule ? s.title : `${userName}: ${s.title}`}`, 
+                        name: `👤 ${displayName}`, 
                         color: userColor, 
                         personalId: s.id,
                         userId: s.user_id
@@ -9114,6 +9488,10 @@
             startDate.setDate(startDate.getDate() - firstDay.getDay());
             const today = new Date();
             
+            // 모바일 체크
+            const isMobile = window.innerWidth <= 768;
+            const maxEventsOnMobile = 2;
+            
             for (let i = 0; i < 42; i++) {
                 const date = new Date(startDate);
                 date.setDate(date.getDate() + i);
@@ -9123,27 +9501,88 @@
                 const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
                 const events = getCalendarEvents(dateStr);
                 
+                // 모바일에서 일정 제한
+                let displayEvents = events;
+                let moreCount = 0;
+                if (isMobile && events.length > maxEventsOnMobile) {
+                    displayEvents = events.slice(0, maxEventsOnMobile);
+                    moreCount = events.length - maxEventsOnMobile;
+                }
+                
+                let eventsHtml = displayEvents.map(e => e.type === 'personal' ? `
+                    <div class="day-event personal-event" style="background: ${e.color}20; color: ${e.color}; border-left: 3px solid ${e.color};" title="${e.name}" onclick="event.stopPropagation(); openEditPersonalSchedule('${e.personalId}')">
+                        ${e.name}
+                    </div>
+                ` : `
+                    <div class="day-event" style="background: ${e.color}20; color: ${e.color}" onclick="event.stopPropagation(); selectProject('${e.projectId}')">
+                        ${e.name}
+                    </div>
+                `).join('');
+                
+                // 더 있으면 +N개 표시 (모바일에서 클릭 시 팝업)
+                if (moreCount > 0) {
+                    eventsHtml += `<div class="day-event more-events" onclick="showMobileDayEvents('${dateStr}', ${date.getDate()}, ${date.getMonth() + 1}); event.stopPropagation();">+${moreCount}개</div>`;
+                }
+                
                 html += `
-                    <div class="calendar-day ${isOtherMonth ? 'other-month' : ''} ${isToday ? 'today' : ''}">
+                    <div class="calendar-day ${isOtherMonth ? 'other-month' : ''} ${isToday ? 'today' : ''}" onclick="if(!event.target.closest('.day-event')) showMobileDayEvents('${dateStr}', ${date.getDate()}, ${date.getMonth() + 1})">
                         <div class="day-number">
                             ${isToday ? `<span>${date.getDate()}</span>` : date.getDate()}
                             <button class="day-add-btn" onclick="event.stopPropagation(); openCalendarAdd('${dateStr}')">+</button>
                         </div>
                         <div class="day-events">
-                            ${events.map(e => e.type === 'personal' ? `
-                                <div class="day-event personal-event" style="background: ${e.color}20; color: ${e.color}; border-left: 3px solid ${e.color};" title="${e.name}" onclick="event.stopPropagation(); openEditPersonalSchedule('${e.personalId}')">
-                                    ${e.name}
-                                </div>
-                            ` : `
-                                <div class="day-event" style="background: ${e.color}20; color: ${e.color}" onclick="event.stopPropagation(); selectProject('${e.projectId}')">
-                                    ${e.name}
-                                </div>
-                            `).join('')}
+                            ${eventsHtml}
                         </div>
                     </div>
                 `;
             }
             grid.innerHTML = html;
+        }
+        
+        // 모바일 캘린더 날짜 클릭 시 일정 표시
+        function showMobileDayEvents(dateStr, day, month) {
+            if (window.innerWidth > 768) return; // 데스크톱에서는 무시
+            
+            const events = getCalendarEvents(dateStr);
+            
+            // 기존 팝업 제거
+            const existingPopup = document.getElementById('mobileDayEventsPopup');
+            if (existingPopup) existingPopup.remove();
+            
+            // 팝업 생성
+            const popup = document.createElement('div');
+            popup.id = 'mobileDayEventsPopup';
+            popup.className = 'mobile-day-events-popup';
+            popup.innerHTML = `
+                <div class="mobile-day-events-backdrop"></div>
+                <div class="mobile-day-events-content">
+                    <div class="mobile-day-events-header">
+                        <span>📅 ${month}월 ${day}일 일정 (${events.length}개)</span>
+                        <button onclick="document.getElementById('mobileDayEventsPopup').remove()">✕</button>
+                    </div>
+                    <div class="mobile-day-events-list">
+                        <div class="mobile-day-add-btn" onclick="openCalendarAdd('${dateStr}'); document.getElementById('mobileDayEventsPopup').remove();">
+                            + 일정 추가
+                        </div>
+                        ${events.length === 0 ? '<div class="mobile-day-empty">일정이 없습니다</div>' : events.map(e => e.type === 'personal' ? `
+                            <div class="mobile-day-event-item" onclick="openEditPersonalSchedule('${e.personalId}'); document.getElementById('mobileDayEventsPopup').remove();" style="border-left-color: ${e.color}">
+                                <div class="mobile-day-event-name">${e.name}</div>
+                            </div>
+                        ` : `
+                            <div class="mobile-day-event-item" onclick="selectProject('${e.projectId}'); document.getElementById('mobileDayEventsPopup').remove();" style="border-left-color: ${e.color}">
+                                <div class="mobile-day-event-name">${e.name}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(popup);
+            
+            // 배경 클릭 시 닫기
+            popup.querySelector('.mobile-day-events-backdrop').addEventListener('click', () => {
+                popup.remove();
+            });
         }
 
         function openCalendarAdd(dateStr) {
@@ -9209,7 +9648,7 @@
             closeModal('calendarAdd');
             document.getElementById('personalScheduleTitle').value = '';
             document.getElementById('personalScheduleDesc').value = '';
-            showToast('개인일정이 등록되었습니다', 'success');
+            showToast('일정이 등록되었습니다', 'success');
         }
 
         // 캘린더 일정 저장 (통합)
@@ -9285,7 +9724,7 @@
             renderCalendar();
             renderMiniCalendar();
             closeModal('editPersonalSchedule');
-            showToast('개인일정이 수정되었습니다', 'success');
+            showToast('일정이 수정되었습니다', 'success');
         }
 
         // 개인일정 삭제
@@ -9306,7 +9745,7 @@
             renderCalendar();
             renderMiniCalendar();
             closeModal('editPersonalSchedule');
-            showToast('개인일정이 삭제되었습니다', 'success');
+            showToast('일정이 삭제되었습니다', 'success');
         }
 
         async function saveCalendarProject() {
@@ -9351,6 +9790,9 @@
         function nextMonth() { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); }
         function goToday() { currentDate = new Date(); renderCalendar(); }
 
+        // 미니 캘린더 선택된 날짜
+        let selectedMiniDate = null;
+        
         // 미니 캘린더
         function renderMiniCalendar() {
             const year = miniCalendarDate.getFullYear();
@@ -9373,16 +9815,137 @@
                 const isToday = date.toDateString() === today.toDateString();
                 // 로컬 날짜 문자열 (타임존 문제 방지)
                 const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-                const hasEvent = projects.some(p => p.next_visit_date === dateStr);
+                const hasEvent = projects.some(p => p.next_visit_date === dateStr) || 
+                                 personalSchedules.some(s => s.schedule_date === dateStr);
+                const isSelected = selectedMiniDate === dateStr;
                 
                 html += `
-                    <div class="mini-calendar-day ${isOtherMonth ? 'other-month' : ''} ${isToday ? 'today' : ''} ${hasEvent ? 'has-event' : ''}"
-                         onclick="showSection('calendar')">
+                    <div class="mini-calendar-day ${isOtherMonth ? 'other-month' : ''} ${isToday ? 'today' : ''} ${hasEvent ? 'has-event' : ''} ${isSelected ? 'selected' : ''}"
+                         onclick="selectMiniCalendarDate('${dateStr}', ${date.getDate()}, ${date.getMonth() + 1})"
+                         ondblclick="goToCalendarDate('${dateStr}')">
                         ${date.getDate()}
                     </div>
                 `;
             }
             grid.innerHTML = html;
+        }
+        
+        // 미니 캘린더 날짜 선택
+        function selectMiniCalendarDate(dateStr, day, month) {
+            selectedMiniDate = dateStr;
+            renderMiniCalendar(); // 선택 상태 업데이트
+            showSelectedDateEvents(dateStr, day, month);
+        }
+        
+        // 대시보드에서 캘린더로 이동 (더블클릭)
+        function goToCalendarDate(dateStr) {
+            // dateStr: "2026-01-23" 형식
+            const [year, month, day] = dateStr.split('-').map(Number);
+            currentDate = new Date(year, month - 1, 1); // 해당 월로 설정
+            showSection('calendar');
+        }
+        
+        // 선택된 날짜의 일정 표시
+        function showSelectedDateEvents(dateStr, day, month) {
+            const container = document.getElementById('selectedDateEvents');
+            const list = document.getElementById('selectedDateList');
+            const title = document.getElementById('selectedDateTitle');
+            
+            // 해당 날짜의 프로젝트 일정
+            const projectEvents = projects.filter(p => p.next_visit_date === dateStr);
+            
+            // 해당 날짜의 개인일정
+            const personalEvents = personalSchedules.filter(s => s.schedule_date === dateStr);
+            
+            const totalCount = projectEvents.length + personalEvents.length;
+            title.innerHTML = `📅 ${month}월 ${day}일 일정 (${totalCount}개)`;
+            
+            // 일정 추가 버튼 (항상 맨 위에)
+            let html = `
+                <div class="selected-date-add-btn" onclick="openCalendarAdd('${dateStr}')">
+                    <span>+ 일정 추가</span>
+                </div>
+            `;
+            
+            if (totalCount === 0) {
+                html += '<div class="selected-date-empty">일정이 없습니다</div>';
+            } else {
+                // 모든 이벤트를 하나의 배열로 합치기
+                const allEvents = [];
+                
+                projectEvents.forEach(p => {
+                    const categoryIcon = (p.category || 'growth') === 'growth' ? '📈' : '📄';
+                    allEvents.push({
+                        type: 'project',
+                        html: `
+                            <div class="selected-date-event-item" onclick="selectProject('${p.id}')">
+                                <div class="selected-date-event-name">${categoryIcon} ${p.name}</div>
+                                <div class="selected-date-event-meta">${(p.category || 'growth') === 'growth' ? 'Growth Initiative' : '일반업무'}</div>
+                            </div>
+                        `
+                    });
+                });
+                
+                personalEvents.forEach(s => {
+                    const timeStr = s.schedule_time ? s.schedule_time.slice(0, 5) + ' ' : '';
+                    const userName = s.user?.name || '알 수 없음';
+                    allEvents.push({
+                        type: 'personal',
+                        html: `
+                            <div class="selected-date-event-item personal" onclick="openEditPersonalSchedule('${s.id}')">
+                                <div class="selected-date-event-name">👤 ${timeStr}${s.title}</div>
+                                <div class="selected-date-event-meta">${userName}</div>
+                            </div>
+                        `
+                    });
+                });
+                
+                // 처음 3개만 표시
+                const maxVisible = 3;
+                const visibleEvents = allEvents.slice(0, maxVisible);
+                const hiddenCount = allEvents.length - maxVisible;
+                
+                html += visibleEvents.map(e => e.html).join('');
+                
+                // 숨겨진 일정이 있으면 더보기 버튼
+                if (hiddenCount > 0) {
+                    html += `
+                        <div class="selected-date-more" id="selectedDateMore" onclick="showAllSelectedDateEvents('${dateStr}', ${day}, ${month})">
+                            <span>+${hiddenCount}개 더보기</span>
+                            <span style="font-size: 10px;">▼</span>
+                        </div>
+                    `;
+                    // 숨겨진 이벤트들 (접혀있음)
+                    html += `<div class="selected-date-hidden" id="selectedDateHidden" style="display:none;">`;
+                    html += allEvents.slice(maxVisible).map(e => e.html).join('');
+                    html += `</div>`;
+                }
+            }
+            
+            list.innerHTML = html;
+            container.style.display = 'block';
+        }
+        
+        // 모든 일정 표시
+        function showAllSelectedDateEvents(dateStr, day, month) {
+            const moreBtn = document.getElementById('selectedDateMore');
+            const hidden = document.getElementById('selectedDateHidden');
+            
+            if (hidden && hidden.style.display === 'none') {
+                hidden.style.display = 'block';
+                moreBtn.innerHTML = '<span>접기</span><span style="font-size: 10px;">▲</span>';
+            } else {
+                hidden.style.display = 'none';
+                const hiddenCount = hidden.querySelectorAll('.selected-date-event-item').length;
+                moreBtn.innerHTML = `<span>+${hiddenCount}개 더보기</span><span style="font-size: 10px;">▼</span>`;
+            }
+        }
+        
+        // 선택된 날짜 일정 닫기
+        function closeSelectedDateEvents() {
+            selectedMiniDate = null;
+            document.getElementById('selectedDateEvents').style.display = 'none';
+            renderMiniCalendar();
         }
 
         function miniCalendarPrev() { miniCalendarDate.setMonth(miniCalendarDate.getMonth() - 1); renderMiniCalendar(); }
@@ -9791,6 +10354,14 @@
             const navItem = document.querySelector(`.nav-item[data-section="${section}"]`);
             if (navItem) navItem.classList.add('active');
             
+            // 캘린더 뷰 클래스 토글
+            const mainContent = document.querySelector('.main-content');
+            if (section === 'calendar') {
+                mainContent.classList.add('calendar-view');
+            } else {
+                mainContent.classList.remove('calendar-view');
+            }
+            
             // 모바일에서 사이드바 닫기
             closeMobileSidebar();
             
@@ -10154,17 +10725,22 @@
             }
         }
         
-        // 캘린더 개인일정 타입 선택
+        // 캘린더 일정 타입 선택
         function selectCalPersonalType(el) {
             document.querySelectorAll('#calPersonalTypeOptions .personal-type-option').forEach(e => e.classList.remove('selected'));
             el.classList.add('selected');
             calPersonalType = el.dataset.type;
             
-            const customGroup = document.getElementById('calCustomTitleGroup');
-            if (calPersonalType === '기타') {
-                customGroup.style.display = 'block';
-            } else {
-                customGroup.style.display = 'none';
+            // 일정 유형 이모지 가져오기
+            const typeEmojis = {
+                '미팅': '🤝', '인사': '👋', '행사': '🎉',
+                '개인': '👤', '외근': '🚗', '기타': '✏️'
+            };
+            
+            // 제목 placeholder 업데이트
+            const titleInput = document.getElementById('calPersonalTitle');
+            if (titleInput) {
+                titleInput.placeholder = `${typeEmojis[calPersonalType] || ''} ${calPersonalType} 일정 제목`;
             }
         }
         
@@ -10283,7 +10859,7 @@
             calendarType = null;
             calendarConditions = [false, false, false, false];
             calProblemCategories = [];
-            calPersonalType = '휴가';
+            calPersonalType = '미팅';
             calSolutionType = null;
             calResultTypes = [];
             calOperationStatus = null;
@@ -10306,11 +10882,13 @@
             document.getElementById('calGeneralDescInput').value = '';
             document.getElementById('calPersonalTitle').value = '';
             document.getElementById('calPersonalDesc').value = '';
+            if (document.getElementById('calPersonalTime')) {
+                document.getElementById('calPersonalTime').value = '';
+            }
             
             document.querySelectorAll('#calPersonalTypeOptions .personal-type-option').forEach((el, i) => {
                 el.classList.toggle('selected', i === 0);
             });
-            document.getElementById('calCustomTitleGroup').style.display = 'none';
             
             updateCalendarStepUI();
         }
@@ -10318,20 +10896,21 @@
         // 캘린더 프로젝트 저장
         async function saveCalendarProject() {
             if (calendarType === 'personal') {
-                // 개인일정 저장
-                let title = calPersonalType;
-                if (calPersonalType === '기타') {
-                    title = document.getElementById('calPersonalTitle').value.trim();
-                    if (!title) {
-                        showToast('일정 제목을 입력해주세요', 'error');
-                        return;
-                    }
+                // 일정 저장
+                const title = document.getElementById('calPersonalTitle').value.trim();
+                if (!title) {
+                    showToast('일정 제목을 입력해주세요', 'error');
+                    return;
                 }
+                
+                const scheduleTime = document.getElementById('calPersonalTime')?.value || null;
                 
                 const { error } = await db.from('personal_schedules').insert({
                     user_id: currentUser.id,
                     title: title,
+                    schedule_type: calPersonalType,
                     schedule_date: calendarSelectedDate,
+                    schedule_time: scheduleTime,
                     description: document.getElementById('calPersonalDesc').value.trim()
                 });
                 
@@ -10340,7 +10919,7 @@
                     return;
                 }
                 
-                showToast('개인일정 등록 완료!', 'success');
+                showToast('일정 등록 완료!', 'success');
             } else if (calendarType === 'growth') {
                 const name = document.getElementById('calGrowthNameInput').value.trim();
                 if (!name) {

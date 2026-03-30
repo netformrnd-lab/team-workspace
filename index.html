@@ -10,59 +10,69 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
+        @font-face {
+            font-family: 'Tossface';
+            src: url('TossFaceFontMac.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+            unicode-range: U+200D, U+2600-27BF, U+FE00-FE0F, U+1F000-1FAFF, U+E0000-E007F;
+        }
+
         :root {
-            /* 메인 컬러 팔레트 */
-            --primary: #03CF5D;
-            --primary-dark: #02a84b;
-            --primary-soft: rgba(3, 207, 93, 0.1);
-            --primary-medium: rgba(3, 207, 93, 0.15);
-            
-            /* 다크 톤 */
-            --dark-900: #192D2C;
-            --dark-800: #3E4F6D;
-            --dark-700: #718D96;
-            --dark-600: #8B9CAA;
-            
+            /* Toss 스타일 컬러 팔레트 */
+            --primary: #3182F6;
+            --primary-dark: #1B64DA;
+            --primary-soft: rgba(49, 130, 246, 0.08);
+            --primary-medium: rgba(49, 130, 246, 0.12);
+
+            /* 다크 톤 (Toss 그레이스케일) */
+            --dark-900: #191F28;
+            --dark-800: #333D4B;
+            --dark-700: #4E5968;
+            --dark-600: #6B7684;
+
             /* 라이트 톤 */
-            --light-300: #CBD5E0;
-            --light-200: #E2E8F0;
-            --light-100: #EDF2F7;
-            --light-50: #F7FAFC;
+            --light-300: #D1D6DB;
+            --light-200: #E5E8EB;
+            --light-100: #F2F4F6;
+            --light-50: #F9FAFB;
             --white: #FFFFFF;
-            
-            /* 상태 컬러 */
-            --success: #03CF5D;
-            --warning: #F6AD55;
-            --danger: #FC8181;
-            --info: #63B3ED;
-            
-            /* 라디우스 */
-            --radius-sm: 8px;
-            --radius-md: 12px;
+
+            /* 상태 컬러 (Toss) */
+            --success: #3182F6;
+            --warning: #FF8800;
+            --danger: #F04452;
+            --info: #3182F6;
+
+            /* 라디우스 (더 둥글게) */
+            --radius-sm: 10px;
+            --radius-md: 16px;
             --radius-lg: 24px;
             --radius-full: 9999px;
-            
-            /* 쉐도우 */
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+
+            /* 쉐도우 (Toss - 미세하고 부드럽게) */
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+            --shadow-md: 0 2px 8px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--light-100);
+            font-family: 'Tossface', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #F4F5F7;
             color: var(--dark-900);
             min-height: 100vh;
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* ========== 로그인 화면 ========== */
         .login-screen {
             position: fixed;
             inset: 0;
-            background: linear-gradient(135deg, #192D2C 0%, #3E4F6D 100%);
+            background: linear-gradient(160deg, #1A1F27 0%, #2B3442 50%, #1A1F27 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -73,59 +83,157 @@
 
         .login-container {
             background: var(--white);
-            padding: 48px 40px;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
+            padding: 48px 36px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             text-align: center;
-            max-width: 420px;
+            max-width: 400px;
             width: 90%;
         }
 
         .login-logo {
-            width: 72px;
-            height: 72px;
+            width: 64px;
+            height: 64px;
             background: var(--primary);
-            border-radius: 18px;
-            margin: 0 auto 28px;
+            border-radius: 16px;
+            margin: 0 auto 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
+            font-size: 28px;
         }
 
-        .login-title { 
-            font-size: 26px; 
-            font-weight: 800; 
-            margin-bottom: 8px;
+        .login-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 6px;
             color: var(--dark-900);
-        }
-        
-        .login-subtitle { 
-            color: var(--dark-600); 
-            margin-bottom: 36px;
-            font-size: 15px;
+            letter-spacing: -0.5px;
         }
 
-        .user-select { display: flex; flex-direction: column; gap: 12px; }
+        .login-subtitle {
+            color: var(--dark-600);
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+
+        .user-select { display: flex; flex-direction: column; gap: 10px; }
 
         .user-btn {
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: 16px 20px;
-            border: 2px solid var(--light-200);
-            border-radius: var(--radius-md);
+            gap: 14px;
+            padding: 14px 18px;
+            border: 1px solid var(--light-200);
+            border-radius: 14px;
             background: var(--white);
             cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
         }
 
         .user-btn:hover {
             border-color: var(--primary);
             background: var(--primary-soft);
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(49, 130, 246, 0.12);
         }
+
+        /* 비밀번호 입력 오버레이 */
+        .pw-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .pw-overlay.active { display: flex; }
+        .pw-modal {
+            background: var(--white);
+            padding: 40px 36px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            max-width: 360px;
+            width: 85%;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .pw-avatar {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; font-weight: 700; color: white;
+            margin: 0 auto 12px;
+        }
+        .pw-name {
+            font-size: 18px; font-weight: 700;
+            color: var(--dark-900); margin-bottom: 4px;
+        }
+        .pw-role {
+            font-size: 13px; color: var(--dark-500);
+            margin-bottom: 24px;
+        }
+        .pw-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--light-300);
+            border-radius: var(--radius-md);
+            font-size: 20px;
+            text-align: center;
+            letter-spacing: 12px;
+            font-weight: 700;
+            outline: none;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+        .pw-input:focus {
+            border-color: var(--primary);
+        }
+        .pw-input.error {
+            border-color: #EF4444;
+            animation: shake 0.4s ease;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        .pw-error-msg {
+            color: #EF4444;
+            font-size: 13px;
+            margin-top: 8px;
+            min-height: 20px;
+        }
+        .pw-submit {
+            width: 100%;
+            padding: 14px;
+            margin-top: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .pw-submit:hover { background: var(--primary-dark, #4338CA); }
+        .pw-back {
+            margin-top: 12px;
+            background: none;
+            border: none;
+            color: var(--dark-500);
+            font-size: 13px;
+            cursor: pointer;
+            padding: 8px;
+        }
+        .pw-back:hover { color: var(--dark-700); }
 
         .user-avatar {
             width: 48px;
@@ -181,8 +289,9 @@
         .sidebar {
             width: 260px;
             background: var(--white);
-            border-right: 1px solid var(--light-200);
+            border-right: none;
             padding: 24px 16px;
+            box-shadow: 1px 0 0 var(--light-200);
             display: flex;
             flex-direction: column;
             position: fixed;
@@ -414,11 +523,11 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 14px;
-            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s;
-            color: var(--dark-700);
+            transition: all 0.15s ease;
+            color: var(--dark-600);
             font-size: 14px;
             font-weight: 500;
         }
@@ -504,42 +613,48 @@
         }
 
         .project-category-header {
-            padding: 12px 16px;
-            font-size: 14px;
-            font-weight: 700;
+            padding: 10px 12px;
+            font-size: 15px;
+            font-weight: 600;
             color: var(--dark-800);
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
-            transition: all 0.2s;
-            border-radius: var(--radius-sm);
+            gap: 12px;
+            transition: all 0.15s ease;
+            border-radius: 12px;
             margin: 4px 8px;
-            background: var(--light-50);
+            background: var(--white);
+            border: 1px solid var(--light-200);
         }
 
         .project-category-header:hover {
-            background: var(--light-200);
+            background: var(--light-50);
+            border-color: var(--light-300);
+            transform: translateX(2px);
         }
 
         .category-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 18px;
+            flex-shrink: 0;
         }
 
         .category-name {
             flex: 1;
+            letter-spacing: -0.3px;
         }
 
         .category-toggle {
-            font-size: 10px;
+            font-size: 11px;
             color: var(--dark-400);
             transition: transform 0.2s;
+            font-weight: 700;
         }
 
         .project-category.expanded .category-toggle {
@@ -784,10 +899,11 @@
             gap: 16px;
         }
 
-        .page-title { 
-            font-size: 28px; 
-            font-weight: 800;
+        .page-title {
+            font-size: 26px;
+            font-weight: 700;
             color: var(--dark-900);
+            letter-spacing: -0.5px;
         }
 
         .page-badge {
@@ -809,26 +925,26 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            padding: 12px 24px;
-            border-radius: var(--radius-sm);
+            gap: 6px;
+            padding: 10px 20px;
+            border-radius: 12px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.15s ease;
             border: none;
             font-family: inherit;
         }
 
-        .btn-primary { 
-            background: var(--primary); 
+        .btn-primary {
+            background: var(--primary);
             color: var(--white);
         }
-        
-        .btn-primary:hover { 
+
+        .btn-primary:hover {
             background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(3, 207, 93, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(49, 130, 246, 0.25);
         }
 
         .btn-secondary { 
@@ -928,6 +1044,215 @@
         .stat-label {
             font-size: 14px;
             color: var(--dark-600);
+        }
+
+        /* 멘션 알림 배너 (우측 컴팩트) */
+        .mention-banner {
+            background: var(--white);
+            border: 1.5px solid #BFDBFE;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+        .mention-banner-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid #E0EAFF;
+            background: #F0F7FF;
+        }
+        .mention-banner-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1E40AF;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .mention-banner-count {
+            font-size: 11px;
+            font-weight: 600;
+            background: #3B82F6;
+            color: white;
+            padding: 1px 7px;
+            border-radius: 8px;
+        }
+        .mention-banner-close {
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: var(--dark-400);
+            cursor: pointer;
+            padding: 2px;
+            line-height: 1;
+        }
+        .mention-banner-close:hover { color: var(--dark-700); }
+        .mention-banner-list {
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .mention-banner-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: #EFF6FF;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+            border-left: 3px solid #3B82F6;
+        }
+        .mention-banner-item:hover {
+            background: #DBEAFE;
+        }
+        .mention-banner-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+        .mention-banner-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .mention-banner-meta {
+            font-size: 11px;
+            color: #6B7280;
+        }
+        .mention-banner-meta strong {
+            color: #1E40AF;
+        }
+        .mention-banner-text {
+            font-size: 13px;
+            color: var(--dark-900);
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-top: 2px;
+        }
+        .mention-banner-time {
+            font-size: 10px;
+            color: #9CA3AF;
+            flex-shrink: 0;
+        }
+        .mention-banner-more {
+            text-align: center;
+            padding: 8px;
+            font-size: 12px;
+            color: #3B82F6;
+            font-weight: 600;
+            cursor: pointer;
+            border-top: 1px solid #E0EAFF;
+        }
+        .mention-banner-more:hover { background: #F0F7FF; }
+
+        /* 기간 알림 배너 */
+        .deadline-banner {
+            margin-bottom: 20px;
+        }
+        .deadline-banner-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--dark-800);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .deadline-banner-title .deadline-count {
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--dark-200);
+            color: var(--dark-700);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .deadline-cards {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+        .deadline-cards::-webkit-scrollbar { display: none; }
+        .deadline-card {
+            min-width: 200px;
+            max-width: 240px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 1.5px solid;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .deadline-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .deadline-card.urgent {
+            background: #FEF2F2;
+            border-color: #FECACA;
+        }
+        .deadline-card.soon {
+            background: #FFFBEB;
+            border-color: #FDE68A;
+        }
+        .deadline-card.normal {
+            background: #F0FDF4;
+            border-color: #BBF7D0;
+        }
+        .deadline-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .deadline-dday {
+            font-size: 13px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+        .deadline-card.urgent .deadline-dday {
+            background: #EF4444;
+            color: white;
+        }
+        .deadline-card.soon .deadline-dday {
+            background: #F59E0B;
+            color: white;
+        }
+        .deadline-card.normal .deadline-dday {
+            background: #22C55E;
+            color: white;
+        }
+        .deadline-card-type {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--dark-500);
+        }
+        .deadline-card-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-900);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 4px;
+        }
+        .deadline-card-assignee {
+            font-size: 12px;
+            color: var(--dark-500);
         }
 
         .dashboard-grid {
@@ -2236,7 +2561,215 @@
             }
         }
 
-        /* ========== 체크리스트 섹션 ========== */
+        /* ========== 채팅형 메모 섹션 ========== */
+        .chat-memo-section {
+            background: var(--white);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            max-height: 500px;
+        }
+        .chat-memo-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--light-200);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .chat-memo-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .chat-memo-count {
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--light-200);
+            color: var(--dark-600);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .chat-memo-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 120px;
+            max-height: 340px;
+        }
+        .chat-msg {
+            display: flex;
+            gap: 10px;
+            max-width: 85%;
+        }
+        .chat-msg.mine {
+            flex-direction: row-reverse;
+            align-self: flex-end;
+        }
+        .chat-msg-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+        .chat-msg-content {
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-msg.mine .chat-msg-content {
+            align-items: flex-end;
+        }
+        .chat-msg-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--dark-600);
+            margin-bottom: 4px;
+        }
+        .chat-msg-bubble {
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            word-break: break-word;
+            white-space: pre-wrap;
+            position: relative;
+        }
+        .chat-msg:not(.mine) .chat-msg-bubble {
+            background: var(--light-100);
+            color: var(--dark-900);
+            border-top-left-radius: 4px;
+        }
+        .chat-msg.mine .chat-msg-bubble {
+            background: var(--primary-soft, #E8F5E9);
+            color: var(--dark-900);
+            border-top-right-radius: 4px;
+        }
+        .chat-msg-bubble.mentioned {
+            border-left: 3px solid #3B82F6;
+        }
+        .chat-msg-mention-badge {
+            font-size: 11px;
+            color: #3B82F6;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .chat-msg-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .chat-msg-time {
+            font-size: 11px;
+            color: var(--dark-400);
+        }
+        .chat-msg-delete {
+            font-size: 11px;
+            color: var(--dark-400);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+        .chat-msg-delete:hover {
+            color: #EF4444;
+        }
+        .chat-memo-input-area {
+            padding: 12px 20px;
+            border-top: 1px solid var(--light-200);
+            position: relative;
+        }
+        .chat-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+        .chat-memo-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1.5px solid var(--light-300);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            max-height: 80px;
+            line-height: 1.4;
+        }
+        .chat-memo-input:focus {
+            border-color: var(--primary);
+        }
+        .chat-send-btn {
+            padding: 10px 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+        .chat-send-btn:hover {
+            background: var(--primary-dark, #02B350);
+        }
+        .mention-dropdown {
+            position: absolute;
+            bottom: 100%;
+            left: 20px;
+            right: 20px;
+            background: var(--white);
+            border: 1px solid var(--light-200);
+            border-radius: 10px;
+            box-shadow: var(--shadow-md);
+            z-index: 100;
+            max-height: 160px;
+            overflow-y: auto;
+        }
+        .mention-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .mention-item:hover, .mention-item.active {
+            background: var(--primary-soft, #E8F5E9);
+        }
+        .mention-item-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+        }
+        .mention-item-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .chat-empty {
+            text-align: center;
+            padding: 32px;
+            color: var(--dark-400);
+            font-size: 14px;
+        }
+
+        /* 기존 체크리스트 CSS 유지 (호환) */
         .checklist-section {
             background: var(--white);
             border-radius: var(--radius-md);
@@ -3260,13 +3793,14 @@
 
         .modal-content {
             background: var(--white);
-            border-radius: var(--radius-lg);
+            border-radius: 20px;
             width: 90%;
             max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
-            transform: translateY(20px) scale(0.95);
-            transition: all 0.3s;
+            transform: translateY(20px) scale(0.97);
+            transition: all 0.25s ease;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
         }
 
         .modal.active .modal-content {
@@ -3615,6 +4149,10 @@
 
         .type-card-icon.personal {
             background: rgba(168, 85, 247, 0.15);
+        }
+
+        .type-card-icon.surepoint {
+            background: rgba(139, 92, 246, 0.15);
         }
 
         .type-card-title {
@@ -4046,15 +4584,16 @@
         }
 
         .toast {
-            padding: 16px 24px;
-            border-radius: var(--radius-sm);
+            padding: 14px 20px;
+            border-radius: 14px;
             color: var(--white);
             font-weight: 500;
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
             animation: slideIn 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            font-size: 14px;
         }
 
         @keyframes slideIn {
@@ -4064,6 +4603,21 @@
 
         .toast.success { background: var(--primary); }
         .toast.error { background: var(--danger); }
+        .toast.info { background: #3B82F6; }
+        .toast.mention-toast {
+            background: #EFF6FF !important;
+            color: #1E40AF !important;
+            border: 1.5px solid #BFDBFE !important;
+            padding: 14px 18px !important;
+            max-width: 380px;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2) !important;
+            animation: mentionSlideIn 0.4s ease;
+        }
+        @keyframes mentionSlideIn {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
         .toast.notification { 
             background: var(--dark-900); 
             min-width: 280px;
@@ -4116,6 +4670,7 @@
         }
 
         @media (max-width: 768px) {
+            .deadline-columns { grid-template-columns: 1fr !important; }
             /* GPT 팁 박스 */
             .gpt-tip-copy {
                 flex-direction: column;
@@ -5187,6 +5742,19 @@
         </div>
     </div>
 
+    <!-- 비밀번호 입력 오버레이 -->
+    <div class="pw-overlay" id="pwOverlay">
+        <div class="pw-modal">
+            <div class="pw-avatar" id="pwAvatar"></div>
+            <div class="pw-name" id="pwName"></div>
+            <div class="pw-role" id="pwRole"></div>
+            <input type="password" class="pw-input" id="pwInput" maxlength="4" inputmode="numeric" placeholder="····" autocomplete="off">
+            <div class="pw-error-msg" id="pwError"></div>
+            <button class="pw-submit" onclick="submitPassword()">로그인</button>
+            <button class="pw-back" onclick="closePasswordScreen()">← 돌아가기</button>
+        </div>
+    </div>
+
     <!-- 앱 컨테이너 -->
     <div class="app-container">
         <!-- 모바일 헤더 -->
@@ -5194,10 +5762,6 @@
             <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileSidebar()">☰</button>
             <button class="mobile-back-btn" id="mobileBackBtn" onclick="goBackMobile()" style="display: none;">←</button>
             <span class="mobile-title" id="mobileTitle">대시보드</span>
-            <div class="notification-bell" onclick="toggleNotificationPanel()" style="position: relative;">
-                🔔
-                <span class="notification-badge" id="mobileNotificationBadge" style="display: none;">0</span>
-            </div>
         </div>
         
         <!-- 사이드바 오버레이 -->
@@ -5245,10 +5809,10 @@
                 </div>
                 
                 <!-- 시작 전 섹션 -->
-                <!-- 📈 Growth Initiative -->
+                <!-- 🚀 Growth Initiative -->
                 <div class="project-category" id="growthCategory">
                     <div class="project-category-header" onclick="toggleCategory('growth')">
-                        <span class="category-icon" style="background: #3B82F6;">📈</span>
+                        <span class="category-icon" style="background: #C5D9FF;">🚀</span>
                         <span class="category-name">Growth Initiative</span>
                         <span class="category-toggle" id="growthToggle">▶</span>
                     </div>
@@ -5277,10 +5841,10 @@
                     </div>
                 </div>
                 
-                <!-- 📄 일반업무 -->
+                <!-- 📋 일반업무 -->
                 <div class="project-category" id="generalCategory">
                     <div class="project-category-header" onclick="toggleCategory('general')">
-                        <span class="category-icon" style="background: #03CF5D;">📄</span>
+                        <span class="category-icon" style="background: #B8EDCA;">📋</span>
                         <span class="category-name">일반업무</span>
                         <span class="category-toggle" id="generalToggle">▶</span>
                     </div>
@@ -5305,6 +5869,38 @@
                                 <span>⏸️ 보류 <span id="generalHoldCount">(0)</span></span>
                             </div>
                             <div id="generalHoldList" class="project-group-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 🎯 슈어포인트 -->
+                <div class="project-category" id="surepointCategory">
+                    <div class="project-category-header" onclick="toggleCategory('surepoint')">
+                        <span class="category-icon" style="background: #D5CCFF;">🎯</span>
+                        <span class="category-name">슈어포인트</span>
+                        <span class="category-toggle" id="surepointToggle">▶</span>
+                    </div>
+                    <div class="project-category-content" id="surepointContent">
+                        <!-- 진행중 -->
+                        <div class="project-group">
+                            <div class="project-group-header ongoing" onclick="toggleProjectGroup('surepointOngoing')">
+                                <span>🔥 진행중 <span id="surepointOngoingCount">(0)</span></span>
+                            </div>
+                            <div id="surepointOngoingList" class="project-group-list"></div>
+                        </div>
+                        <!-- 완료 -->
+                        <div class="project-group">
+                            <div class="project-group-header completed" onclick="toggleProjectGroup('surepointCompleted')">
+                                <span>✅ 완료 <span id="surepointCompletedCount">(0)</span></span>
+                            </div>
+                            <div id="surepointCompletedList" class="project-group-list"></div>
+                        </div>
+                        <!-- 보류 -->
+                        <div class="project-group">
+                            <div class="project-group-header hold" onclick="toggleProjectGroup('surepointHold')">
+                                <span>⏸️ 보류 <span id="surepointHoldCount">(0)</span></span>
+                            </div>
+                            <div id="surepointHoldList" class="project-group-list"></div>
                         </div>
                     </div>
                 </div>
@@ -5334,49 +5930,19 @@
                         <span class="page-badge">실시간</span>
                     </div>
                     <div class="header-actions">
-                        <!-- 업무 우선순위 버튼 -->
-                        <div class="priority-bell-wrapper">
-                            <div class="priority-bell" onclick="togglePriorityDropdown()">
-                                📋
-                                <span class="priority-badge" id="priorityBadge" style="display: none;">!</span>
-                            </div>
-                            <!-- 업무 우선순위 드롭다운 패널 -->
-                            <div class="priority-dropdown" id="priorityDropdown">
-                                <div class="priority-dropdown-header">
-                                    <span>📋 오늘의 업무 우선순위</span>
-                                    <div style="display:flex; gap:8px;">
-                                        <button class="btn-text" onclick="openPriorityFullView()" id="priorityFullViewBtn" style="display:none;">🔍 전체보기</button>
-                                        <button class="btn-text" onclick="openPriorityEditor()">✏️ 작성</button>
-                                    </div>
-                                </div>
-                                <div class="priority-dropdown-content" id="priorityContent" onclick="openPriorityFullView()" style="cursor:pointer;">
-                                    <!-- JavaScript로 렌더링 -->
-                                </div>
-                                <div class="priority-dropdown-footer" id="priorityActions" style="display:none;">
-                                    <button class="btn btn-primary btn-sm" onclick="markPriorityRead()" style="width:100%;">확인 완료</button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="notification-bell-wrapper">
-                            <div class="notification-bell" onclick="toggleNotificationPanel()">
-                                🔔
-                                <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
-                            </div>
-                            <!-- 알림 패널 -->
-                            <div class="notification-panel" id="notificationPanel">
-                                <div class="notification-panel-header">
-                                    <span>🔔 알림</span>
-                                    <button class="btn-text" onclick="markAllAsRead()">모두 읽음</button>
-                                </div>
-                                <div class="notification-list" id="notificationList">
-                                    <div class="notification-empty">새로운 알림이 없습니다</div>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- 업무 우선순위 / 알림 제거됨 -->
                         <button class="btn btn-secondary btn-sm" onclick="showSection('calendar')">📅 캘린더</button>
                         <button class="btn btn-primary btn-sm" onclick="openModal('newProject')">+ 새 프로젝트</button>
                     </div>
+                </div>
+
+                <!-- 기간 알림 배너 -->
+                <div class="deadline-banner" id="deadlineBanner" style="display:none;">
+                    <div class="deadline-banner-title">
+                        ⏰ 다가오는 마감
+                        <span class="deadline-count" id="deadlineCount">0</span>
+                    </div>
+                    <div class="deadline-cards" id="deadlineCards"></div>
                 </div>
 
                 <div class="dashboard-grid">
@@ -5402,17 +5968,13 @@
                         </div>
                     </div>
                     
-                    <div class="recent-activity">
-                        <div class="card-header">
-                            <h3 class="card-title">최근 활동</h3>
+                    <div class="recent-activity" id="mentionPanel">
+                        <div class="card-header" style="display:flex; align-items:center; justify-content:space-between;">
+                            <h3 class="card-title">📣 @멘션</h3>
+                            <span class="mention-panel-count" id="mentionPanelCount" style="font-size:12px; font-weight:600; background:var(--primary-soft); color:var(--primary); padding:2px 10px; border-radius:10px;">0</span>
                         </div>
-                        <div class="activity-list" id="activityList">
-                            <div class="activity-item">
-                                <div class="activity-avatar" style="background: var(--light-300)">?</div>
-                                <div class="activity-content">
-                                    <div class="activity-text">활동 내역을 불러오는 중...</div>
-                                </div>
-                            </div>
+                        <div class="activity-list" id="mentionPanelList" style="padding:12px; max-height:400px; overflow-y:auto;">
+                            <div style="text-align:center; padding:32px 16px; color:var(--dark-400); font-size:14px;">새로운 멘션이 없습니다</div>
                         </div>
                     </div>
                 </div>
@@ -5502,22 +6064,20 @@
                     </div>
                 </div>
 
-                <!-- 체크리스트 섹션 -->
-                <div class="checklist-section">
-                    <div class="checklist-header">
-                        <h3 class="checklist-title">✅ 할 일 체크리스트</h3>
-                        <div class="checklist-progress">
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="checklistProgress" style="width: 0%"></div>
-                            </div>
-                            <span class="progress-text" id="checklistProgressText">0/0</span>
-                        </div>
+                <!-- 채팅형 메모 섹션 -->
+                <div class="chat-memo-section">
+                    <div class="chat-memo-header">
+                        <h3 class="chat-memo-title">💬 메모</h3>
+                        <span class="chat-memo-count" id="chatMemoCount">0</span>
                     </div>
-                    <div class="checklist-body">
-                        <div id="checklistItems"></div>
-                        <div class="checklist-add">
-                            <input type="text" class="checklist-input" id="newChecklistItem" placeholder="새 할 일 추가..." onkeypress="if(event.key==='Enter')addChecklistItem()">
-                            <button class="btn btn-primary btn-sm" onclick="addChecklistItem()">추가</button>
+                    <div class="chat-memo-body" id="chatMemoBody">
+                        <div id="chatMemoMessages"></div>
+                    </div>
+                    <div class="chat-memo-input-area">
+                        <div class="mention-dropdown" id="mentionDropdown" style="display:none;"></div>
+                        <div class="chat-input-row">
+                            <textarea class="chat-memo-input" id="chatMemoInput" placeholder="메시지를 입력하세요. @로 팀원 멘션 가능" rows="1"></textarea>
+                            <button class="chat-send-btn" onclick="addChatMessage()">전송</button>
                         </div>
                     </div>
                 </div>
@@ -5654,6 +6214,13 @@
                                     <div class="type-card-title">일반 업무</div>
                                 </div>
                                 <div class="type-card-desc">단발성 요청, 반복 업무, 일상적인 태스크</div>
+                            </div>
+                            <div class="type-card" data-type="surepoint" onclick="selectProjectType('surepoint')">
+                                <div class="type-card-header">
+                                    <div class="type-card-icon surepoint">📌</div>
+                                    <div class="type-card-title">슈어포인트</div>
+                                </div>
+                                <div class="type-card-desc">슈어포인트 관련 프로젝트 및 업무</div>
                             </div>
                             <div class="type-card" data-type="personal" onclick="selectProjectType('personal')">
                                 <div class="type-card-header">
@@ -5817,7 +6384,7 @@
                     <div class="form-section">
                         <div class="form-section-title">⚙️ 설정</div>
                         <div class="form-group">
-                            <label class="form-label">📅 다음 방문 예정일</label>
+                            <label class="form-label">📅 마감기한</label>
                             <input type="date" class="form-input" id="growthDateInput">
                         </div>
                         <div class="form-group">
@@ -5842,7 +6409,7 @@
                         <textarea class="form-textarea" id="generalDescInput" placeholder="프로젝트 설명 (선택)"></textarea>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">📅 다음 방문 예정일</label>
+                        <label class="form-label">📅 마감기한</label>
                         <input type="date" class="form-input" id="generalDateInput">
                         <small style="color: var(--dark-600); font-size: 12px; margin-top: 4px; display: block;">비워두면 미지정 상태로 생성됩니다</small>
                     </div>
@@ -5942,6 +6509,13 @@
                                     <div class="type-card-title">일반 업무</div>
                                 </div>
                                 <div class="type-card-desc">단발성 요청, 반복 업무</div>
+                            </div>
+                            <div class="type-card" data-type="surepoint" onclick="selectCalendarType('surepoint')">
+                                <div class="type-card-header">
+                                    <div class="type-card-icon surepoint">📌</div>
+                                    <div class="type-card-title">슈어포인트</div>
+                                </div>
+                                <div class="type-card-desc">슈어포인트 관련 프로젝트 및 업무</div>
                             </div>
                             <div class="type-card" data-type="personal" onclick="selectCalendarType('personal')">
                                 <div class="type-card-header">
@@ -6200,7 +6774,7 @@
     <div class="modal" id="nextVisitModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">다음 방문 일정</h2>
+                <h2 class="modal-title">마감기한 설정</h2>
                 <button class="modal-close" onclick="closeModal('nextVisit')">✕</button>
             </div>
             <div class="modal-body">
@@ -6344,11 +6918,15 @@
                     <div class="category-options" id="editProjectCategoryOptions">
                         <div class="category-option" data-category="growth" onclick="selectEditProjectCategory(this)">
                             <span class="category-color" style="background: #3B82F6;"></span>
-                            <span>📈 Growth Initiative</span>
+                            <span>🚀 Growth Initiative</span>
                         </div>
                         <div class="category-option" data-category="general" onclick="selectEditProjectCategory(this)">
                             <span class="category-color" style="background: #03CF5D;"></span>
-                            <span>📄 일반업무</span>
+                            <span>📋 일반업무</span>
+                        </div>
+                        <div class="category-option" data-category="surepoint" onclick="selectEditProjectCategory(this)">
+                            <span class="category-color" style="background: #8B5CF6;"></span>
+                            <span>🎯 슈어포인트</span>
                         </div>
                     </div>
                 </div>
@@ -6361,10 +6939,14 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label class="form-label">📅 기한 (마감일)</label>
+                    <input type="date" class="form-input" id="editProjectDeadline">
+                </div>
+                <div class="form-group">
                     <label class="form-label">👤 담당자</label>
                     <div class="assignee-options" id="editProjectAssignee"></div>
                 </div>
-                
+
                 <!-- Growth Initiative 전용 필드 -->
                 <div id="editGrowthFields" style="display: none;">
                     <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--light-200);">
@@ -6794,7 +7376,7 @@
             } else if (newProjectStep === 3) {
                 if (newProjectType === 'growth') {
                     document.getElementById('newProjectStep3Growth').classList.add('active');
-                } else if (newProjectType === 'general') {
+                } else if (newProjectType === 'general' || newProjectType === 'surepoint') {
                     document.getElementById('newProjectStep3General').classList.add('active');
                 } else if (newProjectType === 'personal') {
                     document.getElementById('newProjectStep3Personal').classList.add('active');
@@ -6890,32 +7472,34 @@
                 showToast('Growth Initiative가 생성되었습니다! 🎯', 'success');
                 await notifyOtherUsers('project_created', '새 Growth Initiative', `${currentUser.name}님이 "${name}"을 생성했습니다`, data.id);
                 
-            } else if (newProjectType === 'general') {
+            } else if (newProjectType === 'general' || newProjectType === 'surepoint') {
                 const name = document.getElementById('generalNameInput').value.trim();
                 if (!name) {
                     showToast('프로젝트명을 입력해주세요', 'error');
                     return;
                 }
-                
+
+                const isSurepoint = newProjectType === 'surepoint';
                 const projectData = {
                     name: name,
                     description: document.getElementById('generalDescInput').value.trim(),
-                    category: 'general',
-                    color: '#03CF5D',
+                    category: newProjectType,
+                    color: isSurepoint ? '#8B5CF6' : '#03CF5D',
                     status: generalStatus,
                     next_visit_date: document.getElementById('generalDateInput').value || getLocalDateString(),
                     created_by: currentUser.id,
                     assigned_to: currentUser.id
                 };
-                
+
                 const { data, error } = await db.from('projects').insert(projectData).select().single();
-                
+
                 if (error) {
                     showToast('생성 실패: ' + error.message, 'error');
                     return;
                 }
-                
-                showToast('일반 업무가 생성되었습니다!', 'success');
+
+                const toastMsg = isSurepoint ? '슈어포인트 프로젝트가 생성되었습니다!' : '일반 업무가 생성되었습니다!';
+                showToast(toastMsg, 'success');
                 await notifyOtherUsers('project_created', '새 프로젝트', `${currentUser.name}님이 "${name}"을 생성했습니다`, data.id);
             }
             
@@ -7029,7 +7613,8 @@
         // 카테고리 정의 (색상 매핑)
         const CATEGORY_COLORS = {
             'growth': '#3B82F6',
-            'general': '#03CF5D'
+            'general': '#03CF5D',
+            'surepoint': '#8B5CF6'
         };
         
         function getCategoryColor(category) {
@@ -7042,7 +7627,7 @@
             '#63B3ED': { name: '협업미팅', emoji: '🔵' },
             '#03CF5D': { name: '내부회의', emoji: '🟢' },
             '#F6AD55': { name: '개인프로젝트', emoji: '🟡' },
-            '#3B82F6': { name: 'Growth', emoji: '📈' }
+            '#3B82F6': { name: 'Growth', emoji: '🚀' }
         };
 
         function getMeetingType(color) {
@@ -7055,6 +7640,7 @@
         // 카테고리 토글 상태
         let growthExpanded = false;
         let generalExpanded = false;
+        let surepointExpanded = false;
         
         // 상태별 토글 상태 (카테고리별)
         let groupExpanded = {
@@ -7063,7 +7649,10 @@
             growthHold: false,
             generalOngoing: false,
             generalCompleted: false,
-            generalHold: false
+            generalHold: false,
+            surepointOngoing: false,
+            surepointCompleted: false,
+            surepointHold: false
         };
         
         // 검색 전 폴더 상태 저장
@@ -7300,10 +7889,14 @@
             renderLoginUsers();
         }
 
+        // 비밀번호 매핑 (이름 기준)
+        const PASSWORDS = { '이재훈': '1234', '김범석': '1234', '김다예': '1234', '임다비': '1234' };
+        let selectedUserId = null;
+
         function renderLoginUsers() {
             const container = document.getElementById('userSelect');
             container.innerHTML = users.map(user => `
-                <button class="user-btn" onclick="login('${user.id}')">
+                <button class="user-btn" onclick="showPasswordScreen('${user.id}')">
                     <div class="user-avatar" style="background: ${user.avatar_color}">${user.avatar_initial}</div>
                     <div class="user-info">
                         <div class="user-name">${user.name}</div>
@@ -7314,27 +7907,202 @@
             `).join('');
         }
 
+        function showPasswordScreen(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+            selectedUserId = userId;
+            document.getElementById('pwAvatar').style.background = user.avatar_color;
+            document.getElementById('pwAvatar').textContent = user.avatar_initial;
+            document.getElementById('pwName').textContent = user.name;
+            document.getElementById('pwRole').textContent = user.role === 'leader' ? '팀장' : '팀원';
+            document.getElementById('pwInput').value = '';
+            document.getElementById('pwInput').classList.remove('error');
+            document.getElementById('pwError').textContent = '';
+            document.getElementById('pwOverlay').classList.add('active');
+            setTimeout(() => document.getElementById('pwInput').focus(), 100);
+        }
+
+        function closePasswordScreen() {
+            document.getElementById('pwOverlay').classList.remove('active');
+            selectedUserId = null;
+        }
+
+        function submitPassword() {
+            const user = users.find(u => u.id === selectedUserId);
+            if (!user) return;
+            const input = document.getElementById('pwInput');
+            const pw = input.value;
+            const correctPw = PASSWORDS[user.name];
+            if (pw === correctPw) {
+                const uid = selectedUserId;
+                closePasswordScreen();
+                login(uid);
+            } else {
+                input.classList.add('error');
+                document.getElementById('pwError').textContent = '비밀번호가 틀렸습니다';
+                setTimeout(() => input.classList.remove('error'), 400);
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        // Enter 키로 비밀번호 제출
+        document.getElementById('pwInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') submitPassword();
+        });
+
         async function login(userId) {
+            console.log('login 호출 - userId:', userId, 'users:', users.map(u => u.id + ':' + u.name));
             currentUser = users.find(u => u.id === userId);
+            if (!currentUser) {
+                // users 배열 새로고침 후 재시도
+                const { data } = await db.from('users').select('*');
+                if (data) users = data;
+                currentUser = users.find(u => u.id === userId);
+            }
+            if (!currentUser) {
+                showToast('사용자를 찾을 수 없습니다', 'error');
+                return;
+            }
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('currentUserAvatar').textContent = currentUser.avatar_initial;
             document.getElementById('currentUserAvatar').style.background = currentUser.avatar_color;
             document.getElementById('currentUserName').textContent = currentUser.name;
-            
-            await loadProjects();
-            await loadAllFiles();
-            await loadRecentActivities();
-            await loadDailyPriority();
-            await loadNotifications();
-            await loadPersonalSchedules();
-            await loadAllChecklists();
-            renderCalendar();
+
+            // 캘린더 먼저 렌더링 (빈 데이터로)
             renderMiniCalendar();
-            updateDashboardStats();
+
+            // 데이터 병렬 로딩 (하나 실패해도 나머지 계속)
+            await Promise.allSettled([
+                loadProjects(),
+                loadAllFiles(),
+                loadRecentActivities(),
+                loadDailyPriority(),
+                loadNotifications(),
+                loadPersonalSchedules(),
+                loadAllChecklists()
+            ]);
+
+            // 데이터 로딩 완료 후 전체 렌더링
+            try {
+                renderCalendar();
+                renderMiniCalendar();
+                updateDashboardStats();
+            } catch(e) { console.error('렌더링 에러:', e); }
             showToast(`${currentUser.name}님 환영합니다!`, 'success');
-            
+
             // 일정 알림 체크 (D-day, D-1)
             setTimeout(() => checkScheduleAlerts(), 1500);
+
+            // @멘션 알림 체크
+            setTimeout(() => checkMentionAlerts(), 2000);
+        }
+
+        // 로그인 시 멘션 알림 체크
+        // 읽은 멘션 ID 관리
+        function getReadMentionIds() {
+            try {
+                return JSON.parse(localStorage.getItem('read_mentions') || '[]');
+            } catch { return []; }
+        }
+        function markMentionRead(id) {
+            const ids = getReadMentionIds();
+            if (!ids.includes(id)) {
+                ids.push(id);
+                localStorage.setItem('read_mentions', JSON.stringify(ids));
+            }
+        }
+        function onMentionClick(id, projectId) {
+            markMentionRead(id);
+            // 해당 항목 DOM에서 제거
+            const el = document.getElementById('mention-item-' + id);
+            if (el) el.remove();
+            // 카운트 업데이트
+            const banner = document.getElementById('mentionBanner');
+            const remaining = banner?.querySelectorAll('.mention-banner-item').length || 0;
+            if (remaining === 0) { banner.style.display = 'none'; }
+            else {
+                const countEl = banner.querySelector('.mention-banner-count');
+                if (countEl) countEl.textContent = remaining + '건';
+            }
+            if (projectId) selectProject(projectId);
+        }
+
+        async function checkMentionAlerts() {
+            if (!currentUser) return;
+            const panel = document.getElementById('mentionPanelList');
+            const countEl = document.getElementById('mentionPanelCount');
+            if (!panel) return;
+
+            try {
+                const { data, error } = await db
+                    .from('checklists')
+                    .select('*, author:users!created_by(name, avatar_initial, avatar_color), project:projects!project_id(id, name)')
+                    .neq('created_by', currentUser.id)
+                    .order('created_at', { ascending: true });
+
+                if (error) { console.error('멘션 조회 에러:', error); return; }
+                if (!data) return;
+
+                const readIds = getReadMentionIds();
+                const mentioned = data.filter(item =>
+                    Array.isArray(item.mentions) &&
+                    item.mentions.includes(currentUser.name) &&
+                    !readIds.includes(item.id)
+                );
+
+                if (countEl) countEl.textContent = mentioned.length;
+
+                if (mentioned.length === 0) {
+                    panel.innerHTML = '<div style="text-align:center; padding:32px 16px; color:var(--dark-400); font-size:14px;">새로운 멘션이 없습니다</div>';
+                    return;
+                }
+
+                panel.innerHTML = mentioned.map(item => {
+                    const author = item.author || {};
+                    const projectName = item.project?.name || '';
+                    const projectId = item.project?.id || '';
+                    const time = item.created_at ? new Date(item.created_at).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }) : '';
+                    const textPreview = (item.text || '').length > 50 ? item.text.slice(0, 50) + '...' : item.text;
+
+                    return `
+                        <div id="mention-panel-${item.id}" onclick="onMentionPanelClick('${item.id}', '${projectId}')" style="display:flex; align-items:flex-start; gap:10px; padding:12px; border-radius:12px; cursor:pointer; transition:all 0.15s; border-left:3px solid var(--primary); background:var(--primary-soft); margin-bottom:8px;" onmouseover="this.style.background='rgba(49,130,246,0.12)'" onmouseout="this.style.background='var(--primary-soft)'">
+                            <div style="width:32px; height:32px; border-radius:50%; background:${author.avatar_color || '#94A3B8'}; display:flex; align-items:center; justify-content:center; color:white; font-size:12px; font-weight:700; flex-shrink:0;">${author.avatar_initial || '?'}</div>
+                            <div style="flex:1; min-width:0;">
+                                <div style="font-size:12px; color:var(--dark-600); margin-bottom:2px;"><strong style="color:var(--primary);">${author.name || '?'}</strong> · ${projectName}</div>
+                                <div style="font-size:13px; color:var(--dark-900); line-height:1.4; margin-bottom:4px;">${escapeHtml(textPreview)}</div>
+                                <div style="font-size:11px; color:var(--dark-400);">${time}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error('멘션 알림 체크 실패:', err);
+            }
+        }
+
+        function onMentionPanelClick(itemId, projectId) {
+            // 읽음 처리
+            markMentionRead(itemId);
+            // DOM에서 제거
+            const el = document.getElementById('mention-panel-' + itemId);
+            if (el) el.remove();
+            // 카운트 업데이트
+            const countEl = document.getElementById('mentionPanelCount');
+            const panel = document.getElementById('mentionPanelList');
+            const remaining = panel ? panel.querySelectorAll('[id^="mention-panel-"]').length : 0;
+            if (countEl) countEl.textContent = remaining;
+            if (remaining === 0 && panel) {
+                panel.innerHTML = '<div style="text-align:center; padding:32px 16px; color:var(--dark-400); font-size:14px;">새로운 멘션이 없습니다</div>';
+            }
+            // 프로젝트로 이동 + 메모 스크롤
+            if (projectId) {
+                selectProject(projectId);
+                setTimeout(() => {
+                    const memoSection = document.querySelector('.chat-memo-section');
+                    if (memoSection) memoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 500);
+            }
         }
 
         // 일정 알림 체크 (D-day, D-1)
@@ -7488,7 +8256,7 @@
                     .gte('end_date', today)  // 종료일 >= 오늘
                     .order('updated_at', { ascending: false })
                     .limit(1)
-                    .single();
+                    .maybeSingle();
                 
                 if (error && error.code !== 'PGRST116') {
                     console.error('우선순위 로드 실패:', error);
@@ -8155,16 +8923,21 @@
             // 카테고리별로 분류 (기본값: growth)
             const growth = filtered.filter(p => (p.category || 'growth') === 'growth');
             const general = filtered.filter(p => p.category === 'general');
-            
+            const surepoint = filtered.filter(p => p.category === 'surepoint');
+
             // 상태별로 분류
             const growthOngoing = growth.filter(p => (p.status || '진행중') === '진행중' || p.status === '시작전');
             const growthCompleted = growth.filter(p => p.status === '완료');
             const growthHold = growth.filter(p => p.status === '보류');
-            
+
             const generalOngoing = general.filter(p => (p.status || '진행중') === '진행중' || p.status === '시작전');
             const generalCompleted = general.filter(p => p.status === '완료');
             const generalHold = general.filter(p => p.status === '보류');
-            
+
+            const surepointOngoing = surepoint.filter(p => (p.status || '진행중') === '진행중' || p.status === '시작전');
+            const surepointCompleted = surepoint.filter(p => p.status === '완료');
+            const surepointHold = surepoint.filter(p => p.status === '보류');
+
             // 카운트 업데이트
             document.getElementById('growthOngoingCount').textContent = `(${growthOngoing.length})`;
             document.getElementById('growthCompletedCount').textContent = `(${growthCompleted.length})`;
@@ -8172,23 +8945,31 @@
             document.getElementById('generalOngoingCount').textContent = `(${generalOngoing.length})`;
             document.getElementById('generalCompletedCount').textContent = `(${generalCompleted.length})`;
             document.getElementById('generalHoldCount').textContent = `(${generalHold.length})`;
-            
+            document.getElementById('surepointOngoingCount').textContent = `(${surepointOngoing.length})`;
+            document.getElementById('surepointCompletedCount').textContent = `(${surepointCompleted.length})`;
+            document.getElementById('surepointHoldCount').textContent = `(${surepointHold.length})`;
+
             // 검색 중일 때 결과가 있는 폴더만 자동 펼침
             if (isSearching) {
                 growthExpanded = growth.length > 0;
                 generalExpanded = general.length > 0;
+                surepointExpanded = surepoint.length > 0;
                 groupExpanded.growthOngoing = growthOngoing.length > 0;
                 groupExpanded.growthCompleted = growthCompleted.length > 0;
                 groupExpanded.growthHold = growthHold.length > 0;
                 groupExpanded.generalOngoing = generalOngoing.length > 0;
                 groupExpanded.generalCompleted = generalCompleted.length > 0;
                 groupExpanded.generalHold = generalHold.length > 0;
+                groupExpanded.surepointOngoing = surepointOngoing.length > 0;
+                groupExpanded.surepointCompleted = surepointCompleted.length > 0;
+                groupExpanded.surepointHold = surepointHold.length > 0;
             }
-            
+
             // 카테고리 색상 정의
             const categoryColors = {
                 growth: '#3B82F6',
-                general: '#03CF5D'
+                general: '#03CF5D',
+                surepoint: '#8B5CF6'
             };
             
             // 프로젝트 아이템 렌더링 함수
@@ -8226,6 +9007,11 @@
             renderList('generalOngoingList', generalOngoing);
             renderList('generalCompletedList', generalCompleted);
             renderList('generalHoldList', generalHold);
+
+            // 슈어포인트 렌더링
+            renderList('surepointOngoingList', surepointOngoing);
+            renderList('surepointCompletedList', surepointCompleted);
+            renderList('surepointHoldList', surepointHold);
             
             // 토글 상태 적용
             applyCategoryToggleState();
@@ -8236,7 +9022,8 @@
         function applyCategoryToggleState() {
             const categories = [
                 { name: 'growth', expanded: growthExpanded },
-                { name: 'general', expanded: generalExpanded }
+                { name: 'general', expanded: generalExpanded },
+                { name: 'surepoint', expanded: surepointExpanded }
             ];
             
             categories.forEach(c => {
@@ -8274,6 +9061,8 @@
                 growthExpanded = !growthExpanded;
             } else if (category === 'general') {
                 generalExpanded = !generalExpanded;
+            } else if (category === 'surepoint') {
+                surepointExpanded = !surepointExpanded;
             }
             applyCategoryToggleState();
         }
@@ -8354,12 +9143,13 @@
                     </div>
                 `;
             } else {
-                const categoryColors = { growth: '#3B82F6', general: '#03CF5D' };
-                const categoryNames = { growth: 'Growth', general: '일반업무' };
+                const categoryColors = { growth: '#3B82F6', general: '#03CF5D', surepoint: '#8B5CF6' };
+                const categoryNames = { growth: 'Growth', general: '일반업무', surepoint: '슈어포인트' };
+                const categoryIcons = { growth: '🚀', general: '📋', surepoint: '🎯' };
                 content.innerHTML = filtered.map(p => {
                     const color = categoryColors[p.category || 'growth'] || '#3B82F6';
                     const categoryName = categoryNames[p.category || 'growth'] || 'Growth';
-                    const categoryIcon = p.category === 'general' ? '📄' : '📈';
+                    const categoryIcon = categoryIcons[p.category || 'growth'] || '🚀';
                     return `
                     <div style="display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 12px; cursor: pointer; transition: all 0.2s; border: 1px solid var(--light-200); margin-bottom: 12px;"
                          onmouseover="this.style.background='var(--light-50)'; this.style.borderColor='${color}'"
@@ -8530,12 +9320,27 @@
             const area = document.getElementById('nextVisitArea');
             if (currentProject.next_visit_date) {
                 const date = new Date(currentProject.next_visit_date);
+                const assigneeName = currentProject.assignee?.name || '';
+                const assigneeText = assigneeName ? ` · 담당: ${assigneeName}` : '';
+
+                // D-day 계산
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const target = new Date(currentProject.next_visit_date + 'T00:00:00');
+                const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+                let ddayBadge = '';
+                if (diffDays <= 7) {
+                    const ddayText = diffDays < 0 ? `D+${Math.abs(diffDays)}` : diffDays === 0 ? 'D-Day' : `D-${diffDays}`;
+                    const ddayColor = diffDays <= 3 ? '#EF4444' : '#F59E0B';
+                    ddayBadge = `<span style="background:${ddayColor}; color:white; font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px; margin-left:8px;">${ddayText}</span>`;
+                }
+
                 area.innerHTML = `
                     <div class="next-visit-card">
                         <div class="next-visit-icon">📅</div>
                         <div class="next-visit-info">
-                            <div class="next-visit-label">다음 방문 예정</div>
-                            <div class="next-visit-date">${date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                            <div class="next-visit-label">마감기한${ddayBadge}</div>
+                            <div class="next-visit-date">${date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}${assigneeText}</div>
                             ${currentProject.next_visit_memo ? `<div class="next-visit-memo">${currentProject.next_visit_memo}</div>` : ''}
                         </div>
                         <button class="next-visit-edit" onclick="openModal('nextVisit')">수정</button>
@@ -8544,7 +9349,7 @@
             } else {
                 area.innerHTML = `
                     <div class="no-next-visit" onclick="openModal('nextVisit')">
-                        + 다음 방문 예정일 설정
+                        + 마감기한 설정
                     </div>
                 `;
             }
@@ -8553,29 +9358,22 @@
         // ========== 체크리스트 (로컬 저장) ==========
         async function loadChecklist() {
             if (!currentProject) return;
-            
+
             try {
                 const { data, error } = await db
                     .from('checklists')
-                    .select('*')
+                    .select('*, author:users!created_by(name, avatar_initial, avatar_color)')
                     .eq('project_id', currentProject.id)
                     .order('created_at', { ascending: true });
-                
+
                 if (error) throw error;
-                
+
                 checklist[currentProject.id] = data || [];
-                renderChecklist();
+                renderChatMemo();
             } catch (err) {
-                console.error('체크리스트 로드 실패:', err);
-                // 폴백: localStorage에서 로드 시도
-                const saved = localStorage.getItem('workspace_checklist');
-                if (saved) {
-                    const localData = JSON.parse(saved);
-                    checklist[currentProject.id] = localData[currentProject.id] || [];
-                } else {
-                    checklist[currentProject.id] = [];
-                }
-                renderChecklist();
+                console.error('메모 로드 실패:', err);
+                checklist[currentProject.id] = [];
+                renderChatMemo();
             }
         }
 
@@ -8667,7 +9465,7 @@
                     checklist[item.project_id].push(item);
                 });
                 
-                renderTodoCards();
+                renderDeadlineSection();
             } catch (err) {
                 console.error('전체 체크리스트 로드 실패:', err);
             }
@@ -8687,34 +9485,6 @@
             showToast('모든 체크리스트가 초기화되었습니다', 'success');
         }
 
-        function renderChecklist() {
-            const items = checklist[currentProject.id] || [];
-            const completed = items.filter(c => c.completed).length;
-            const total = items.length;
-            const percent = total > 0 ? (completed / total * 100) : 0;
-
-            document.getElementById('checklistProgress').style.width = percent + '%';
-            document.getElementById('checklistProgressText').textContent = `${completed}/${total}`;
-
-            const container = document.getElementById('checklistItems');
-            if (items.length === 0) {
-                container.innerHTML = '<div style="color: var(--dark-600); font-size: 14px; padding: 20px 0; text-align: center;">할 일을 추가해보세요</div>';
-            } else {
-                container.innerHTML = items.map((item, idx) => `
-                    <div class="checklist-item ${item.completed ? 'completed' : ''}" id="checklist-item-${idx}" data-id="${item.id}">
-                        <div class="checkbox ${item.completed ? 'checked' : ''}" onclick="toggleChecklist('${item.id}', ${idx})"></div>
-                        <span class="checklist-text">${escapeHtml(item.text)}</span>
-                        <div class="checklist-actions">
-                            <button class="checklist-edit" onclick="editChecklistItem(${idx})" title="수정">✏️</button>
-                            <button class="checklist-delete" onclick="deleteChecklistItem('${item.id}', ${idx})" title="삭제">✕</button>
-                        </div>
-                    </div>
-                `).join('');
-            }
-            
-            updateDashboardStats();
-        }
-
         // HTML 이스케이프 함수
         function escapeHtml(text) {
             const div = document.createElement('div');
@@ -8722,110 +9492,78 @@
             return div.innerHTML;
         }
 
-        // 체크리스트 수정 모드
-        function editChecklistItem(idx) {
-            const items = checklist[currentProject.id];
-            if (!items || !items[idx]) return;
-            
-            const itemElement = document.getElementById(`checklist-item-${idx}`);
-            const currentText = items[idx].text;
-            const itemId = items[idx].id;
-            
-            itemElement.innerHTML = `
-                <input type="text" class="checklist-edit-input" id="checklist-edit-input-${idx}" value="${escapeHtml(currentText)}" onkeypress="if(event.key==='Enter')saveChecklistEdit('${itemId}', ${idx})" onkeydown="if(event.key==='Escape')renderChecklist()">
-                <div class="checklist-edit-actions">
-                    <button class="checklist-edit-btn save" onclick="saveChecklistEdit('${itemId}', ${idx})">저장</button>
-                    <button class="checklist-edit-btn cancel" onclick="renderChecklist()">취소</button>
-                </div>
-            `;
-            
-            const input = document.getElementById(`checklist-edit-input-${idx}`);
-            input.focus();
-            input.select();
+        // @멘션 하이라이트 처리
+        function highlightMentions(text) {
+            const escaped = escapeHtml(text);
+            const names = users.map(u => u.name).join('|');
+            if (!names) return escaped;
+            const regex = new RegExp(`@(${names})`, 'g');
+            return escaped.replace(regex, '<span style="color:#3B82F6; font-weight:700;">@$1</span>');
         }
 
-        // 체크리스트 수정 저장
-        async function saveChecklistEdit(itemId, idx) {
-            const input = document.getElementById(`checklist-edit-input-${idx}`);
-            const newText = input.value.trim();
-            
-            if (!newText) {
-                showToast('내용을 입력하세요', 'error');
+        // 채팅형 메모 렌더링
+        function renderChatMemo() {
+            if (!currentProject) return;
+            const items = checklist[currentProject.id] || [];
+            const container = document.getElementById('chatMemoMessages');
+            const countEl = document.getElementById('chatMemoCount');
+            if (!container) return;
+            if (countEl) countEl.textContent = items.length;
+
+            if (items.length === 0) {
+                container.innerHTML = '<div class="chat-empty">메모가 없습니다. 첫 메시지를 남겨보세요!</div>';
                 return;
             }
-            
-            try {
-                const { error } = await db
-                    .from('checklists')
-                    .update({ text: newText })
-                    .eq('id', itemId);
-                
-                if (error) throw error;
-                
-                // 로컬 데이터 업데이트
-                const items = checklist[currentProject.id];
-                if (items && items[idx]) {
-                    items[idx].text = newText;
-                }
-                saveChecklistToStorage();
-                renderChecklist();
-                showToast('수정되었습니다', 'success');
-            } catch (err) {
-                console.error('체크리스트 수정 실패:', err);
-                showToast('수정 실패', 'error');
-            }
+
+            container.innerHTML = items.map(item => {
+                const isMine = item.created_by === currentUser?.id;
+                const author = item.author || {};
+                const avatarColor = author.avatar_color || 'linear-gradient(135deg, #94A3B8, #64748B)';
+                const avatarInitial = author.avatar_initial || '?';
+                const authorName = author.name || '알 수 없음';
+                const time = item.created_at ? new Date(item.created_at).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }) : '';
+                const mentionsMe = (item.mentions || []).includes(currentUser?.name);
+                const mentionBadge = mentionsMe ? '<div class="chat-msg-mention-badge">📣 나를 언급함</div>' : '';
+                const mentionClass = mentionsMe ? ' mentioned' : '';
+                const deleteBtn = isMine ? `<button class="chat-msg-delete" onclick="deleteChatMessage('${item.id}')">삭제</button>` : '';
+                const bubbleContent = highlightMentions(item.text);
+
+                return `
+                    <div class="chat-msg ${isMine ? 'mine' : ''}">
+                        <div class="chat-msg-avatar" style="background:${avatarColor}">${avatarInitial}</div>
+                        <div class="chat-msg-content">
+                            <div class="chat-msg-name">${authorName}</div>
+                            ${mentionBadge}
+                            <div class="chat-msg-bubble${mentionClass}">${bubbleContent}</div>
+                            <div class="chat-msg-meta">
+                                <span class="chat-msg-time">${time}</span>
+                                ${deleteBtn}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // 스크롤 하단으로
+            const body = document.getElementById('chatMemoBody');
+            if (body) setTimeout(() => body.scrollTop = body.scrollHeight, 50);
         }
 
-        async function toggleChecklist(itemId, idx) {
-            const items = checklist[currentProject.id];
-            if (!items || !items[idx]) return;
-            
-            const newCompleted = !items[idx].completed;
-            
-            try {
-                const { error } = await db
-                    .from('checklists')
-                    .update({ completed: newCompleted })
-                    .eq('id', itemId);
-                
-                if (error) throw error;
-                
-                items[idx].completed = newCompleted;
-                saveChecklistToStorage();
-                renderChecklist();
-            } catch (err) {
-                console.error('체크리스트 토글 실패:', err);
-            }
-        }
+        // renderChecklist 호환 래퍼
+        function renderChecklist() { renderChatMemo(); }
 
-        async function deleteChecklistItem(itemId, idx) {
-            if (!confirm('이 항목을 삭제하시겠습니까?')) return;
-            
-            try {
-                const { error } = await db
-                    .from('checklists')
-                    .delete()
-                    .eq('id', itemId);
-                
-                if (error) throw error;
-                
-                const items = checklist[currentProject.id];
-                if (items) {
-                    items.splice(idx, 1);
-                }
-                saveChecklistToStorage();
-                renderChecklist();
-                showToast('삭제되었습니다', 'success');
-            } catch (err) {
-                console.error('체크리스트 삭제 실패:', err);
-                showToast('삭제 실패', 'error');
-            }
-        }
-
-        async function addChecklistItem() {
-            const input = document.getElementById('newChecklistItem');
+        // 메시지 전송
+        async function addChatMessage() {
+            const input = document.getElementById('chatMemoInput');
             const text = input.value.trim();
             if (!text || !currentProject) return;
+
+            // @멘션 감지
+            const names = users.map(u => u.name);
+            const mentions = [];
+            names.forEach(name => {
+                if (text.includes('@' + name)) mentions.push(name);
+            });
 
             try {
                 const { data, error } = await db
@@ -8834,26 +9572,147 @@
                         project_id: currentProject.id,
                         text: text,
                         completed: false,
-                        created_by: currentUser.id
+                        created_by: currentUser.id,
+                        mentions: mentions
                     })
-                    .select()
+                    .select('*, author:users!created_by(name, avatar_initial, avatar_color)')
                     .single();
-                
+
                 if (error) throw error;
-                
-                if (!checklist[currentProject.id]) {
-                    checklist[currentProject.id] = [];
-                }
+
+                if (!checklist[currentProject.id]) checklist[currentProject.id] = [];
                 checklist[currentProject.id].push(data);
-                saveChecklistToStorage();
                 input.value = '';
-                renderChecklist();
-                showToast('할 일이 추가되었습니다', 'success');
+                input.style.height = 'auto';
+                renderChatMemo();
+                closeMentionDropdown();
             } catch (err) {
-                console.error('체크리스트 추가 실패:', err);
-                showToast('추가 실패', 'error');
+                console.error('메시지 전송 실패:', err);
+                showToast('전송 실패', 'error');
             }
         }
+
+        // 메시지 삭제
+        async function deleteChatMessage(itemId) {
+            if (!confirm('이 메시지를 삭제하시겠습니까?')) return;
+            try {
+                const { error } = await db.from('checklists').delete().eq('id', itemId);
+                if (error) throw error;
+                const items = checklist[currentProject.id];
+                if (items) {
+                    const idx = items.findIndex(i => i.id === itemId);
+                    if (idx !== -1) items.splice(idx, 1);
+                }
+                renderChatMemo();
+                showToast('삭제되었습니다', 'success');
+            } catch (err) {
+                showToast('삭제 실패', 'error');
+            }
+        }
+
+        // @멘션 드롭다운
+        let mentionSelectedIdx = -1;
+        let mentionFilteredUsers = [];
+
+        function showMentionDropdown(query) {
+            const dropdown = document.getElementById('mentionDropdown');
+            if (!dropdown) return;
+            mentionFilteredUsers = users.filter(u => u.name.includes(query) && u.id !== currentUser?.id);
+            if (mentionFilteredUsers.length === 0) { dropdown.style.display = 'none'; mentionSelectedIdx = -1; return; }
+            mentionSelectedIdx = 0;
+            dropdown.style.display = 'block';
+            renderMentionItems();
+        }
+
+        function renderMentionItems() {
+            const dropdown = document.getElementById('mentionDropdown');
+            if (!dropdown) return;
+            dropdown.innerHTML = mentionFilteredUsers.map((u, i) => `
+                <div class="mention-item ${i === mentionSelectedIdx ? 'active' : ''}" onmouseenter="mentionSelectedIdx=${i}; renderMentionItems()" onclick="insertMention('${u.name}')">
+                    <div class="mention-item-avatar" style="background:${u.avatar_color}">${u.avatar_initial}</div>
+                    <div class="mention-item-name">${u.name}</div>
+                </div>
+            `).join('');
+        }
+
+        function closeMentionDropdown() {
+            const dropdown = document.getElementById('mentionDropdown');
+            if (dropdown) dropdown.style.display = 'none';
+            mentionSelectedIdx = -1;
+            mentionFilteredUsers = [];
+        }
+
+        function isMentionOpen() {
+            const dropdown = document.getElementById('mentionDropdown');
+            return dropdown && dropdown.style.display !== 'none' && mentionFilteredUsers.length > 0;
+        }
+
+        function insertMention(name) {
+            const input = document.getElementById('chatMemoInput');
+            const val = input.value;
+            const atIdx = val.lastIndexOf('@');
+            if (atIdx !== -1) {
+                input.value = val.slice(0, atIdx) + '@' + name + ' ';
+            }
+            closeMentionDropdown();
+            input.focus();
+        }
+
+        // 입력창 이벤트 (멘션 + Enter 전송)
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatInput = document.getElementById('chatMemoInput');
+            if (!chatInput) return;
+
+            chatInput.addEventListener('keydown', function(e) {
+                if (isMentionOpen()) {
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        mentionSelectedIdx = (mentionSelectedIdx + 1) % mentionFilteredUsers.length;
+                        renderMentionItems();
+                        return;
+                    }
+                    if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        mentionSelectedIdx = (mentionSelectedIdx - 1 + mentionFilteredUsers.length) % mentionFilteredUsers.length;
+                        renderMentionItems();
+                        return;
+                    }
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (mentionSelectedIdx >= 0 && mentionFilteredUsers[mentionSelectedIdx]) {
+                            insertMention(mentionFilteredUsers[mentionSelectedIdx].name);
+                        }
+                        return;
+                    }
+                    if (e.key === 'Escape') {
+                        e.preventDefault();
+                        closeMentionDropdown();
+                        return;
+                    }
+                } else {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        addChatMessage();
+                    }
+                }
+            });
+
+            chatInput.addEventListener('input', function() {
+                // 자동 높이 조절
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 80) + 'px';
+                // @멘션 감지
+                const val = this.value;
+                const cursor = this.selectionStart;
+                const before = val.slice(0, cursor);
+                const atMatch = before.match(/@([^\s]*)$/);
+                if (atMatch) {
+                    showMentionDropdown(atMatch[1]);
+                } else {
+                    closeMentionDropdown();
+                }
+            });
+        });
 
         // ========== 방문 기록 ==========
         async function loadVisits() {
@@ -9591,7 +10450,14 @@
             const [year, month, day] = dateStr.split('-').map(Number);
             const dateDisplay = `${year}년 ${month}월 ${day}일`;
             document.getElementById('calendarAddDate').textContent = dateDisplay;
+
+            // 모달 열기 (내부에서 resetCalendarModal 호출됨)
             openModal('calendarAdd');
+
+            // reset 후 개인일정 폼으로 직접 이동
+            calendarType = 'personal';
+            calendarStep = 3;
+            updateCalendarStepUI();
         }
 
         // 일정 타입 선택
@@ -9665,9 +10531,10 @@
             const { data, error } = await db.from('personal_schedules')
                 .select('*, user:users(id, name, avatar_initial, avatar_color)')
                 .order('schedule_date', { ascending: false });
-            
+
             if (!error) {
                 personalSchedules = data || [];
+                renderMiniCalendar();
             }
         }
 
@@ -9768,7 +10635,7 @@
             if (error) { showToast('저장 실패', 'error'); return; }
             
             // 다른 사용자들에게 알림 보내기
-            const categoryName = calendarSelectedCategory === 'growth' ? 'Growth Initiative' : '일반업무';
+            const categoryName = { growth: 'Growth Initiative', general: '일반업무', surepoint: '슈어포인트' }[calendarSelectedCategory] || calendarSelectedCategory;
             await notifyOtherUsers(
                 'project_created',
                 `${currentUser.name}님이 새 프로젝트를 생성했습니다`,
@@ -9874,13 +10741,17 @@
                 const allEvents = [];
                 
                 projectEvents.forEach(p => {
-                    const categoryIcon = (p.category || 'growth') === 'growth' ? '📈' : '📄';
+                    const catIcons = { growth: '🚀', general: '📋', surepoint: '🎯' };
+                    const catNames = { growth: 'Growth Initiative', general: '일반업무', surepoint: '슈어포인트' };
+                    const pCat = p.category || 'growth';
+                    const assigneeName = p.assignee?.name || '';
+                    const metaText = assigneeName ? `${catNames[pCat] || 'Growth Initiative'}(담당자: ${assigneeName})` : (catNames[pCat] || 'Growth Initiative');
                     allEvents.push({
                         type: 'project',
                         html: `
                             <div class="selected-date-event-item" onclick="selectProject('${p.id}')">
-                                <div class="selected-date-event-name">${categoryIcon} ${p.name}</div>
-                                <div class="selected-date-event-meta">${(p.category || 'growth') === 'growth' ? 'Growth Initiative' : '일반업무'}</div>
+                                <div class="selected-date-event-name">${catIcons[pCat] || '🚀'} ${p.name}</div>
+                                <div class="selected-date-event-meta">${metaText}</div>
                             </div>
                         `
                     });
@@ -10025,12 +10896,248 @@
 
         // ========== 대시보드 통계 ==========
         function updateDashboardStats() {
-            // 진행중인 할 일 카드 렌더링
-            renderTodoCards();
+            renderDeadlineSection();
+            renderDeadlineBanner();
         }
 
-        // 진행중인 할 일 카드 렌더링
-        function renderTodoCards() {
+        // 기간 알림 배너 렌더링
+        function renderDeadlineBanner() {
+            const banner = document.getElementById('deadlineBanner');
+            const container = document.getElementById('deadlineCards');
+            const countEl = document.getElementById('deadlineCount');
+            if (!banner || !container || !currentUser) return;
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const isLeader = currentUser.role === 'leader' || currentUser.name === '이재훈';
+
+            const items = [];
+
+            // 프로젝트 마감기한 (next_visit_date)
+            projects.forEach(p => {
+                if (!p.next_visit_date) return;
+                if (p.status === '완료' || p.status === '보류') return;
+                // 팀장: 전체, 팀원: 본인 assigned_to만
+                if (!isLeader && p.assigned_to !== currentUser.id) return;
+
+                const deadline = new Date(p.next_visit_date + 'T00:00:00');
+                const diffDays = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+                if (diffDays < 0) return; // 지난 것은 제외
+
+                const catIcons = { growth: '🚀', general: '📋', surepoint: '🎯' };
+                const catNames = { growth: 'Growth', general: '일반업무', surepoint: '슈어포인트' };
+                const pCat = p.category || 'growth';
+
+                items.push({
+                    type: 'project',
+                    id: p.id,
+                    name: p.name,
+                    dday: diffDays,
+                    assignee: p.assignee?.name || '',
+                    categoryIcon: catIcons[pCat] || '🚀',
+                    categoryName: catNames[pCat] || 'Growth',
+                    dateStr: p.next_visit_date
+                });
+            });
+
+            // 개인일정 (본인 것만, 팀장은 전체)
+            personalSchedules.forEach(s => {
+                if (!s.schedule_date) return;
+                if (!isLeader && s.user_id !== currentUser.id) return;
+
+                const deadline = new Date(s.schedule_date + 'T00:00:00');
+                const diffDays = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+                if (diffDays < 0 || diffDays > 14) return; // 지난 것 제외, 2주 이내만
+
+                items.push({
+                    type: 'personal',
+                    id: s.id,
+                    name: s.title,
+                    dday: diffDays,
+                    assignee: s.user?.name || currentUser.name,
+                    categoryIcon: '👤',
+                    categoryName: '개인일정',
+                    dateStr: s.schedule_date
+                });
+            });
+
+            // D-day 오름차순 정렬
+            items.sort((a, b) => a.dday - b.dday);
+
+            if (items.length === 0) {
+                banner.style.display = 'none';
+                return;
+            }
+
+            banner.style.display = 'block';
+            countEl.textContent = items.length;
+
+            const maxShow = 5;
+            const visible = items.slice(0, maxShow);
+            const remaining = items.length - maxShow;
+
+            function renderBannerCard(item) {
+                let level, ddayText;
+                if (item.dday === 0) { ddayText = 'D-Day'; }
+                else { ddayText = `D-${item.dday}`; }
+                if (item.dday <= 3) level = 'urgent';
+                else if (item.dday <= 7) level = 'soon';
+                else level = 'normal';
+
+                const onclick = item.type === 'project'
+                    ? `selectProject('${item.id}')`
+                    : `showSection('calendar')`;
+
+                return `
+                    <div class="deadline-card ${level}" onclick="${onclick}">
+                        <div class="deadline-card-top">
+                            <span class="deadline-dday">${ddayText}</span>
+                            <span class="deadline-card-type">${item.categoryIcon} ${item.categoryName}</span>
+                        </div>
+                        <div class="deadline-card-name" title="${item.name}">${item.name}</div>
+                        <div class="deadline-card-assignee">${item.assignee ? '담당: ' + item.assignee : ''} · ${item.dateStr.slice(5).replace('-', '/')}</div>
+                    </div>
+                `;
+            }
+
+            let html = visible.map(renderBannerCard).join('');
+
+            if (remaining > 0) {
+                html += `
+                    <div class="deadline-card" onclick="document.getElementById('todoSection').scrollIntoView({behavior:'smooth'})" style="min-width:120px; max-width:140px; background:var(--light-100); border:1.5px dashed var(--light-300); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                        <div style="text-align:center;">
+                            <div style="font-size:20px; font-weight:700; color:var(--dark-700);">+${remaining}</div>
+                            <div style="font-size:12px; color:var(--dark-500); margin-top:2px;">더보기 ↓</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // 마감기한 섹션 렌더링
+        function renderDeadlineSection() {
+            const container = document.getElementById('todoSection');
+            if (!container || !currentUser) return;
+
+            const isLeader = currentUser.role === 'leader' || currentUser.name === '이재훈';
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const levelColors = {
+                urgent: { bg: '#FEF2F2', border: '#FECACA', badge: '#EF4444' },
+                soon:   { bg: '#FFFBEB', border: '#FDE68A', badge: '#F59E0B' },
+                normal: { bg: '#F0FDF4', border: '#BBF7D0', badge: '#22C55E' }
+            };
+
+            // 마감기한 있는 프로젝트 수집
+            const items = [];
+            projects.forEach(p => {
+                if (!p.next_visit_date) return;
+                if (p.status === '완료' || p.status === '보류') return;
+                if (!isLeader && p.assigned_to !== currentUser.id) return;
+
+                const [y, m, d] = p.next_visit_date.split('-').map(Number);
+                const deadline = new Date(y, m - 1, d);
+                deadline.setHours(0, 0, 0, 0);
+                const diffDays = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+
+                // 지난 마감기한은 표시하지 않음
+                if (diffDays < 0) return;
+
+                items.push({
+                    id: p.id,
+                    name: p.name,
+                    category: p.category || 'growth',
+                    dday: diffDays,
+                    assignee: p.assignee?.name || '',
+                    dateStr: p.next_visit_date,
+                    isPast: false
+                });
+            });
+
+            // D-day 정렬 (지난 것은 맨 아래)
+            const sortItems = (arr) => arr.sort((a, b) => {
+                if (a.isPast && !b.isPast) return 1;
+                if (!a.isPast && b.isPast) return -1;
+                return a.dday - b.dday;
+            });
+
+            // 카테고리별 분리
+            const categories = [
+                { key: 'growth', icon: '📈', name: 'Growth Initiative', color: '#3B82F6' },
+                { key: 'general', icon: '📄', name: '일반업무', color: '#03CF5D' },
+                { key: 'surepoint', icon: '📌', name: '슈어포인트', color: '#8B5CF6' }
+            ];
+
+            const grouped = {};
+            categories.forEach(c => { grouped[c.key] = []; });
+            items.forEach(item => {
+                if (grouped[item.category]) grouped[item.category].push(item);
+                else grouped['growth'].push(item);
+            });
+            categories.forEach(c => sortItems(grouped[c.key]));
+
+            const title = isLeader ? '⏰ 마감기한' : '⏰ 내 마감기한';
+            const totalCount = items.length;
+
+            // 카드 렌더링 헬퍼
+            function renderCard(item) {
+                let level, ddayText;
+                if (item.dday < 0) { ddayText = `D+${Math.abs(item.dday)}`; level = 'urgent'; }
+                else if (item.dday === 0) { ddayText = 'D-Day'; level = 'urgent'; }
+                else if (item.dday <= 3) { ddayText = `D-${item.dday}`; level = 'urgent'; }
+                else if (item.dday <= 7) { ddayText = `D-${item.dday}`; level = 'soon'; }
+                else { ddayText = `D-${item.dday}`; level = 'normal'; }
+                const cl = levelColors[level];
+                const dateDisplay = item.dateStr.slice(5).replace('-', '/');
+                const subInfo = isLeader ? `👤 ${item.assignee || '미배정'}` : `📅 ${dateDisplay}`;
+                return `
+                    <div onclick="selectProject('${item.id}')" style="padding:12px; background:${cl.bg}; border:1.5px solid ${cl.border}; border-radius:10px; cursor:pointer; transition:all 0.2s; margin-bottom:6px;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 3px 10px rgba(0,0,0,0.08)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                            <span style="background:${cl.badge}; color:white; font-size:11px; font-weight:700; padding:2px 8px; border-radius:5px;">${ddayText}</span>
+                        </div>
+                        <div style="font-size:14px; font-weight:600; color:var(--dark-900); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-bottom:4px;">${item.name}</div>
+                        <div style="font-size:12px; color:var(--dark-500);">${subInfo}</div>
+                    </div>
+                `;
+            }
+
+            // 컬럼 HTML 생성
+            const columnsHtml = categories.map(cat => {
+                const catItems = grouped[cat.key];
+                const cardsHtml = catItems.length === 0
+                    ? `<div style="text-align:center; padding:20px 8px; color:var(--dark-400); font-size:13px;">없음</div>`
+                    : catItems.map(renderCard).join('');
+                return `
+                    <div style="flex:1; min-width:0;">
+                        <div style="display:flex; align-items:center; gap:6px; margin-bottom:12px; padding-bottom:10px; border-bottom:2px solid ${cat.color};">
+                            <span style="font-size:15px;">${cat.icon}</span>
+                            <span style="font-size:14px; font-weight:700; color:var(--dark-900);">${cat.name}</span>
+                            <span style="font-size:12px; font-weight:600; color:var(--dark-500); margin-left:auto;">${catItems.length}건</span>
+                        </div>
+                        ${cardsHtml}
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div style="background:var(--white); border-radius:16px; padding:24px; border:1px solid var(--light-200);">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+                        <div style="font-size:16px; font-weight:700; color:var(--dark-900);">${title}</div>
+                        <span style="font-size:13px; color:var(--dark-500);">전체 ${totalCount}건</span>
+                    </div>
+                    <div class="deadline-columns" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;">
+                        ${columnsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ===== 기존 renderTodoCards 삭제됨 =====
+        function renderTodoCards() { renderDeadlineSection(); } // 호환용 래퍼
+        function _DEAD_renderTodoCards() {
             const container = document.getElementById('todoSection');
             if (!container) return;
             
@@ -10072,10 +11179,11 @@
                 };
             });
             
-            // Growth와 일반업무 분리
+            // Growth, 일반업무, 슈어포인트 분리
             const growthData = todoData.filter(d => d.project.category === 'growth' || !d.project.category);
             const generalData = todoData.filter(d => d.project.category === 'general');
-            
+            const surepointData = todoData.filter(d => d.project.category === 'surepoint');
+
             // D-day 기준 정렬
             const sortByDday = (a, b) => {
                 if (a.dday.days === null && b.dday.days === null) return 0;
@@ -10083,12 +11191,13 @@
                 if (b.dday.days === null) return -1;
                 return a.dday.days - b.dday.days;
             };
-            
+
             growthData.sort(sortByDday);
             generalData.sort(sortByDday);
-            
+            surepointData.sort(sortByDday);
+
             // Accordion 상태 저장 (localStorage)
-            const accordionState = JSON.parse(localStorage.getItem('todo_accordion_state') || '{"growth": false, "general": true}');
+            const accordionState = JSON.parse(localStorage.getItem('todo_accordion_state') || '{"growth": false, "general": true, "surepoint": true}');
             
             let html = '';
             
@@ -10133,7 +11242,28 @@
                     </div>
                 `;
             }
-            
+
+            // 슈어포인트 그룹
+            if (surepointData.length > 0) {
+                html += `
+                    <div class="todo-group surepoint ${accordionState.surepoint ? 'collapsed' : ''}" id="todoGroupSurepoint">
+                        <div class="todo-group-header" onclick="toggleTodoGroup('surepoint')">
+                            <div class="todo-group-title">
+                                <div class="todo-group-icon">📌</div>
+                                <span>슈어포인트</span>
+                            </div>
+                            <div class="todo-group-badge">
+                                <div class="todo-group-count">${surepointData.length}개</div>
+                                <div class="todo-group-toggle">▼</div>
+                            </div>
+                        </div>
+                        <div class="todo-group-content">
+                            ${surepointData.map(data => renderGeneralCard(data)).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
             container.innerHTML = html;
         }
         
@@ -10482,6 +11612,7 @@
                 document.getElementById('editProjectStatus').value = status;
                 editProjectCategory = currentProject.category || 'growth';
                 editProjectAssignee = currentProject.assigned_to;
+                document.getElementById('editProjectDeadline').value = currentProject.next_visit_date || '';
                 
                 // 카테고리 선택 업데이트
                 document.querySelectorAll('#editProjectCategoryOptions .category-option').forEach(el => {
@@ -10819,7 +11950,7 @@
             } else if (calendarStep === 3) {
                 if (calendarType === 'growth') {
                     document.getElementById('calendarStep3Growth').classList.add('active');
-                } else if (calendarType === 'general') {
+                } else if (calendarType === 'general' || calendarType === 'surepoint') {
                     document.getElementById('calendarStep3General').classList.add('active');
                 } else if (calendarType === 'personal') {
                     document.getElementById('calendarStep3Personal').classList.add('active');
@@ -10846,10 +11977,22 @@
                 nextBtn.style.display = 'block';
                 saveBtn.style.display = 'none';
             } else {
-                backBtn.style.display = 'block';
-                cancelBtn.style.display = 'none';
+                // 개인일정 직접 진입 시 이전 버튼 숨김
+                if (calendarType === 'personal') {
+                    backBtn.style.display = 'none';
+                    cancelBtn.style.display = 'block';
+                } else {
+                    backBtn.style.display = 'block';
+                    cancelBtn.style.display = 'none';
+                }
                 nextBtn.style.display = 'none';
                 saveBtn.style.display = 'block';
+            }
+
+            // 개인일정 직접 진입 시 스텝 인디케이터 숨김
+            const stepIndicator = document.getElementById('calendarStepIndicator');
+            if (stepIndicator) {
+                stepIndicator.style.display = (calendarType === 'personal' && calendarStep === 3) ? 'none' : 'flex';
             }
         }
         
@@ -10857,6 +12000,8 @@
         function resetCalendarModal() {
             calendarStep = 1;
             calendarType = null;
+            const stepIndicator = document.getElementById('calendarStepIndicator');
+            if (stepIndicator) stepIndicator.style.display = 'flex';
             calendarConditions = [false, false, false, false];
             calProblemCategories = [];
             calPersonalType = '미팅';
@@ -10963,11 +12108,12 @@
                     return;
                 }
                 
+                const isSurepoint = calendarType === 'surepoint';
                 const { data, error } = await db.from('projects').insert({
                     name: name,
                     description: document.getElementById('calGeneralDescInput').value.trim(),
-                    category: 'general',
-                    color: '#03CF5D',
+                    category: isSurepoint ? 'surepoint' : 'general',
+                    color: isSurepoint ? '#8B5CF6' : '#03CF5D',
                     status: '진행중',
                     next_visit_date: calendarSelectedDate || getLocalDateString(),
                     created_by: currentUser.id,
@@ -11182,7 +12328,7 @@
             if (error) { showToast('저장 실패', 'error'); return; }
             
             // 다른 사용자들에게 알림 보내기
-            const categoryName = newProjectCategory === 'growth' ? 'Growth Initiative' : '일반업무';
+            const categoryName = { growth: 'Growth Initiative', general: '일반업무', surepoint: '슈어포인트' }[newProjectCategory] || newProjectCategory;
             await notifyOtherUsers(
                 'project_created',
                 `${currentUser.name}님이 새 프로젝트를 생성했습니다`,
@@ -11357,9 +12503,10 @@
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            toast.innerHTML = `<span>${type === 'success' ? '✓' : '✕'}</span> ${message}`;
+            const icons = { success: '✓', error: '✕', info: 'ℹ' };
+            toast.innerHTML = `<span>${icons[type] || '✓'}</span> ${message}`;
             container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+            setTimeout(() => toast.remove(), 4000);
         }
 
         // 초기화

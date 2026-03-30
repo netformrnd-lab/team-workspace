@@ -8081,7 +8081,7 @@
             }
         }
 
-        function onMentionPanelClick(itemId, projectId) {
+        async function onMentionPanelClick(itemId, projectId) {
             // 읽음 처리
             markMentionRead(itemId);
             // DOM에서 제거
@@ -8097,7 +8097,7 @@
             }
             // 프로젝트로 이동 + 메모 스크롤
             if (projectId) {
-                selectProject(projectId);
+                await selectProject(projectId);
                 setTimeout(() => {
                     const memoSection = document.querySelector('.chat-memo-section');
                     if (memoSection) memoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
